@@ -1,5 +1,5 @@
 ---
-import SiteLayout from "../layouts/SiteLayout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 interface Props {
   title: string;
@@ -8,8 +8,12 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<SiteLayout title={title}>
+<BaseLayout title={title}>
   <h1>{title}</h1>
-  <p>Phase II: being rebuilt.</p>
-  <p><a href="/">Back to Home</a></p>
-</SiteLayout>
+  <p>Phase II rebuild in progress. This page is being updated.</p>
+  <p>
+    <a href="/">Home</a>
+    <span aria-hidden="true"> | </span>
+    <a href="/signals">Signals</a>
+  </p>
+</BaseLayout>

@@ -1,0 +1,15 @@
+Signals content conventions (v1 scaffold)
+
+Future markdown signals should be stored as one file per signal in this folder.
+
+Suggested filename convention:
+- YYYY-MM-DD-topic-slug.md
+
+Suggested frontmatter keys:
+- title
+- timestamp
+- city
+- sector
+- sources
+- summary
+- confidence

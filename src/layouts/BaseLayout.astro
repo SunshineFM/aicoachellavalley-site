@@ -1,0 +1,118 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/" class="brand">AI Coachella Valley (AICV)</a>
+        <nav aria-label="Primary">
+          <a href="/signals">Signals</a>
+          <a href="/cities">Cities</a>
+          <a href="/sectors">Sectors</a>
+          <a href="/framework">Framework</a>
+          <a href="/">Home</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>
+        Live dispatches:
+        <a href="https://x.com/CoachellaAI" target="_blank" rel="noreferrer">@CoachellaAI</a>
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(body) {
+    margin: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a1a;
+    line-height: 1.55;
+  }
+
+  header {
+    background: #ffffff;
+    border-bottom: 1px solid #d8dbe1;
+  }
+
+  .header-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    color: #0b3e91;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  nav a {
+    color: #184a9c;
+    text-decoration: none;
+  }
+
+  nav a:hover,
+  nav a:focus-visible {
+    text-decoration: underline;
+  }
+
+  main {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  footer {
+    border-top: 1px solid #d8dbe1;
+    background: #ffffff;
+  }
+
+  footer p {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    color: #454b57;
+    font-size: 0.95rem;
+  }
+
+  footer a {
+    color: #184a9c;
+  }
+</style>
