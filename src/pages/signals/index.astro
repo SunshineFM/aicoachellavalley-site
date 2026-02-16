@@ -1,16 +1,88 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const signals = (await getCollection("signals")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
 ---
 
 <BaseLayout title="Signals | AI Coachella Valley">
   <h1>Signals</h1>
-  <p>No signals yet.</p>
   <p>
-    This feed is reserved for structured, time-stamped, verifiable indicators of AI modernization across the region.
+    Structured, time-stamped, verifiable indicators tracking AI modernization across the Coachella Valley regional economy.
   </p>
+
+  {signals.length === 0 ? (
+    <p>No signals yet.</p>
+  ) : (
+    <ul class="signals-list">
+      {signals.map((signal) => (
+        <li>
+          <h2>
+            <a href={`/signals/${signal.slug}`}>{signal.data.title}</a>
+          </h2>
+          <p class="meta">
+            <strong>Date:</strong> {dateFormatter.format(signal.data.date)}
+            {signal.data.time ? ` ${signal.data.time}` : ""}
+            {signal.data.city ? ` | ${signal.data.city}` : ""}
+            {signal.data.sector ? ` | ${signal.data.sector}` : ""}
+          </p>
+          <p class="meta">
+            <strong>Type:</strong> {signal.data.signal_type} | <strong>Confidence:</strong> {signal.data.confidence}
+          </p>
+          <p>{signal.data.summary}</p>
+        </li>
+      ))}
+    </ul>
+  )}
+
   <p>
     <a href="/">Home</a>
     <span aria-hidden="true"> | </span>
     <a href="/framework">Method & guardrails</a>
   </p>
 </BaseLayout>
+
+<style>
+  .signals-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .signals-list li {
+    padding: 1rem;
+    border: 1px solid #d8dbe1;
+    background: #fff;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  h2 a {
+    color: #184a9c;
+    text-decoration: none;
+  }
+
+  h2 a:hover,
+  h2 a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .meta {
+    margin: 0.25rem 0;
+    color: #4b5360;
+    font-size: 0.95rem;
+  }
+</style>

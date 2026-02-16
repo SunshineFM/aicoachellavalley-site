@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const signals = await getCollection("signals");
+
+  return signals.map((signal) => ({
+    params: { slug: signal.slug },
+    props: { signal },
+  }));
+}
+
+type Props = {
+  signal: CollectionEntry<"signals">;
+};
+
+const { signal } = Astro.props;
+const { Content } = await render(signal);
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "2-digit",
+});
+---
+
+<BaseLayout title={`${signal.data.title} | Signals`}>
+  <article>
+    <h1>{signal.data.title}</h1>
+    <p>
+      <strong>Date:</strong> {dateFormatter.format(signal.data.date)}
+      {signal.data.time ? ` ${signal.data.time}` : ""}
+    </p>
+    <p>
+      <strong>City:</strong> {signal.data.city ?? "Regional"}
+      <span aria-hidden="true"> | </span>
+      <strong>Sector:</strong> {signal.data.sector ?? "Cross-sector"}
+    </p>
+    <p>
+      <strong>Signal type:</strong> {signal.data.signal_type}
+      <span aria-hidden="true"> | </span>
+      <strong>Confidence:</strong> {signal.data.confidence}
+    </p>
+    <p><strong>Summary:</strong> {signal.data.summary}</p>
+
+    {signal.data.tags && signal.data.tags.length > 0 ? (
+      <p><strong>Tags:</strong> {signal.data.tags.join(", ")}</p>
+    ) : null}
+
+    <hr />
+    <Content />
+
+    {signal.data.sources && signal.data.sources.length > 0 ? (
+      <>
+        <h2>Sources</h2>
+        <ul>
+          {signal.data.sources.map((url) => (
+            <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+          ))}
+        </ul>
+      </>
+    ) : null}
+
+    <p>
+      <a href="/signals">Back to Signals</a>
+      <span aria-hidden="true"> | </span>
+      <a href="/">Home</a>
+    </p>
+  </article>
+</BaseLayout>

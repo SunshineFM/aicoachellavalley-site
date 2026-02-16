@@ -4,12 +4,22 @@ const signals = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
-    timestamp: z.string().optional(),
+    date: z.date(),
+    time: z.string().optional(),
     city: z.string().optional(),
     sector: z.string().optional(),
-    sources: z.array(z.string()).optional(),
-    summary: z.string().optional(),
-    confidence: z.number().min(0).max(1).optional(),
+    signal_type: z.enum([
+      "adoption",
+      "infrastructure",
+      "policy",
+      "workforce",
+      "investment",
+      "research",
+    ]),
+    confidence: z.enum(["low", "medium", "high"]),
+    sources: z.array(z.string().url()).optional(),
+    tags: z.array(z.string()).optional(),
+    summary: z.string(),
   }),
 });
 
