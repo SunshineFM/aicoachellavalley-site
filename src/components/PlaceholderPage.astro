@@ -1,9 +1,15 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
 ---
 
-<SiteLayout title="AI Coachella Valley">
-  <h1>AI Coachella Valley</h1>
+<SiteLayout title={title}>
+  <h1>{title}</h1>
   <p>Phase II: being rebuilt.</p>
   <p><a href="/">Back to Home</a></p>
 </SiteLayout>
