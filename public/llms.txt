@@ -1,0 +1,6 @@
+# AI Coachella Valley
+
+Home: /
+Signals: /signals
+Cities: /cities
+Sectors: /sectors
