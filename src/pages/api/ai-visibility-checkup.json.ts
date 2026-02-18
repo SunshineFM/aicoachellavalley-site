@@ -111,9 +111,9 @@ const CATEGORY_WEIGHTS: Record<CategoryId, number> = {
 };
 
 const REALITY_CHECK_ITEMS = [
-  'Not scored. External systems vary. Search: site:example.com "brand".',
-  "Not scored. External systems vary. Search the exact business name and review top citations.",
-  'Not scored. External systems vary. Ask an LLM: "What is <business> in Coachella Valley?" and verify whether it cites the site.',
+  "Google: search the brand name + city and review what ranks.",
+  'AI assistants: ask "What is <brand>?" and see whether the answer cites your site.',
+  "Search Console/Bing Webmaster: confirm important pages are indexed.",
 ];
 
 const CHECKS = {
@@ -226,7 +226,7 @@ const CHECKS = {
     id: "sd-presence",
     name: "JSON-LD presence",
     categoryId: "structured-data",
-    max: 10,
+    max: 5,
     fix: "Add at least one JSON-LD block describing your organization or page entity.",
   },
   sdValidity: {
@@ -242,6 +242,13 @@ const CHECKS = {
     categoryId: "structured-data",
     max: 5,
     fix: "Include page-specific schema entities (Service, FAQPage, LocalBusiness, SoftwareApplication, etc.).",
+  },
+  sdBrandClarity: {
+    id: "sd-brand-clarity",
+    name: "Brand/entity clarity",
+    categoryId: "structured-data",
+    max: 5,
+    fix: "Include clear organization identity in schema or consistent brand naming in title/H1/body copy.",
   },
 } as const;
 
@@ -373,7 +380,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   );
 
   const title = extractFirst(html, /<title[^>]*>([\s\S]*?)<\/title>/i);
-  const metaDescription = findMetaTag(html, "description");
+  const metaDescription = extractMetaDescription(html);
   const robots = findMetaTag(html, "robots");
   const canonical = findCanonical(html);
   const finalUrlObj = parseUrl(fetchResult.finalUrl);
@@ -448,6 +455,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   );
 
   const descriptionLength = metaDescription.trim().length;
+  const descriptionSnippet = truncateWithEllipsis(metaDescription, 160);
   const metaDescriptionStatus: CheckStatus =
     descriptionLength >= 70 && descriptionLength <= 160
       ? "pass"
@@ -467,13 +475,15 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
             : descriptionLength <= 200
               ? `Meta description length: ${descriptionLength} (slightly long; ideal 70-160).`
               : `Meta description length: ${descriptionLength} (too long; ideal 70-160).`;
+  const metaDescriptionEvidenceWithSnippet =
+    descriptionLength > 0 ? `${metaDescriptionEvidence} Snippet: "${descriptionSnippet}".` : metaDescriptionEvidence;
   checks.push(
     check(
       CHECKS.metaDescription,
       metaDescriptionStatus,
       metaDescriptionPoints,
-      metaDescriptionEvidence,
-      metaDescription ? `<meta name=\"description\" content=\"${metaDescription}\" />` : undefined,
+      metaDescriptionEvidenceWithSnippet,
+      metaDescription ? `<meta name=\"description\" content=\"${truncateWithEllipsis(metaDescription, 160)}\" />` : undefined,
     ),
   );
 
@@ -527,6 +537,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   );
 
   const h1Count = countMatches(html, /<h1\b[^>]*>/gi);
+  const h1Text = extractFirst(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i);
   checks.push(
     check(
       CHECKS.contentH1,
@@ -619,6 +630,8 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     "Place",
   ]);
   const specificTypeFound = jsonLd.types.some((type) => specificSchemaTypes.has(type));
+  const hasOrganizationSchema = jsonLd.types.some((type) => type === "Organization" || type === "WebSite");
+  const brandSignal = detectBrandEntitySignal(title, h1Text, bodyText);
   checks.push(
     check(
       CHECKS.sdRecommendedTypes,
@@ -629,6 +642,19 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
           ? `Detected JSON-LD @type values: ${jsonLd.types.join(", ")}.`
           : `Only generic schema types detected: ${jsonLd.types.join(", ")}.`
         : "No page-specific schema types detected.",
+    ),
+  );
+
+  checks.push(
+    check(
+      CHECKS.sdBrandClarity,
+      hasOrganizationSchema || brandSignal.flag ? "pass" : "fail",
+      hasOrganizationSchema || brandSignal.flag ? CHECKS.sdBrandClarity.max : 0,
+      hasOrganizationSchema
+        ? "Organization/WebSite schema detected."
+        : brandSignal.flag
+          ? brandSignal.evidence
+          : "No Organization/WebSite schema and no clear brand/entity naming signal found in title/H1/body.",
     ),
   );
 
@@ -728,7 +754,8 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     },
   };
 
-  const snippets = recommendedSnippets(url, title, metaDescription, canonical);
+  const exportDescription = chooseExportDescription(metaDescription, bodyText);
+  const snippets = recommendedSnippets(url, title, exportDescription, canonical);
   base.exports.markdown = buildMarkdownExport(base, checks, snippets.jsonLdStarter);
   base.exports.json = buildJsonExport(base, snippets);
   base.exports.html = buildHtmlExport(snippets);
@@ -765,6 +792,7 @@ function buildMarkdownExport(payload: AnalysisPayload, checks: CheckResult[], js
 
   lines.push("");
   lines.push("## Reality Check (Not scored)");
+  lines.push("- This tool evaluates readiness signals only and does not guarantee rankings or citations.");
   for (const item of payload.realityCheck) {
     lines.push(`- ${item}`);
   }
@@ -812,19 +840,20 @@ function buildHtmlExport(snippets: ReturnType<typeof recommendedSnippets>): stri
 }
 
 function recommendedSnippets(url: string, title: string, description: string, canonical: string) {
-  const safeTitle = escapeHtml(title || "Business Name | Service + Location");
-  const safeDescription = escapeHtml(
-    description || "Concise summary of what you offer, where you operate, and who you serve.",
-  );
-  const safeCanonical = escapeHtml(canonical || url);
+  const plainTitle = stripTags(decodeEntities(title || "Business Name | Service + Location")).replace(/\s+/g, " ").trim();
+  const plainDescription = chooseExportDescription(description, "");
+  const plainCanonical = stripTags(decodeEntities(canonical || url)).replace(/\s+/g, " ").trim();
+  const safeTitle = escapeHtml(plainTitle);
+  const safeDescriptionAttr = escapeHtml(plainDescription);
+  const safeCanonical = escapeHtml(plainCanonical);
 
   const jsonLdStarter = JSON.stringify(
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: safeTitle,
-      url: safeCanonical,
-      description: safeDescription,
+      name: plainTitle,
+      url: plainCanonical,
+      description: plainDescription,
     },
     null,
     2,
@@ -832,7 +861,7 @@ function recommendedSnippets(url: string, title: string, description: string, ca
 
   const headTags = [
     `<title>${safeTitle}</title>`,
-    `<meta name=\"description\" content=\"${safeDescription}\" />`,
+    `<meta name=\"description\" content=\"${safeDescriptionAttr}\" />`,
     `<meta name=\"robots\" content=\"index,follow\" />`,
     `<link rel=\"canonical\" href=\"${safeCanonical}\" />`,
   ].join("\n");
@@ -966,6 +995,21 @@ function detectExternalTrustReference(readableText: string, title: string): { st
     status: "warn",
     evidence: "No clear phone, address, or specific organization reference detected in visible body text.",
   };
+}
+
+function detectBrandEntitySignal(title: string, h1Text: string, bodyText: string): { flag: boolean; evidence: string } {
+  const source = `${title} ${h1Text}`.toLowerCase();
+  const body = bodyText.toLowerCase();
+  const stopWords = new Set(["the", "and", "for", "with", "from", "your", "that", "this", "aicv", "hub", "home"]);
+  const tokens = source
+    .split(/[^a-z0-9]+/g)
+    .filter((part) => part.length >= 4 && !stopWords.has(part));
+  const uniqueTokens = [...new Set(tokens)];
+  const matched = uniqueTokens.filter((token) => body.includes(token));
+  if (matched.length >= 2) {
+    return { flag: true, evidence: `Brand/entity naming signal detected in visible text (${matched.slice(0, 3).join(", ")}).` };
+  }
+  return { flag: false, evidence: "" };
 }
 
 function toGrade(score: number): Grade {
@@ -1216,10 +1260,45 @@ function extractFirst(html: string, regex: RegExp): string {
 
 function findMetaTag(html: string, name: string): string {
   const esc = escapeRegex(name);
-  const forward = new RegExp(`<meta[^>]+name=["']${esc}["'][^>]*content=["']([\\s\\S]*?)["'][^>]*>`, "i");
-  const reverse = new RegExp(`<meta[^>]+content=["']([\\s\\S]*?)["'][^>]*name=["']${esc}["'][^>]*>`, "i");
+  const forward = new RegExp(`<meta[^>]+name=["']${esc}["'][^>]*content=["']([^"']*)["'][^>]*>`, "i");
+  const reverse = new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]*name=["']${esc}["'][^>]*>`, "i");
   const match = html.match(forward) || html.match(reverse);
-  return match?.[1] ? decodeEntities(match[1].trim()) : "";
+  return match?.[1] ? decodeEntities(stripTags(match[1]).replace(/\s+/g, " ").trim()) : "";
+}
+
+function findMetaProperty(html: string, property: string): string {
+  const esc = escapeRegex(property);
+  const forward = new RegExp(`<meta[^>]+property=["']${esc}["'][^>]*content=["']([^"']*)["'][^>]*>`, "i");
+  const reverse = new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]*property=["']${esc}["'][^>]*>`, "i");
+  const match = html.match(forward) || html.match(reverse);
+  return match?.[1] ? decodeEntities(stripTags(match[1]).replace(/\s+/g, " ").trim()) : "";
+}
+
+function extractMetaDescription(html: string): string {
+  const fromMeta = decodeEntities(stripTags(findMetaTag(html, "description"))).replace(/\s+/g, " ").trim();
+  if (fromMeta) {
+    return fromMeta;
+  }
+  const fromOg = decodeEntities(stripTags(findMetaProperty(html, "og:description"))).replace(/\s+/g, " ").trim();
+  return fromOg || "";
+}
+
+function truncateWithEllipsis(value: string, max: number): string {
+  if (value.length <= max) {
+    return value;
+  }
+  if (max <= 1) {
+    return "…";
+  }
+  return `${value.slice(0, max - 1).trimEnd()}…`;
+}
+
+function chooseExportDescription(metaDescription: string, readableBodyText: string): string {
+  const cleanedMeta = decodeEntities(stripTags(metaDescription || "")).replace(/\s+/g, " ").trim();
+  const cleanedBody = decodeEntities(stripTags(readableBodyText || "")).replace(/\s+/g, " ").trim();
+  const fallback = "Concise summary of what you offer, where you operate, and who you serve.";
+  const chosen = cleanedMeta || truncateWithEllipsis(cleanedBody, 160) || fallback;
+  return truncateWithEllipsis(chosen, 200);
 }
 
 function findCanonical(html: string): string {

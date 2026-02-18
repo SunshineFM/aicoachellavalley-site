@@ -77,6 +77,7 @@ const checkupJsonLd = {
 
       <details class="panel">
         <summary>Reality Check (Not scored)</summary>
+        <p class="tiny">This tool evaluates readiness signals only and does not guarantee rankings or citations.</p>
         <ul id="reality-check-list"></ul>
       </details>
 
@@ -451,6 +452,7 @@ const checkupJsonLd = {
     align-items: baseline;
     flex-wrap: wrap;
     min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .score span:first-child {
@@ -530,7 +532,7 @@ const checkupJsonLd = {
   .bar span {
     display: block;
     height: 100%;
-    width: clamp(0%, var(--pct), 100%);
+    width: min(100%, var(--pct));
     background: linear-gradient(90deg, #3b82f6, #0d9488);
     max-width: 100%;
     box-sizing: border-box;
