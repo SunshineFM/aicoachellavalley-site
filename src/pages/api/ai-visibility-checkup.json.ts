@@ -305,6 +305,8 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   const html = fetchResult.html || "";
   const bodyText = extractBodyText(html);
   const loweredText = bodyText.toLowerCase();
+  const scriptCount = countMatches(html, /<script\b/gi);
+  const jsShell = isLikelyJsShell(html, bodyText, scriptCount);
 
   const checks: CheckResult[] = [];
 
@@ -361,22 +363,26 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
-  const descriptionLength = metaDescription.length;
+  const descriptionLength = metaDescription.trim().length;
   const metaDescriptionStatus: CheckStatus =
-    descriptionLength >= 70 && descriptionLength <= 160 ? "pass" : descriptionLength > 0 ? "warn" : "fail";
-  const metaDescriptionPoints =
     descriptionLength >= 70 && descriptionLength <= 160
-      ? CHECKS.metaDescription.max
-      : descriptionLength > 160
-        ? Math.max(0, CHECKS.metaDescription.max - 2)
-        : descriptionLength > 0
-          ? 3
-          : 0;
-  const metaDescriptionEvidence = metaDescription
-    ? descriptionLength > 160
-      ? `Meta description found (${descriptionLength} chars, longer than recommended 160).`
-      : `Meta description found (${descriptionLength} chars).`
-    : "Meta description missing.";
+      ? "pass"
+      : (descriptionLength >= 50 && descriptionLength < 70) || (descriptionLength > 160 && descriptionLength <= 200)
+        ? "warn"
+        : "fail";
+  const metaDescriptionPoints = metaDescriptionStatus === "pass" ? CHECKS.metaDescription.max : metaDescriptionStatus === "warn" ? 3 : 0;
+  const metaDescriptionEvidence =
+    descriptionLength === 0
+      ? "Meta description length: 0 (missing; ideal 70-160)."
+      : descriptionLength < 50
+        ? `Meta description length: ${descriptionLength} (too short; ideal 70-160).`
+        : descriptionLength < 70
+          ? `Meta description length: ${descriptionLength} (slightly short; ideal 70-160).`
+          : descriptionLength <= 160
+            ? `Meta description length: ${descriptionLength} (ideal 70-160).`
+            : descriptionLength <= 200
+              ? `Meta description length: ${descriptionLength} (slightly long; ideal 70-160).`
+              : `Meta description length: ${descriptionLength} (too long; ideal 70-160).`;
   checks.push(
     check(
       CHECKS.metaDescription,
@@ -488,24 +494,35 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
-  const categoryScores = summarizeCategories(checks);
-  const score = clamp(categoryScores.reduce((sum, category) => sum + category.score, 0), 0, 100);
-  const grade = toGrade(score);
+  const categoryScores = summarizeCategories(checks).map((category) =>
+    category.id === "content" && jsShell.flag ? { ...category, score: Math.min(category.score, 10) } : category,
+  );
+  const rawScore = clamp(categoryScores.reduce((sum, category) => sum + category.score, 0), 0, 100);
 
   const meaningfulContent = bodyText.length >= 220;
-  const jsShellLikely = bodyText.length < 120 && /<div[^>]+id=["'](?:app|root|__next|svelte|astro)["']/i.test(html);
   const hasMajorBlocker = checks.some((item) =>
     [CHECKS.accessFetch.id, CHECKS.accessStatus.id].includes(item.id) && item.status === "fail",
   );
 
-  const confidence = toConfidence({
+  const baseConfidence = toConfidence({
     fetchResult,
     meaningfulContent,
-    jsShellLikely,
     metadataGaps: checks.filter((c) => c.categoryId === "metadata" && c.status !== "pass").length,
     jsonLdErrors: jsonLd.parseErrors,
     hasMajorBlocker,
   });
+  const confidence = jsShell.flag ? downgradeConfidence(baseConfidence) : baseConfidence;
+
+  let score = rawScore;
+  let capReason: string | null = null;
+  if (confidence === "Low" && score > 60) {
+    score = 60;
+    capReason = "Low";
+  } else if (confidence === "Medium" && score > 85) {
+    score = 85;
+    capReason = "Medium";
+  }
+  const grade = toGrade(score);
 
   const prioritizedFixChecks = checks
     .filter((item) => item.status !== "pass")
@@ -518,6 +535,16 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     "JavaScript-rendered content can be partially missed because analysis is HTML-first.",
     "Recommendations are heuristic and should be reviewed with your CMS and analytics context.",
   ];
+  if (jsShell.flag) {
+    limitations.push(
+      `${jsShell.evidence} This page appears to rely heavily on client-side rendering; AI crawlers may see little content. Content score is capped until server-rendered content is available.`,
+    );
+  }
+  if (capReason === "Low") {
+    limitations.push("Score capped due to Low confidence (fetch/parse limitations).");
+  } else if (capReason === "Medium") {
+    limitations.push("Score capped due to Medium confidence (partial signals).");
+  }
 
   const outputChecks: CheckOutput[] = checks.map(({ categoryId, max, ...rest }) => rest);
 
@@ -698,18 +725,11 @@ function summarizeCategories(checks: CheckResult[]): CategoryOutput[] {
 function toConfidence(input: {
   fetchResult: FetchResult;
   meaningfulContent: boolean;
-  jsShellLikely: boolean;
   metadataGaps: number;
   jsonLdErrors: number;
   hasMajorBlocker: boolean;
 }): Confidence {
-  if (
-    input.fetchResult.timedOut ||
-    input.fetchResult.blockedStatus ||
-    input.jsShellLikely ||
-    !input.meaningfulContent ||
-    input.hasMajorBlocker
-  ) {
+  if (input.fetchResult.timedOut || input.fetchResult.blockedStatus || !input.meaningfulContent || input.hasMajorBlocker) {
     return "Low";
   }
 
@@ -718,6 +738,28 @@ function toConfidence(input: {
   }
 
   return "High";
+}
+
+function downgradeConfidence(confidence: Confidence): Confidence {
+  if (confidence === "High") {
+    return "Medium";
+  }
+  if (confidence === "Medium") {
+    return "Low";
+  }
+  return "Low";
+}
+
+function isLikelyJsShell(_html: string, readableText: string, scriptCount: number): { flag: boolean; evidence: string } {
+  const readableLen = readableText.trim().length;
+  const flagged = (readableLen < 600 && scriptCount >= 10) || (readableLen < 300 && scriptCount >= 6);
+  if (!flagged) {
+    return { flag: false, evidence: "" };
+  }
+  return {
+    flag: true,
+    evidence: `Likely JS-rendered shell: readable text ${readableLen} chars, scripts ${scriptCount}. Server-render key content or add SSR/prerender.`,
+  };
 }
 
 function toGrade(score: number): Grade {
