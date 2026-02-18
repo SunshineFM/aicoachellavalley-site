@@ -1,0 +1,127 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CITY_ENTRIES, normalizeMeta, resolveSummary } from "../../utils/briefs";
+
+export function getStaticPaths() {
+  return CITY_ENTRIES.map((city) => ({
+    params: { city: city.slug },
+    props: { city },
+  }));
+}
+
+const { city } = Astro.props as { city: (typeof CITY_ENTRIES)[number] };
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+
+const cityBriefs = (await getCollection("signals"))
+  .filter((brief) => normalizeMeta(brief.data.city) === city.slug)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title={`${city.name} | Cities | AI Coachella Valley`}>
+  <h1>{city.name}</h1>
+  <p>Latest city-level briefs, evidence, and updates for {city.name}.</p>
+
+  <section>
+    <h2>Latest Briefs</h2>
+    {cityBriefs.length === 0 ? (
+      <p>No briefs for {city.name} yet.</p>
+    ) : (
+      <ul class="brief-list">
+        {cityBriefs.map((brief) => (
+          <li>
+            <h3><a href={`/briefs/${brief.slug}`}>{brief.data.title}</a></h3>
+            <p class="meta">{dateFormatter.format(brief.data.date)}</p>
+            <p>{resolveSummary(brief)}</p>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section>
+    <h2>Actions</h2>
+    <div class="cta-row">
+      <a href={`/submit?city=${city.slug}`}>Submit a brief</a>
+      <a href="/tools/aio">AIO tool</a>
+      <a href="/events">Events</a>
+    </div>
+  </section>
+
+  <p>
+    <a href="/cities">All Cities</a>
+    <span aria-hidden="true"> | </span>
+    <a href="/briefs">Briefs</a>
+  </p>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: 2rem;
+  }
+
+  .brief-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .brief-list li {
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    padding: 0.9rem 1rem;
+  }
+
+  .brief-list h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .brief-list a {
+    color: #184a9c;
+    text-decoration: none;
+  }
+
+  .brief-list a:hover,
+  .brief-list a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .meta {
+    color: #4b5360;
+    font-size: 0.92rem;
+    margin: 0.35rem 0 0;
+  }
+
+  .brief-list p {
+    margin: 0.35rem 0 0;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .cta-row a {
+    border: 1px solid #c8ced8;
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    color: #184a9c;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .cta-row a:hover,
+  .cta-row a:focus-visible {
+    text-decoration: underline;
+  }
+</style>

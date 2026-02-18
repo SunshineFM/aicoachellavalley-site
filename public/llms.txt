@@ -1,7 +1,11 @@
-AI Coachella Valley (AICV) is a static reference site that tracks structured, time-stamped, verifiable signals of AI modernization across the Coachella Valley regional economy. Signals are concise observations designed for retrieval, comparison, and later synthesis into city and sector briefs.
+AI Coachella Valley (AICV) is a static reference site that tracks structured, time-stamped, verifiable briefs of AI modernization across the Coachella Valley regional economy. Briefs are concise observations designed for retrieval, comparison, and later synthesis into city and sector analysis.
+Updated: 2026-02-17
+City hubs: https://aicoachellavalley.com/cities (individual city pages exist at /cities/{slug})
 
 Home: https://aicoachellavalley.com/
-Signals: https://aicoachellavalley.com/signals
+Briefs: https://aicoachellavalley.com/briefs
+State of AI: https://aicoachellavalley.com/state-of-ai
+Events: https://aicoachellavalley.com/events
 Cities: https://aicoachellavalley.com/cities
-Sectors: https://aicoachellavalley.com/sectors
-Framework: https://aicoachellavalley.com/framework
+Tools (AIO Score): https://aicoachellavalley.com/tools/aio
+AICV Suggests: https://aicoachellavalley.com/marketplace

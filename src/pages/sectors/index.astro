@@ -1,13 +1,95 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { labelFromSlug, normalizeMeta } from "../../utils/briefs";
+
+const briefs = await getCollection("signals");
+
+const sectorMap = new Map<string, { label: string; count: number }>();
+
+briefs.forEach((brief) => {
+  const rawLabel = brief.data.sector?.trim();
+  const slug = normalizeMeta(rawLabel);
+  if (!slug) return;
+
+  const existing = sectorMap.get(slug);
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  sectorMap.set(slug, {
+    label: rawLabel || labelFromSlug(slug),
+    count: 1,
+  });
+});
+
+const sectors = Array.from(sectorMap.entries())
+  .map(([slug, data]) => ({ slug, ...data }))
+  .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+
+const sectorListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: sectors.map((sector, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: `https://aicoachellavalley.com/sectors/${sector.slug}`,
+    name: sector.label,
+  })),
+};
 ---
 
 <BaseLayout title="Sectors | AI Coachella Valley">
+  <script type="application/ld+json" set:html={JSON.stringify(sectorListJsonLd)}></script>
   <h1>Sectors</h1>
-  <p>Sector briefs will be published here as Signals accumulate.</p>
-  <p>
-    <a href="/">Home</a>
-    <span aria-hidden="true"> | </span>
-    <a href="/signals">Signals</a>
-  </p>
+  <p>Browse sector hubs built from the latest published briefs.</p>
+  {sectors.length === 0 ? (
+    <p>No sector briefs yet.</p>
+  ) : (
+    <ul class="sector-grid">
+      {sectors.map((sector) => (
+        <li class="sector-tile">
+          <a href={`/sectors/${sector.slug}`}>
+            <strong>{sector.label}</strong>
+            <span>{sector.count} brief{sector.count === 1 ? "" : "s"}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
 </BaseLayout>
+
+<style>
+  .sector-grid {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sector-tile a {
+    display: grid;
+    gap: 0.35rem;
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    text-decoration: none;
+    padding: 0.9rem 1rem;
+  }
+
+  .sector-tile strong {
+    color: #184a9c;
+  }
+
+  .sector-tile span {
+    color: #4b5360;
+    font-size: 0.92rem;
+  }
+
+  .sector-tile a:hover,
+  .sector-tile a:focus-visible strong {
+    text-decoration: underline;
+  }
+</style>

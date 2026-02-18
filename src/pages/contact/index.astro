@@ -1,0 +1,105 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
+
+const rawCity = Astro.url.searchParams.get("city") ?? "";
+const normalizedCity = normalizeMeta(rawCity);
+const selectedCity = CITY_ENTRIES.find((city) => city.slug === normalizedCity);
+const hasUnknownCity = normalizedCity.length > 0 && !selectedCity;
+---
+
+<BaseLayout title="Contact | AI Coachella Valley">
+  <h1>Contact</h1>
+  <p>Share a brief, ask a question, or request support from the AICV team.</p>
+
+  {selectedCity ? (
+    <p class="city-prefill">Submitting for city: <strong>{selectedCity.name}</strong></p>
+  ) : null}
+
+  {hasUnknownCity ? (
+    <p class="city-unknown">
+      Requested city slug <strong>{rawCity}</strong> is not recognized. Please select a city below.
+    </p>
+  ) : null}
+
+  <form class="contact-form" method="post" action="#">
+    <label>
+      Name
+      <input type="text" name="name" autocomplete="name" />
+    </label>
+
+    <label>
+      Email
+      <input type="email" name="email" autocomplete="email" />
+    </label>
+
+    <label>
+      City
+      <select name="city">
+        <option value="">Select a city (optional)</option>
+        {CITY_ENTRIES.map((city) => (
+          <option value={city.slug} selected={city.slug === normalizedCity}>
+            {city.name}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      Message
+      <textarea name="message" rows={6} placeholder="How can we help?"></textarea>
+    </label>
+
+    <button type="submit">Send</button>
+  </form>
+</BaseLayout>
+
+<style>
+  .city-prefill,
+  .city-unknown {
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .city-unknown {
+    color: #7d4a00;
+    border-color: #f0d3a4;
+    background: #fff7ea;
+  }
+
+  .contact-form {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.9rem;
+    max-width: 40rem;
+  }
+
+  .contact-form label {
+    display: grid;
+    gap: 0.35rem;
+    color: #4b5360;
+    font-size: 0.95rem;
+  }
+
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    border: 1px solid #c8ced8;
+    border-radius: 0.35rem;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    background: #fff;
+  }
+
+  .contact-form button {
+    width: fit-content;
+    border: 1px solid #184a9c;
+    background: #184a9c;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.4rem 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>

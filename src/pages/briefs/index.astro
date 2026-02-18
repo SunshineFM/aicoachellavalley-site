@@ -1,0 +1,256 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { normalizeMeta, resolveSummary } from "../../utils/briefs";
+
+const briefs = (await getCollection("signals")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const cityMap = new Map<string, string>();
+const sectorMap = new Map<string, string>();
+
+briefs.forEach((brief) => {
+  const cityLabel = brief.data.city?.trim();
+  const citySlug = normalizeMeta(cityLabel);
+  if (cityLabel && citySlug && !cityMap.has(citySlug)) cityMap.set(citySlug, cityLabel);
+
+  const sectorLabel = brief.data.sector?.trim();
+  const sectorSlug = normalizeMeta(sectorLabel);
+  if (sectorLabel && sectorSlug && !sectorMap.has(sectorSlug)) sectorMap.set(sectorSlug, sectorLabel);
+});
+
+const cityOptions = Array.from(cityMap.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+const sectorOptions = Array.from(sectorMap.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
+
+const briefListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: briefs.map((brief, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: `https://aicoachellavalley.com/briefs/${brief.slug}`,
+    name: brief.data.title,
+  })),
+};
+---
+
+<BaseLayout title="Briefs | AI Coachella Valley">
+  <script type="application/ld+json" set:html={JSON.stringify(briefListJsonLd)}></script>
+  <section>
+    <h1>Briefs</h1>
+    <p>Fast, date-stamped briefings on regional AI movement, plus deeper analysis tracks as they publish.</p>
+  </section>
+
+  <section class="tabs" aria-label="Brief depth">
+    <button type="button" class="tab-button active" data-tab="quick" aria-selected="true">Quick</button>
+    <button type="button" class="tab-button" data-tab="deep" aria-selected="false">Deep</button>
+  </section>
+
+  <section id="quick-panel" data-panel="quick">
+    <div class="controls">
+      <label class="control">
+        <span>Search</span>
+        <input id="brief-search" type="search" placeholder="Search title or summary" />
+      </label>
+
+      {cityOptions.length > 0 ? (
+        <label class="control">
+          <span>City</span>
+          <select id="brief-city">
+            <option value="">All cities</option>
+            {cityOptions.map(([citySlug, cityLabel]) => (
+              <option value={citySlug}>{cityLabel}</option>
+            ))}
+          </select>
+        </label>
+      ) : null}
+
+      {sectorOptions.length > 0 ? (
+        <label class="control">
+          <span>Sector</span>
+          <select id="brief-sector">
+            <option value="">All sectors</option>
+            {sectorOptions.map(([sectorSlug, sectorLabel]) => (
+              <option value={sectorSlug}>{sectorLabel}</option>
+            ))}
+          </select>
+        </label>
+      ) : null}
+    </div>
+
+    {briefs.length === 0 ? (
+      <p>No briefs yet.</p>
+    ) : (
+      <>
+        <ul id="brief-list" class="brief-list">
+          {briefs.map((brief) => (
+            <li
+              data-title={brief.data.title.toLowerCase()}
+              data-summary={resolveSummary(brief).toLowerCase()}
+              data-city={normalizeMeta(brief.data.city)}
+              data-sector={normalizeMeta(brief.data.sector)}
+            >
+              <h2><a href={`/briefs/${brief.slug}`}>{brief.data.title}</a></h2>
+              <p class="meta">{dateFormatter.format(brief.data.date)}</p>
+              <p>{resolveSummary(brief)}</p>
+            </li>
+          ))}
+        </ul>
+        <p id="empty-result" hidden>No briefs match your filters.</p>
+      </>
+    )}
+  </section>
+
+  <section id="deep-panel" data-panel="deep" hidden>
+    <h2>Deep</h2>
+    <p>Deep briefs are being prepared. Check back soon.</p>
+  </section>
+</BaseLayout>
+
+<script>
+  const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+  const panels = Array.from(document.querySelectorAll("[data-panel]"));
+
+  function showPanel(tab) {
+    tabButtons.forEach((button) => {
+      const active = button.dataset.tab === tab;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.panel !== tab;
+    });
+  }
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => showPanel(button.dataset.tab));
+  });
+
+  const searchInput = document.getElementById("brief-search");
+  const cityInput = document.getElementById("brief-city");
+  const sectorInput = document.getElementById("brief-sector");
+  const list = document.getElementById("brief-list");
+  const empty = document.getElementById("empty-result");
+
+  if (list && searchInput instanceof HTMLInputElement) {
+    const items = Array.from(list.querySelectorAll("li"));
+
+    const runFilters = () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const city = cityInput instanceof HTMLSelectElement ? cityInput.value : "";
+      const sector = sectorInput instanceof HTMLSelectElement ? sectorInput.value : "";
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const matchesQuery =
+          query.length === 0 ||
+          item.dataset.title?.includes(query) ||
+          item.dataset.summary?.includes(query);
+        const matchesCity = city.length === 0 || item.dataset.city === city;
+        const matchesSector = sector.length === 0 || item.dataset.sector === sector;
+
+        const visible = Boolean(matchesQuery && matchesCity && matchesSector);
+        item.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+
+      if (empty) empty.hidden = visibleCount !== 0;
+    };
+
+    searchInput.addEventListener("input", runFilters);
+    cityInput?.addEventListener("change", runFilters);
+    sectorInput?.addEventListener("change", runFilters);
+  }
+</script>
+
+<style>
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  .tab-button {
+    border: 1px solid #c8ced8;
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    color: #184a9c;
+    cursor: pointer;
+  }
+
+  .tab-button.active {
+    background: #184a9c;
+    color: #fff;
+    border-color: #184a9c;
+  }
+
+  .controls {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    margin-bottom: 1rem;
+  }
+
+  .control {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: #4b5360;
+  }
+
+  .control input,
+  .control select {
+    border: 1px solid #c8ced8;
+    border-radius: 0.35rem;
+    padding: 0.45rem 0.55rem;
+    font: inherit;
+  }
+
+  .brief-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .brief-list li {
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    padding: 0.9rem 1rem;
+  }
+
+  .brief-list h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .brief-list a {
+    color: #184a9c;
+    text-decoration: none;
+  }
+
+  .brief-list a:hover,
+  .brief-list a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .brief-list p {
+    margin: 0.35rem 0 0;
+  }
+
+  .meta {
+    font-size: 0.92rem;
+    color: #4b5360;
+  }
+</style>

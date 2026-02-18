@@ -4,6 +4,28 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://aicoachellavalley.com/#organization",
+      name: "AI Coachella Valley (AICV)",
+      url: "https://aicoachellavalley.com/",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://aicoachellavalley.com/#website",
+      name: "AI Coachella Valley (AICV)",
+      url: "https://aicoachellavalley.com/",
+      inLanguage: "en-US",
+      publisher: {
+        "@id": "https://aicoachellavalley.com/#organization",
+      },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -15,28 +37,56 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(siteJsonLd)}></script>
   </head>
   <body>
     <header>
       <div class="header-inner">
         <a href="/" class="brand">AI Coachella Valley (AICV)</a>
-        <nav aria-label="Primary">
-          <a href="/signals">Signals</a>
-          <a href="/cities">Cities</a>
-          <a href="/sectors">Sectors</a>
-          <a href="/framework">Framework</a>
-          <a href="/">Home</a>
-        </nav>
+        <div class="header-right">
+          <nav aria-label="Primary">
+            <a href="/marketplace">AICV Suggests</a>
+            <a href="/briefs">Briefs</a>
+            <a href="/state-of-ai">State of AI</a>
+            <a href="/events">Events</a>
+            <details class="nav-dropdown">
+              <summary>Cities</summary>
+              <div class="dropdown-menu">
+                <a href="/cities/palm-springs">Palm Springs</a>
+                <a href="/cities/desert-hot-springs">Desert Hot Springs</a>
+                <a href="/cities/cathedral-city">Cathedral City</a>
+                <a href="/cities/rancho-mirage">Rancho Mirage</a>
+                <a href="/cities/palm-desert">Palm Desert</a>
+                <a href="/cities/indian-wells">Indian Wells</a>
+                <a href="/cities/indio">Indio</a>
+                <a href="/cities/la-quinta">La Quinta</a>
+                <a href="/cities/coachella">Coachella</a>
+                <a href="/cities">All Cities</a>
+              </div>
+            </details>
+            <details class="nav-dropdown">
+              <summary>Tools</summary>
+              <div class="dropdown-menu">
+                <a href="/tools/aio">AIO Score</a>
+              </div>
+            </details>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+          </nav>
+          <a href="/#subscribe" class="utility-link">Subscribe</a>
+        </div>
       </div>
     </header>
     <main>
       <slot />
     </main>
     <footer>
-      <p>
-        Live dispatches:
-        <a href="https://x.com/CoachellaAI" target="_blank" rel="noreferrer">@CoachellaAI</a>
-      </p>
+      <div class="footer-inner">
+        <a href="/#subscribe">Subscribe</a>
+        <a href="/contact">Contact</a>
+        <a href="/projects">Partners</a>
+        <a href="/submit">Submit a Brief</a>
+      </div>
     </footer>
   </body>
 </html>
@@ -70,6 +120,14 @@ const { title } = Astro.props;
     align-items: center;
   }
 
+  .header-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
   .brand {
     color: #0b3e91;
     font-weight: 700;
@@ -81,6 +139,18 @@ const { title } = Astro.props;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    align-items: center;
+  }
+
+  .utility-link {
+    color: #184a9c;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .utility-link:hover,
+  .utility-link:focus-visible {
+    text-decoration: underline;
   }
 
   nav a {
@@ -91,6 +161,61 @@ const { title } = Astro.props;
   nav a:hover,
   nav a:focus-visible {
     text-decoration: underline;
+  }
+
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown summary {
+    color: #184a9c;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .nav-dropdown summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-dropdown summary:hover,
+  .nav-dropdown summary:focus-visible {
+    text-decoration: underline;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.3rem);
+    left: 0;
+    min-width: 13rem;
+    padding: 0.55rem;
+    border: 1px solid #d8dbe1;
+    border-radius: 0.4rem;
+    background: #fff;
+    z-index: 20;
+  }
+
+  .nav-dropdown[open] .dropdown-menu {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .dropdown-menu a {
+    color: #184a9c;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .dropdown-menu a:hover,
+  .dropdown-menu a:focus-visible {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 48rem) {
+    .dropdown-menu {
+      position: static;
+      margin-top: 0.35rem;
+    }
   }
 
   main {
@@ -104,15 +229,23 @@ const { title } = Astro.props;
     background: #ffffff;
   }
 
-  footer p {
+  .footer-inner {
     max-width: 72rem;
     margin: 0 auto;
     padding: 1rem 1.25rem;
-    color: #454b57;
-    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
   }
 
-  footer a {
-    color: #184a9c;
+  .footer-inner a {
+    color: #454b57;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+
+  .footer-inner a:hover,
+  .footer-inner a:focus-visible {
+    text-decoration: underline;
   }
 </style>

@@ -13,3 +13,64 @@ Suggested frontmatter keys:
 - sources
 - summary
 - confidence
+
+Allowed city values (canonical 9):
+- Palm Springs
+- Desert Hot Springs
+- Cathedral City
+- Rancho Mirage
+- Palm Desert
+- Indian Wells
+- Indio
+- La Quinta
+- Coachella
+
+Recommended frontmatter keys (minimum for Briefs UX):
+- city
+- sector
+- summary
+
+Example frontmatter:
+---
+title: Regional operator launches AI pilot
+date: 2026-02-17
+city: Palm Springs
+sector: Healthcare
+summary: A short, verifiable update describing what changed and why it matters.
+signal_type: adoption
+confidence: medium
+---
+
+Canonical city values + slugs:
+- Palm Springs -> palm-springs
+- Desert Hot Springs -> desert-hot-springs
+- Cathedral City -> cathedral-city
+- Rancho Mirage -> rancho-mirage
+- Palm Desert -> palm-desert
+- Indian Wells -> indian-wells
+- Indio -> indio
+- La Quinta -> la-quinta
+- Coachella -> coachella
+
+Sector guidance:
+- Sector is freeform for now. Use a clear human-readable label; normalization is handled later.
+
+Minimal frontmatter example:
+---
+title: Brief title goes here
+date: 2026-02-18
+---
+
+Ideal frontmatter example:
+---
+title: Regional operator launches AI pilot
+date: 2026-02-18
+summary: One-sentence summary of what changed and why it matters.
+city: Palm Springs
+sector: Healthcare
+sources:
+  - https://example.org/source-1
+updatedAt: 2026-02-18T15:00:00Z
+provenance: reporting
+confidence: medium
+---

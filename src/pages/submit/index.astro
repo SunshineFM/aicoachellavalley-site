@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
+
+const rawCity = Astro.url.searchParams.get("city") ?? "";
+const rawSector = Astro.url.searchParams.get("sector") ?? "";
+const normalizedCity = normalizeMeta(rawCity);
+const matchedCity = CITY_ENTRIES.find((city) => city.slug === normalizedCity);
+const cityPrefill = matchedCity?.slug ?? "";
+const sectorPrefill = rawSector.trim();
+---
+
+<BaseLayout title="Submit a Brief | AI Coachella Valley">
+  <h1>Submit a Brief</h1>
+  <p>A brief is a short, verifiable update about AI adoption, operations, or outcomes in the region.</p>
+
+  <form class="submit-form" method="post" action="#">
+    <label>
+      Name (optional)
+      <input type="text" name="name" autocomplete="name" />
+    </label>
+
+    <label>
+      Email (optional)
+      <input type="email" name="email" autocomplete="email" />
+    </label>
+
+    <label>
+      City
+      <select name="city">
+        <option value="">Select city</option>
+        {CITY_ENTRIES.map((city) => (
+          <option value={city.slug} selected={city.slug === cityPrefill}>{city.name}</option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      Sector
+      <input type="text" name="sector" value={sectorPrefill} />
+    </label>
+
+    <label>
+      Title
+      <input type="text" name="title" />
+    </label>
+
+    <label>
+      Summary
+      <textarea name="summary" rows={4}></textarea>
+    </label>
+
+    <label>
+      Sources
+      <textarea name="sources" rows={4} placeholder="One URL per line"></textarea>
+    </label>
+
+    <label>
+      Notes
+      <textarea name="notes" rows={4}></textarea>
+    </label>
+
+    <button type="submit">Submit Brief</button>
+  </form>
+
+  <p class="note">Where this goes: submissions are reviewed before publishing.</p>
+</BaseLayout>
+
+<style>
+  .submit-form {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.9rem;
+    max-width: 44rem;
+  }
+
+  .submit-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.95rem;
+    color: #4b5360;
+  }
+
+  .submit-form input,
+  .submit-form select,
+  .submit-form textarea {
+    border: 1px solid #c8ced8;
+    border-radius: 0.35rem;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    background: #fff;
+  }
+
+  .submit-form button {
+    width: fit-content;
+    border: 1px solid #184a9c;
+    background: #184a9c;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.4rem 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .note {
+    margin-top: 1rem;
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    padding: 0.75rem 0.9rem;
+  }
+</style>

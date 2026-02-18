@@ -1,13 +1,94 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
+
+const briefs = await getCollection("signals");
+const briefCountByCity = new Map<string, number>();
+
+briefs.forEach((brief) => {
+  const citySlug = normalizeMeta(brief.data.city);
+  if (!citySlug) return;
+  briefCountByCity.set(citySlug, (briefCountByCity.get(citySlug) ?? 0) + 1);
+});
+
+const cityListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: CITY_ENTRIES.map((city, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: `https://aicoachellavalley.com/cities/${city.slug}`,
+    name: city.name,
+  })),
+};
 ---
 
 <BaseLayout title="Cities | AI Coachella Valley">
-  <h1>Cities</h1>
-  <p>City briefs will be published here as Signals accumulate.</p>
-  <p>
-    <a href="/">Home</a>
-    <span aria-hidden="true"> | </span>
-    <a href="/signals">Signals</a>
-  </p>
+  <script type="application/ld+json" set:html={JSON.stringify(cityListJsonLd)}></script>
+  <h1>All Cities</h1>
+  <p>Explore city-level briefs across the Coachella Valley.</p>
+  <ul class="city-grid">
+    {CITY_ENTRIES.map((city) => {
+      const count = briefCountByCity.get(city.slug) ?? 0;
+      return (
+        <li class="city-tile">
+          <a href={`/cities/${city.slug}`}>
+            <strong>{city.name}</strong>
+            <span>{count} brief{count === 1 ? "" : "s"}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
 </BaseLayout>
+
+<style>
+  .city-grid {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .city-tile a {
+    display: grid;
+    gap: 0.35rem;
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    text-decoration: none;
+    padding: 0.9rem 1rem;
+  }
+
+  .city-tile strong {
+    color: #184a9c;
+  }
+
+  .city-tile span {
+    color: #4b5360;
+    font-size: 0.92rem;
+  }
+
+  .city-tile a:hover,
+  .city-tile a:focus-visible strong {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 50rem) {
+    .city-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .city-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .city-grid a {
+    color: #184a9c;
+  }
+</style>

@@ -13,20 +13,20 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 });
 ---
 
-<BaseLayout title="Signals | AI Coachella Valley">
-  <h1>Signals</h1>
+<BaseLayout title="Briefs | AI Coachella Valley">
+  <h1>Briefs</h1>
   <p>
-    Structured, time-stamped, verifiable indicators tracking AI modernization across the Coachella Valley regional economy.
+    Structured, time-stamped, verifiable briefs tracking AI modernization across the Coachella Valley regional economy.
   </p>
 
   {signals.length === 0 ? (
-    <p>No signals yet.</p>
+    <p>No briefs yet.</p>
   ) : (
     <ul class="signals-list">
       {signals.map((signal) => (
         <li>
           <h2>
-            <a href={`/signals/${signal.slug}`}>{signal.data.title}</a>
+            <a href="/briefs">{signal.data.title}</a>
           </h2>
           <p class="meta">
             <strong>Date:</strong> {dateFormatter.format(signal.data.date)}

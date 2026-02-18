@@ -1,0 +1,171 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { normalizeMeta, resolveSummary } from "../../utils/briefs";
+
+export async function getStaticPaths() {
+  const briefs = await getCollection("signals");
+
+  return briefs.map((brief) => ({
+    params: { slug: brief.slug },
+    props: { brief, allBriefs: briefs },
+  }));
+}
+
+type Props = {
+  brief: CollectionEntry<"signals">;
+  allBriefs: CollectionEntry<"signals">[];
+};
+
+const { brief, allBriefs } = Astro.props as Props;
+const { Content } = await render(brief);
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "2-digit",
+});
+
+const cityLabel = brief.data.city?.trim() || "Unclassified";
+const sectorLabel = brief.data.sector?.trim() || "Unclassified";
+const citySlug = normalizeMeta(brief.data.city);
+const sectorSlug = normalizeMeta(brief.data.sector);
+const updatedAtRaw = (brief.data as { updatedAt?: string | Date }).updatedAt;
+const dateModified =
+  updatedAtRaw instanceof Date
+    ? updatedAtRaw.toISOString()
+    : typeof updatedAtRaw === "string" && updatedAtRaw.length > 0
+      ? updatedAtRaw
+      : undefined;
+
+const about: Array<{ "@type": "Thing"; name: string }> = [];
+if (cityLabel !== "Unclassified") about.push({ "@type": "Thing", name: cityLabel });
+if (sectorLabel !== "Unclassified") about.push({ "@type": "Thing", name: sectorLabel });
+
+const briefJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": `https://aicoachellavalley.com/briefs/${brief.slug}#brief`,
+  headline: brief.data.title,
+  datePublished: brief.data.date.toISOString(),
+  inLanguage: "en-US",
+  ...(dateModified ? { dateModified } : {}),
+  description: resolveSummary(brief),
+  author: {
+    "@id": "https://aicoachellavalley.com/#organization",
+  },
+  publisher: {
+    "@id": "https://aicoachellavalley.com/#organization",
+  },
+  isPartOf: {
+    "@id": "https://aicoachellavalley.com/#website",
+  },
+  mainEntityOfPage: `https://aicoachellavalley.com/briefs/${brief.slug}`,
+  ...(about.length > 0 ? { about } : {}),
+};
+
+const relatedBriefs = allBriefs
+  .filter((item) => item.slug !== brief.slug)
+  .filter((item) => {
+    const itemCitySlug = normalizeMeta(item.data.city);
+    const itemSectorSlug = normalizeMeta(item.data.sector);
+    const sameCity = citySlug.length > 0 && itemCitySlug === citySlug;
+    const sameSector = sectorSlug.length > 0 && itemSectorSlug === sectorSlug;
+    return Boolean(sameCity || sameSector);
+  })
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<BaseLayout title={`${brief.data.title} | Briefs`}>
+  <script type="application/ld+json" set:html={JSON.stringify(briefJsonLd)}></script>
+  <article class="brief-article">
+    <h1>{brief.data.title}</h1>
+
+    <p class="meta">
+      <strong>Date:</strong> {dateFormatter.format(brief.data.date)}
+      {brief.data.time ? ` ${brief.data.time}` : ""}
+    </p>
+
+    <div class="tag-row">
+      <span class="tag">City: {cityLabel}</span>
+      <span class="tag">Sector: {sectorLabel}</span>
+    </div>
+
+    <p><strong>Summary:</strong> {resolveSummary(brief)}</p>
+
+    <hr />
+    <Content />
+
+    {brief.data.sources && brief.data.sources.length > 0 ? (
+      <>
+        <h2>Sources</h2>
+        <ul>
+          {brief.data.sources.map((url) => (
+            <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+          ))}
+        </ul>
+      </>
+    ) : null}
+
+    <section>
+      <h2>Related Briefs</h2>
+      {relatedBriefs.length === 0 ? (
+        <p>No related briefs yet.</p>
+      ) : (
+        <ul>
+          {relatedBriefs.map((related) => (
+            <li>
+              <a href={`/briefs/${related.slug}`}>{related.data.title}</a>
+              <span class="related-date"> ({dateFormatter.format(related.data.date)})</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <p>
+      <a href="/briefs">Back to Briefs</a>
+      <span aria-hidden="true"> | </span>
+      <a href="/">Home</a>
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .brief-article {
+    background: #fff;
+    border: 1px solid #d8dbe1;
+    padding: 1rem;
+  }
+
+  .brief-article h1 {
+    margin-top: 0;
+  }
+
+  .meta {
+    color: #4b5360;
+    font-size: 0.95rem;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0.75rem 0;
+  }
+
+  .tag {
+    border: 1px solid #c8ced8;
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.85rem;
+    color: #4b5360;
+  }
+
+  .related-date {
+    color: #4b5360;
+    font-size: 0.92rem;
+  }
+</style>
