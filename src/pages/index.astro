@@ -31,9 +31,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   <section>
     <h2>What you get here</h2>
     <div class="tool-callout">
-      <h3>Free Tool: AIO Score</h3>
+      <h3>Free Tool: AI Visibility Checkup</h3>
       <p>Check AI visibility and readiness using the public AIO score workflow.</p>
-      <a href="/tools/aio">Open the AIO Score tool</a>
+      <a href="/tools/aio">Open the AI Visibility Checkup</a>
     </div>
     <div class="card-grid">
       <article class="card">
@@ -62,7 +62,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
       <ul class="signal-list">
         {signals.map((signal) => (
           <li>
-            <a href="/briefs">{signal.data.title}</a>
+            <a href={`/briefs/${signal.slug}`}>{signal.data.title}</a>
             <p>{dateFormatter.format(signal.data.date)}</p>
           </li>
         ))}
