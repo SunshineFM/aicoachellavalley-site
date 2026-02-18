@@ -3,6 +3,8 @@ import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
 import { createShareRecord, type PublicSharePayload, type ShareTopFix } from "../../utils/aioShareStore";
 
+export const prerender = false;
+
 type CheckStatus = "pass" | "warn" | "fail";
 type Grade = "Needs work" | "Fair" | "Good" | "Great";
 type Confidence = "High" | "Medium" | "Low";

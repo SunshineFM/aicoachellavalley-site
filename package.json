@@ -10,5 +10,8 @@
   },
   "dependencies": {
     "astro": "^5.17.1"
+  },
+  "devDependencies": {
+    "@astrojs/vercel": "^9.0.4"
   }
 }
