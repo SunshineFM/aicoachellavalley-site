@@ -51,6 +51,7 @@ type AnalysisPayload = {
   checks: CheckOutput[];
   topFixes: string[];
   limitations: string[];
+  realityCheck: string[];
   exports: {
     markdown: string;
     json: string;
@@ -102,6 +103,19 @@ const CATEGORY_NAMES: Record<CategoryId, string> = {
   "structured-data": "Structured data",
 };
 
+const CATEGORY_WEIGHTS: Record<CategoryId, number> = {
+  access: 25,
+  metadata: 25,
+  content: 25,
+  "structured-data": 25,
+};
+
+const REALITY_CHECK_ITEMS = [
+  'Not scored. External systems vary. Search: site:example.com "brand".',
+  "Not scored. External systems vary. Search the exact business name and review top citations.",
+  'Not scored. External systems vary. Ask an LLM: "What is <business> in Coachella Valley?" and verify whether it cites the site.',
+];
+
 const CHECKS = {
   accessFetch: {
     id: "access-fetch",
@@ -123,6 +137,20 @@ const CHECKS = {
     categoryId: "access",
     max: 7,
     fix: "Reduce unnecessary redirect chains and keep canonical URL consistent.",
+  },
+  accessRobotsTxt: {
+    id: "access-robots-txt",
+    name: "robots.txt availability",
+    categoryId: "access",
+    max: 5,
+    fix: "Publish a readable robots.txt at /robots.txt with crawl directives and sitemap reference.",
+  },
+  accessSitemapXml: {
+    id: "access-sitemap-xml",
+    name: "sitemap.xml availability",
+    categoryId: "access",
+    max: 5,
+    fix: "Publish a valid sitemap.xml (urlset or sitemapindex) and keep it updated.",
   },
   metaTitle: {
     id: "meta-title",
@@ -335,6 +363,11 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   const robots = findMetaTag(html, "robots");
   const canonical = findCanonical(html);
   const finalUrlObj = parseUrl(fetchResult.finalUrl);
+  const crawlBase = finalUrlObj?.origin || parseUrl(url)?.origin || null;
+  const [robotsTxtResult, sitemapResult] = await Promise.all([
+    crawlBase ? fetchWithRedirectChecks(`${crawlBase}/robots.txt`, 4_000) : Promise.resolve(null),
+    crawlBase ? fetchWithRedirectChecks(`${crawlBase}/sitemap.xml`, 4_000) : Promise.resolve(null),
+  ]);
   const canonicalUrlObj = resolveCanonicalUrl(canonical, fetchResult.finalUrl || url);
 
   let redirectStatus: CheckStatus = fetchResult.redirectCount <= 1 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
@@ -352,6 +385,47 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   }
 
   checks.push(check(CHECKS.accessRedirects, redirectStatus, redirectPoints, redirectEvidence.join(" ")));
+
+  if (!robotsTxtResult) {
+    checks.push(check(CHECKS.accessRobotsTxt, "warn", 2, "Could not evaluate robots.txt for this URL origin."));
+  } else {
+    const robotsBody = robotsTxtResult.html.trim();
+    const robotsPass = robotsTxtResult.ok && robotsBody.length >= 24;
+    const robotsWarn = robotsTxtResult.status === 404 || (robotsTxtResult.ok && robotsBody.length > 0 && robotsBody.length < 24);
+    checks.push(
+      check(
+        CHECKS.accessRobotsTxt,
+        robotsPass ? "pass" : robotsWarn ? "warn" : "fail",
+        robotsPass ? CHECKS.accessRobotsTxt.max : robotsWarn ? 2 : 0,
+        robotsPass
+          ? `robots.txt reachable (${robotsBody.length} chars).`
+          : robotsWarn
+            ? `robots.txt weak or missing (status ${robotsTxtResult.status}, ${robotsBody.length} chars).`
+            : `robots.txt unavailable (status ${robotsTxtResult.status}).`,
+      ),
+    );
+  }
+
+  if (!sitemapResult) {
+    checks.push(check(CHECKS.accessSitemapXml, "warn", 2, "Could not evaluate sitemap.xml for this URL origin."));
+  } else {
+    const sitemapBody = sitemapResult.html;
+    const sitemapLooksValid = /<(urlset|sitemapindex)\b/i.test(sitemapBody);
+    const sitemapPass = sitemapResult.ok && sitemapLooksValid;
+    const sitemapWarn = sitemapResult.status === 404 || (sitemapResult.ok && !sitemapLooksValid);
+    checks.push(
+      check(
+        CHECKS.accessSitemapXml,
+        sitemapPass ? "pass" : sitemapWarn ? "warn" : "fail",
+        sitemapPass ? CHECKS.accessSitemapXml.max : sitemapWarn ? 2 : 0,
+        sitemapPass
+          ? `sitemap.xml reachable and valid (status ${sitemapResult.status}).`
+          : sitemapWarn
+            ? `sitemap.xml missing or not parseable as sitemap (status ${sitemapResult.status}).`
+            : `sitemap.xml unavailable (status ${sitemapResult.status}).`,
+      ),
+    );
+  }
 
   checks.push(
     check(
@@ -514,6 +588,11 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   const confidence = jsShell.flag ? downgradeConfidence(baseConfidence) : baseConfidence;
 
   let score = rawScore;
+  let harshMetaPenaltyApplied = false;
+  if (descriptionLength > 220) {
+    score = Math.max(0, score - 3);
+    harshMetaPenaltyApplied = true;
+  }
   let capReason: string | null = null;
   if (confidence === "Low" && score > 60) {
     score = 60;
@@ -545,6 +624,9 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   } else if (capReason === "Medium") {
     limitations.push("Score capped due to Medium confidence (partial signals).");
   }
+  if (harshMetaPenaltyApplied) {
+    limitations.push("Additional penalty applied: meta description is far above recommended length (>220 chars).");
+  }
 
   const outputChecks: CheckOutput[] = checks.map(({ categoryId, max, ...rest }) => rest);
 
@@ -559,6 +641,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     checks: outputChecks,
     topFixes,
     limitations,
+    realityCheck: REALITY_CHECK_ITEMS,
     exports: {
       markdown: "",
       json: "",
@@ -599,6 +682,12 @@ function buildMarkdownExport(payload: AnalysisPayload, checks: CheckResult[], js
       lines.push(`  - Why it matters: Improves crawl understanding and retrieval quality.`);
       lines.push(`  - How to fix: ${item.fix}`);
     }
+  }
+
+  lines.push("");
+  lines.push("## Reality Check (Not scored)");
+  for (const item of payload.realityCheck) {
+    lines.push(`- ${item}`);
   }
 
   lines.push("");
@@ -714,12 +803,17 @@ function summarizeCategories(checks: CheckResult[]): CategoryOutput[] {
     grouped.set(item.categoryId, current);
   }
 
-  return (Object.keys(CATEGORY_NAMES) as CategoryId[]).map((id) => ({
-    id,
-    name: CATEGORY_NAMES[id],
-    score: clamp(grouped.get(id)?.score || 0, 0, 25),
-    max: 25,
-  }));
+  return (Object.keys(CATEGORY_NAMES) as CategoryId[]).map((id) => {
+    const raw = grouped.get(id) || { score: 0, max: 0 };
+    const max = CATEGORY_WEIGHTS[id];
+    const normalized = raw.max > 0 ? Math.round((clamp(raw.score, 0, raw.max) / raw.max) * max) : 0;
+    return {
+      id,
+      name: CATEGORY_NAMES[id],
+      score: clamp(normalized, 0, max),
+      max,
+    };
+  });
 }
 
 function toConfidence(input: {
@@ -821,7 +915,7 @@ async function assertSafeTarget(input: string): Promise<void> {
   }
 }
 
-async function fetchWithRedirectChecks(input: string): Promise<FetchResult> {
+async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_MS): Promise<FetchResult> {
   let current = new URL(input);
   let redirects = 0;
 
@@ -842,7 +936,7 @@ async function fetchWithRedirectChecks(input: string): Promise<FetchResult> {
     await assertSafeTarget(current.toString());
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await fetch(current.toString(), {
@@ -910,7 +1004,7 @@ async function fetchWithRedirectChecks(input: string): Promise<FetchResult> {
         timedOut,
         blockedStatus: false,
         redirectCount: redirects,
-        error: timedOut ? "Fetch timed out after 10 seconds." : "Target fetch failed.",
+        error: timedOut ? `Fetch timed out after ${Math.round(timeoutMs / 1000)} seconds.` : "Target fetch failed.",
       };
     }
   }

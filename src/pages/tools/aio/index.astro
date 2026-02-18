@@ -73,6 +73,11 @@ const checkupJsonLd = {
         <ul id="limitations-list"></ul>
       </details>
 
+      <details class="panel">
+        <summary>Reality Check (Not scored)</summary>
+        <ul id="reality-check-list"></ul>
+      </details>
+
       <article class="panel">
         <h2>Fix Pack exports</h2>
         <div class="export-tabs" role="tablist" aria-label="Export formats">
@@ -126,6 +131,7 @@ const checkupJsonLd = {
   const topFixes = document.getElementById("top-fixes");
   const evidenceList = document.getElementById("evidence-list");
   const limitationsList = document.getElementById("limitations-list");
+  const realityCheckList = document.getElementById("reality-check-list");
 
   const exportArea = document.getElementById("export-area");
   const exportLabel = document.getElementById("active-export-label");
@@ -188,7 +194,7 @@ const checkupJsonLd = {
         return `
           <div class="cat-row">
             <div class="cat-head"><span>${esc(item.name)}</span><span>${item.score}/${item.max}</span></div>
-            <div class="bar"><span style="width:${pct}%"></span></div>
+            <div class="bar"><span style="width:min(100%, ${pct}%);"></span></div>
           </div>
         `;
       })
@@ -209,6 +215,7 @@ const checkupJsonLd = {
       .join("");
 
     limitationsList.innerHTML = (payload.limitations || []).map((item) => `<li>${esc(item)}</li>`).join("");
+    realityCheckList.innerHTML = (payload.realityCheck || []).map((item) => `<li>${esc(item)}</li>`).join("");
 
     syncExportArea();
     shareOutput.hidden = true;
@@ -485,11 +492,13 @@ const checkupJsonLd = {
   }
 
   .bar {
+    width: 100%;
     height: 8px;
     background: #e8edf7;
     border-radius: 999px;
     overflow: hidden;
     max-width: 100%;
+    box-sizing: border-box;
   }
 
   .bar span {
@@ -497,6 +506,7 @@ const checkupJsonLd = {
     height: 100%;
     background: linear-gradient(90deg, #3b82f6, #0d9488);
     max-width: 100%;
+    box-sizing: border-box;
   }
 
   .panel h2 {
@@ -529,6 +539,8 @@ const checkupJsonLd = {
     border-radius: 8px;
     padding: 0.62rem;
     font-size: 0.84rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   .export-tabs {
@@ -565,6 +577,9 @@ const checkupJsonLd = {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.85rem;
     background: #f8fbff;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
   }
 
   .share-row {
@@ -619,7 +634,6 @@ const checkupJsonLd = {
   }
 
   /* Any export/code blocks must not force layout wider */
-  .export-area,
   textarea,
   pre,
   code {
@@ -629,6 +643,7 @@ const checkupJsonLd = {
   pre,
   code {
     white-space: pre-wrap;
+    overflow-x: auto;
     overflow-wrap: anywhere;
     word-break: break-word;
   }
