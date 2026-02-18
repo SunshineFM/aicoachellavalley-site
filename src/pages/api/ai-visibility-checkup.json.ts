@@ -166,6 +166,13 @@ const CHECKS = {
     max: 6,
     fix: "Write a clear 70-160 char description summarizing value and context.",
   },
+  metaDescriptionRedundancy: {
+    id: "meta-description-redundancy",
+    name: "Meta description uniqueness",
+    categoryId: "metadata",
+    max: 4,
+    fix: "Avoid repeating the title verbatim. Add unique, specific detail in the description.",
+  },
   metaRobots: {
     id: "meta-robots",
     name: "Indexing directives",
@@ -208,6 +215,13 @@ const CHECKS = {
     max: 4,
     fix: "Include obvious About and Contact paths in internal links or body text.",
   },
+  contentExternalTrust: {
+    id: "content-external-trust-reference",
+    name: "External trust reference",
+    categoryId: "content",
+    max: 3,
+    fix: "Include a clear phone, address, or specific organization reference in visible page copy.",
+  },
   sdPresence: {
     id: "sd-presence",
     name: "JSON-LD presence",
@@ -227,7 +241,7 @@ const CHECKS = {
     name: "Recommended schema types",
     categoryId: "structured-data",
     max: 5,
-    fix: "Prefer Organization/WebSite or LocalBusiness types where appropriate.",
+    fix: "Include page-specific schema entities (Service, FAQPage, LocalBusiness, SoftwareApplication, etc.).",
   },
 } as const;
 
@@ -463,6 +477,27 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
+  const normalizedTitle = title.trim().toLowerCase();
+  const normalizedDescription = metaDescription.trim().toLowerCase();
+  const descriptionRepeatsTitle =
+    descriptionLength > 0 && normalizedTitle.length > 0 && normalizedDescription.includes(normalizedTitle);
+  checks.push(
+    check(
+      CHECKS.metaDescriptionRedundancy,
+      descriptionLength === 0 ? "fail" : descriptionRepeatsTitle && descriptionLength < 180 ? "warn" : "pass",
+      descriptionLength === 0
+        ? 0
+        : descriptionRepeatsTitle && descriptionLength < 180
+          ? 1
+          : CHECKS.metaDescriptionRedundancy.max,
+      descriptionLength === 0
+        ? "Meta description missing; cannot evaluate uniqueness."
+        : descriptionRepeatsTitle && descriptionLength < 180
+          ? "Meta description appears to repeat the title too closely."
+          : "Meta description adds distinct context beyond the title.",
+    ),
+  );
+
   const noindex = /(^|\s|,)(noindex|none)(\s|,|$)/i.test(robots);
   checks.push(
     check(
@@ -532,6 +567,16 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
+  const externalTrust = detectExternalTrustReference(bodyText, title);
+  checks.push(
+    check(
+      CHECKS.contentExternalTrust,
+      externalTrust.status,
+      externalTrust.status === "pass" ? CHECKS.contentExternalTrust.max : 1,
+      externalTrust.evidence,
+    ),
+  );
+
   const jsonLd = inspectJsonLd(html);
 
   checks.push(
@@ -559,15 +604,31 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
-  const recommendedTypeFound = jsonLd.types.some((type) => ["Organization", "WebSite", "LocalBusiness"].includes(type));
+  const specificSchemaTypes = new Set([
+    "LocalBusiness",
+    "Service",
+    "FAQPage",
+    "SoftwareApplication",
+    "Product",
+    "Article",
+    "BlogPosting",
+    "Event",
+    "HowTo",
+    "WebPage",
+    "Person",
+    "Place",
+  ]);
+  const specificTypeFound = jsonLd.types.some((type) => specificSchemaTypes.has(type));
   checks.push(
     check(
       CHECKS.sdRecommendedTypes,
-      recommendedTypeFound ? "pass" : jsonLd.total > 0 ? "warn" : "fail",
-      recommendedTypeFound ? CHECKS.sdRecommendedTypes.max : jsonLd.total > 0 ? 2 : 0,
+      specificTypeFound ? "pass" : jsonLd.total > 0 ? "warn" : "fail",
+      specificTypeFound ? CHECKS.sdRecommendedTypes.max : jsonLd.total > 0 ? 2 : 0,
       jsonLd.types.length
-        ? `Detected JSON-LD @type values: ${jsonLd.types.join(", ")}.`
-        : "No recommended Organization/WebSite/LocalBusiness type detected.",
+        ? specificTypeFound
+          ? `Detected JSON-LD @type values: ${jsonLd.types.join(", ")}.`
+          : `Only generic schema types detected: ${jsonLd.types.join(", ")}.`
+        : "No page-specific schema types detected.",
     ),
   );
 
@@ -871,6 +932,39 @@ function isLikelyJsShell(_html: string, readableText: string, scriptCount: numbe
   return {
     flag: true,
     evidence: `Likely JS-rendered shell: readable text ${readableLen} chars, scripts ${scriptCount}. Server-render key content or add SSR/prerender.`,
+  };
+}
+
+function detectExternalTrustReference(readableText: string, title: string): { status: CheckStatus; evidence: string } {
+  const text = readableText.toLowerCase();
+  const hasPhone = /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b/.test(readableText);
+  const hasAddress =
+    /\b\d{1,6}\s+[a-z0-9.'-]+\s+(street|st|avenue|ave|road|rd|boulevard|blvd|drive|dr|lane|ln|way|court|ct)\b/i.test(
+      readableText,
+    );
+
+  const stopWords = new Set(["the", "and", "for", "with", "from", "your", "that", "this", "aicv", "hub"]);
+  const titleTokens = title
+    .toLowerCase()
+    .split(/[^a-z0-9]+/g)
+    .filter((part) => part.length >= 4 && !stopWords.has(part));
+  const matchedTitleTokens = [...new Set(titleTokens)].filter((token) => text.includes(token));
+  const hasOrgReference = matchedTitleTokens.length >= 2;
+
+  if (hasPhone || hasAddress || hasOrgReference) {
+    const markers: string[] = [];
+    if (hasPhone) markers.push("phone");
+    if (hasAddress) markers.push("address");
+    if (hasOrgReference) markers.push("organization-name");
+    return {
+      status: "pass",
+      evidence: `External trust reference found in visible copy (${markers.join(", ")}).`,
+    };
+  }
+
+  return {
+    status: "warn",
+    evidence: "No clear phone, address, or specific organization reference detected in visible body text.",
   };
 }
 
