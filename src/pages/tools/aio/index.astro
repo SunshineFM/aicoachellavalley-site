@@ -36,21 +36,23 @@ const checkupJsonLd = {
     </header>
 
     <section id="results" class="results" hidden>
-      <div class="top-grid">
-        <article class="score-card">
-          <p class="label">Score</p>
-          <p class="score"><span id="score-value">0</span><span>/100</span></p>
-          <p id="grade-pill" class="grade-pill">Needs work</p>
-        </article>
+      <div class="score-wrap">
+        <div class="top-grid">
+          <article class="score-card">
+            <p class="label">Score</p>
+            <p class="score"><span id="score-value">0</span><span>/100</span></p>
+            <p id="grade-pill" class="grade-pill">Needs work</p>
+          </article>
 
-        <article class="confidence-card">
-          <p class="label">Confidence</p>
-          <p id="confidence-value" class="confidence-value">Low</p>
-          <p class="tiny" title="High: strong signals. Medium: partial issues. Low: blocked/timeout/very weak content.">
-            High: strong signals • Medium: partial issues • Low: blocked or weak signals
-          </p>
-          <p id="fetched-at" class="tiny"></p>
-        </article>
+          <article class="confidence-card">
+            <p class="label">Confidence</p>
+            <p id="confidence-value" class="confidence-value">Low</p>
+            <p class="tiny" title="High: strong signals. Medium: partial issues. Low: blocked/timeout/very weak content.">
+              High: strong signals • Medium: partial issues • Low: blocked or weak signals
+            </p>
+            <p id="fetched-at" class="tiny"></p>
+          </article>
+        </div>
       </div>
 
       <article class="panel">
@@ -194,7 +196,7 @@ const checkupJsonLd = {
         return `
           <div class="cat-row">
             <div class="cat-head"><span>${esc(item.name)}</span><span>${item.score}/${item.max}</span></div>
-            <div class="bar"><span style="width:min(100%, ${pct}%);"></span></div>
+            <div class="bar"><span style="--pct:${pct}%;"></span></div>
           </div>
         `;
       })
@@ -395,12 +397,20 @@ const checkupJsonLd = {
   .results {
     display: grid;
     gap: 0.95rem;
+    max-width: 100%;
+  }
+
+  .score-wrap {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .top-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
+    max-width: 100%;
   }
 
   .score-card,
@@ -425,10 +435,12 @@ const checkupJsonLd = {
     display: flex;
     gap: 0.25rem;
     align-items: baseline;
+    flex-wrap: wrap;
+    min-width: 0;
   }
 
   .score span:first-child {
-    font-size: 2.2rem;
+    font-size: clamp(1.8rem, 5.6vw, 2.2rem);
     font-weight: 700;
     color: #0d47a1;
   }
@@ -504,6 +516,7 @@ const checkupJsonLd = {
   .bar span {
     display: block;
     height: 100%;
+    width: clamp(0%, var(--pct), 100%);
     background: linear-gradient(90deg, #3b82f6, #0d9488);
     max-width: 100%;
     box-sizing: border-box;

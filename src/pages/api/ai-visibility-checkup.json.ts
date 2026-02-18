@@ -370,17 +370,13 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   ]);
   const canonicalUrlObj = resolveCanonicalUrl(canonical, fetchResult.finalUrl || url);
 
-  let redirectStatus: CheckStatus = fetchResult.redirectCount <= 1 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
-  let redirectPoints = fetchResult.redirectCount <= 1 ? CHECKS.accessRedirects.max : fetchResult.redirectCount <= 3 ? 3 : 0;
+  let redirectStatus: CheckStatus = fetchResult.redirectCount === 0 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
+  let redirectPoints = fetchResult.redirectCount === 0 ? CHECKS.accessRedirects.max : fetchResult.redirectCount <= 3 ? 4 : 0;
   const redirectEvidence = [`Redirect hops detected: ${fetchResult.redirectCount}. Final URL: ${fetchResult.finalUrl}.`];
 
   if (canonicalUrlObj && finalUrlObj && canonicalUrlObj.host !== finalUrlObj.host) {
-    if (redirectStatus === "pass") {
-      redirectStatus = "warn";
-      redirectPoints = Math.max(0, CHECKS.accessRedirects.max - 2);
-    } else if (redirectStatus === "warn") {
-      redirectPoints = Math.max(0, redirectPoints - 1);
-    }
+    redirectStatus = redirectStatus === "fail" ? "fail" : "warn";
+    redirectPoints = redirectStatus === "fail" ? 0 : Math.min(redirectPoints, 3);
     redirectEvidence.push(`Canonical host (${canonicalUrlObj.host}) differs from final host (${finalUrlObj.host}).`);
   }
 
@@ -478,12 +474,19 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
+  const canonicalHostMismatch = Boolean(canonicalUrlObj && finalUrlObj && canonicalUrlObj.host !== finalUrlObj.host);
+  const canonicalPathMismatch = Boolean(canonicalUrlObj && finalUrlObj && canonicalUrlObj.pathname !== finalUrlObj.pathname);
+  const canonicalMismatch = canonicalHostMismatch || canonicalPathMismatch;
   checks.push(
     check(
       CHECKS.metaCanonical,
-      canonical ? "pass" : "fail",
-      canonical ? CHECKS.metaCanonical.max : 0,
-      canonical ? `Canonical URL found: ${canonical}.` : "Canonical link missing.",
+      canonical ? (canonicalMismatch ? "warn" : "pass") : "fail",
+      canonical ? (canonicalMismatch ? 3 : CHECKS.metaCanonical.max) : 0,
+      canonical
+        ? canonicalMismatch
+          ? `Canonical URL found (${canonical}) but differs from final URL path/host (${fetchResult.finalUrl}).`
+          : `Canonical URL found: ${canonical}.`
+        : "Canonical link missing.",
       canonical ? `<link rel=\"canonical\" href=\"${canonical}\" />` : undefined,
     ),
   );
@@ -593,6 +596,16 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     score = Math.max(0, score - 3);
     harshMetaPenaltyApplied = true;
   }
+  const hasFail = checks.some((item) => item.status === "fail");
+  const hasWarn = checks.some((item) => item.status === "warn");
+  let strictCapReason: "warn" | "fail" | null = null;
+  if (hasFail && score > 85) {
+    score = 85;
+    strictCapReason = "fail";
+  } else if (hasWarn && score > 95) {
+    score = 95;
+    strictCapReason = "warn";
+  }
   let capReason: string | null = null;
   if (confidence === "Low" && score > 60) {
     score = 60;
@@ -626,6 +639,11 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   }
   if (harshMetaPenaltyApplied) {
     limitations.push("Additional penalty applied: meta description is far above recommended length (>220 chars).");
+  }
+  if (strictCapReason === "fail") {
+    limitations.push("Strict mode cap applied: one or more checks failed, so score is capped at 85.");
+  } else if (strictCapReason === "warn") {
+    limitations.push("Strict mode cap applied: one or more checks are warnings, so score is capped at 95.");
   }
 
   const outputChecks: CheckOutput[] = checks.map(({ categoryId, max, ...rest }) => rest);
