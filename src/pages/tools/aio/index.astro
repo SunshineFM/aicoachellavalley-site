@@ -465,11 +465,23 @@ const checkupJsonLd = {
     gap: 0.58rem;
   }
 
+  .cat-row {
+    min-width: 0;
+  }
+
   .cat-head {
     display: flex;
     justify-content: space-between;
+    gap: 0.5rem;
     font-size: 0.94rem;
     margin-bottom: 0.2rem;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .cat-head span:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .bar {
@@ -477,12 +489,14 @@ const checkupJsonLd = {
     background: #e8edf7;
     border-radius: 999px;
     overflow: hidden;
+    max-width: 100%;
   }
 
   .bar span {
     display: block;
     height: 100%;
     background: linear-gradient(90deg, #3b82f6, #0d9488);
+    max-width: 100%;
   }
 
   .panel h2 {

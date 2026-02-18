@@ -328,21 +328,28 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
-  const redirectStatus: CheckStatus = fetchResult.redirectCount <= 1 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
-  const redirectPoints = fetchResult.redirectCount <= 1 ? CHECKS.accessRedirects.max : fetchResult.redirectCount <= 3 ? 3 : 0;
-  checks.push(
-    check(
-      CHECKS.accessRedirects,
-      redirectStatus,
-      redirectPoints,
-      `Redirect hops detected: ${fetchResult.redirectCount}. Final URL: ${fetchResult.finalUrl}.`,
-    ),
-  );
-
   const title = extractFirst(html, /<title[^>]*>([\s\S]*?)<\/title>/i);
   const metaDescription = findMetaTag(html, "description");
   const robots = findMetaTag(html, "robots");
   const canonical = findCanonical(html);
+  const finalUrlObj = parseUrl(fetchResult.finalUrl);
+  const canonicalUrlObj = resolveCanonicalUrl(canonical, fetchResult.finalUrl || url);
+
+  let redirectStatus: CheckStatus = fetchResult.redirectCount <= 1 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
+  let redirectPoints = fetchResult.redirectCount <= 1 ? CHECKS.accessRedirects.max : fetchResult.redirectCount <= 3 ? 3 : 0;
+  const redirectEvidence = [`Redirect hops detected: ${fetchResult.redirectCount}. Final URL: ${fetchResult.finalUrl}.`];
+
+  if (canonicalUrlObj && finalUrlObj && canonicalUrlObj.host !== finalUrlObj.host) {
+    if (redirectStatus === "pass") {
+      redirectStatus = "warn";
+      redirectPoints = Math.max(0, CHECKS.accessRedirects.max - 2);
+    } else if (redirectStatus === "warn") {
+      redirectPoints = Math.max(0, redirectPoints - 1);
+    }
+    redirectEvidence.push(`Canonical host (${canonicalUrlObj.host}) differs from final host (${finalUrlObj.host}).`);
+  }
+
+  checks.push(check(CHECKS.accessRedirects, redirectStatus, redirectPoints, redirectEvidence.join(" ")));
 
   checks.push(
     check(
@@ -354,14 +361,28 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
+  const descriptionLength = metaDescription.length;
+  const metaDescriptionStatus: CheckStatus =
+    descriptionLength >= 70 && descriptionLength <= 160 ? "pass" : descriptionLength > 0 ? "warn" : "fail";
+  const metaDescriptionPoints =
+    descriptionLength >= 70 && descriptionLength <= 160
+      ? CHECKS.metaDescription.max
+      : descriptionLength > 160
+        ? Math.max(0, CHECKS.metaDescription.max - 2)
+        : descriptionLength > 0
+          ? 3
+          : 0;
+  const metaDescriptionEvidence = metaDescription
+    ? descriptionLength > 160
+      ? `Meta description found (${descriptionLength} chars, longer than recommended 160).`
+      : `Meta description found (${descriptionLength} chars).`
+    : "Meta description missing.";
   checks.push(
     check(
       CHECKS.metaDescription,
-      metaDescription.length >= 70 ? "pass" : metaDescription.length > 0 ? "warn" : "fail",
-      metaDescription.length >= 70 ? CHECKS.metaDescription.max : metaDescription.length > 0 ? 3 : 0,
-      metaDescription
-        ? `Meta description found (${metaDescription.length} chars).`
-        : "Meta description missing.",
+      metaDescriptionStatus,
+      metaDescriptionPoints,
+      metaDescriptionEvidence,
       metaDescription ? `<meta name=\"description\" content=\"${metaDescription}\" />` : undefined,
     ),
   );
@@ -957,6 +978,25 @@ function findCanonical(html: string): string {
   const forward = html.match(/<link[^>]+rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i);
   const reverse = html.match(/<link[^>]+href=["']([^"']+)["'][^>]*rel=["']canonical["'][^>]*>/i);
   return forward?.[1]?.trim() || reverse?.[1]?.trim() || "";
+}
+
+function parseUrl(value: string): URL | null {
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+}
+
+function resolveCanonicalUrl(canonical: string, fallbackBase: string): URL | null {
+  if (!canonical) {
+    return null;
+  }
+  try {
+    return new URL(canonical, fallbackBase);
+  } catch {
+    return null;
+  }
 }
 
 function extractBodyText(html: string): string {
