@@ -1,0 +1,590 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const checkupJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://aicoachellavalley.com/tools/aio#app",
+  name: "AI Visibility Checkup",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  inLanguage: "en-US",
+  url: "https://aicoachellavalley.com/tools/aio",
+  publisher: { "@id": "https://aicoachellavalley.com/#organization" },
+  isPartOf: { "@id": "https://aicoachellavalley.com/#website" },
+  description:
+    "Check how discoverable your site is across AI assistants and AI search.",
+};
+---
+
+<BaseLayout title="AI Visibility Checkup | AI Coachella Valley">
+  <script type="application/ld+json" set:html={JSON.stringify(checkupJsonLd)}></script>
+
+  <section class="aio-tool">
+    <header class="hero">
+      <h1>AI Visibility Checkup</h1>
+      <p>Check how discoverable your site is across AI assistants and AI search.</p>
+      <form id="checkup-form" class="checkup-form">
+        <label for="target-url">URL</label>
+        <div class="input-row">
+          <input id="target-url" name="url" type="text" required placeholder="example.com" autocomplete="url" />
+          <button type="submit" id="analyze-btn">Analyze</button>
+        </div>
+      </form>
+      <p id="status-text" class="status" aria-live="polite"></p>
+      <p id="loading-text" class="loading" hidden>Analyzing... (10-20 seconds)</p>
+    </header>
+
+    <section id="results" class="results" hidden>
+      <div class="top-grid">
+        <article class="score-card">
+          <p class="label">Score</p>
+          <p class="score"><span id="score-value">0</span><span>/100</span></p>
+          <p id="grade-pill" class="grade-pill">Needs work</p>
+        </article>
+
+        <article class="confidence-card">
+          <p class="label">Confidence</p>
+          <p id="confidence-value" class="confidence-value">Low</p>
+          <p class="tiny" title="High: strong signals. Medium: partial issues. Low: blocked/timeout/very weak content.">
+            High: strong signals • Medium: partial issues • Low: blocked or weak signals
+          </p>
+          <p id="fetched-at" class="tiny"></p>
+        </article>
+      </div>
+
+      <article class="panel">
+        <h2>Category breakdown</h2>
+        <div id="category-bars" class="category-bars"></div>
+      </article>
+
+      <article class="panel">
+        <h2>Top fixes</h2>
+        <ol id="top-fixes"></ol>
+      </article>
+
+      <details class="panel" open>
+        <summary>Evidence</summary>
+        <div id="evidence-list"></div>
+      </details>
+
+      <details class="panel">
+        <summary>Limitations</summary>
+        <ul id="limitations-list"></ul>
+      </details>
+
+      <article class="panel">
+        <h2>Fix Pack exports</h2>
+        <div class="export-tabs" role="tablist" aria-label="Export formats">
+          <button type="button" class="tab-btn active" data-tab="markdown">Markdown</button>
+          <button type="button" class="tab-btn" data-tab="json">JSON</button>
+          <button type="button" class="tab-btn" data-tab="html">HTML</button>
+        </div>
+        <div class="export-controls">
+          <p id="active-export-label" class="tiny">Markdown export</p>
+          <button type="button" id="copy-export-btn" class="secondary">Copy</button>
+        </div>
+        <textarea id="export-area" readonly></textarea>
+      </article>
+
+      <article class="panel">
+        <h2>Share results</h2>
+        <p class="tiny">Creates a public summary link with no PII and no raw HTML.</p>
+        <div class="share-row">
+          <button type="button" id="share-btn" class="secondary">Share results</button>
+          <span id="share-status" class="tiny"></span>
+        </div>
+        <div id="share-output" hidden>
+          <textarea id="share-url" readonly></textarea>
+          <button type="button" id="copy-share-btn" class="secondary">Copy link</button>
+        </div>
+      </article>
+
+      <aside class="panel muted-cta">
+        <p class="label">Optional</p>
+        <h2>Have a local developer handle it (Coming soon)</h2>
+        <p>From $99/mo (early access list)</p>
+        <a href="/contact?topic=ai-visibility-managed">Join early access</a>
+      </aside>
+    </section>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById("checkup-form");
+  const analyzeBtn = document.getElementById("analyze-btn");
+  const statusText = document.getElementById("status-text");
+  const loadingText = document.getElementById("loading-text");
+  const results = document.getElementById("results");
+
+  const scoreValue = document.getElementById("score-value");
+  const gradePill = document.getElementById("grade-pill");
+  const confidenceValue = document.getElementById("confidence-value");
+  const fetchedAt = document.getElementById("fetched-at");
+
+  const categoryBars = document.getElementById("category-bars");
+  const topFixes = document.getElementById("top-fixes");
+  const evidenceList = document.getElementById("evidence-list");
+  const limitationsList = document.getElementById("limitations-list");
+
+  const exportArea = document.getElementById("export-area");
+  const exportLabel = document.getElementById("active-export-label");
+  const copyExportBtn = document.getElementById("copy-export-btn");
+
+  const shareBtn = document.getElementById("share-btn");
+  const shareStatus = document.getElementById("share-status");
+  const shareOutput = document.getElementById("share-output");
+  const shareUrlEl = document.getElementById("share-url");
+  const copyShareBtn = document.getElementById("copy-share-btn");
+
+  let lastPayload = null;
+  let activeExport = "markdown";
+
+  function esc(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function gradeClass(grade) {
+    if (grade === "Great") return "grade-great";
+    if (grade === "Good") return "grade-good";
+    if (grade === "Fair") return "grade-fair";
+    return "grade-needs";
+  }
+
+  function formatDate(value) {
+    try {
+      return new Date(value).toLocaleString();
+    } catch {
+      return value;
+    }
+  }
+
+  function syncExportArea() {
+    if (!lastPayload) return;
+    const content = lastPayload.exports?.[activeExport] || "";
+    exportArea.value = content;
+    exportLabel.textContent = `${activeExport.toUpperCase()} export`;
+  }
+
+  function render(payload) {
+    lastPayload = payload;
+    results.hidden = false;
+
+    scoreValue.textContent = String(payload.score || 0);
+    gradePill.textContent = payload.grade || "Needs work";
+    gradePill.className = `grade-pill ${gradeClass(payload.grade)}`;
+
+    confidenceValue.textContent = payload.confidence || "Low";
+    fetchedAt.textContent = `Fetched: ${formatDate(payload.fetchedAt)}${payload.debug?.cacheHit ? " (cached)" : ""}`;
+
+    categoryBars.innerHTML = (payload.categories || [])
+      .map((item) => {
+        const pct = Math.max(0, Math.min(100, Math.round((item.score / item.max) * 100)));
+        return `
+          <div class="cat-row">
+            <div class="cat-head"><span>${esc(item.name)}</span><span>${item.score}/${item.max}</span></div>
+            <div class="bar"><span style="width:${pct}%"></span></div>
+          </div>
+        `;
+      })
+      .join("");
+
+    topFixes.innerHTML = (payload.topFixes || []).slice(0, 7).map((fix) => `<li>${esc(fix)}</li>`).join("");
+
+    evidenceList.innerHTML = (payload.checks || [])
+      .map((check) => `
+        <article class="evidence-item">
+          <h3>${esc(check.name)}</h3>
+          <p><strong>Status:</strong> ${esc(check.status)} (${check.points} pts)</p>
+          <p><strong>Evidence:</strong> ${esc(check.evidence || "")}</p>
+          <p><strong>Fix:</strong> ${esc(check.fix || "")}</p>
+          ${check.snippet ? `<pre><code>${esc(check.snippet)}</code></pre>` : ""}
+        </article>
+      `)
+      .join("");
+
+    limitationsList.innerHTML = (payload.limitations || []).map((item) => `<li>${esc(item)}</li>`).join("");
+
+    syncExportArea();
+    shareOutput.hidden = true;
+    shareStatus.textContent = "";
+  }
+
+  async function copyText(text, button) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const original = button.textContent;
+      button.textContent = "Copied";
+      setTimeout(() => {
+        button.textContent = original;
+      }, 1200);
+    } catch {
+      button.textContent = "Copy failed";
+      setTimeout(() => {
+        button.textContent = "Copy";
+      }, 1200);
+    }
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const fd = new FormData(form);
+    const url = String(fd.get("url") || "").trim();
+
+    if (!url) {
+      statusText.textContent = "Enter a URL.";
+      return;
+    }
+
+    analyzeBtn.disabled = true;
+    loadingText.hidden = false;
+    statusText.textContent = "";
+    results.hidden = true;
+
+    try {
+      const response = await fetch("/api/ai-visibility-checkup.json", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        statusText.textContent = payload.message || "Analysis failed.";
+        return;
+      }
+
+      render(payload);
+      statusText.textContent = "Analysis complete.";
+    } catch {
+      statusText.textContent = "Could not complete analysis.";
+    } finally {
+      analyzeBtn.disabled = false;
+      loadingText.hidden = true;
+    }
+  });
+
+  document.querySelectorAll(".tab-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const tab = button.getAttribute("data-tab");
+      if (!tab) return;
+      activeExport = tab;
+      document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      syncExportArea();
+    });
+  });
+
+  copyExportBtn?.addEventListener("click", () => {
+    copyText(exportArea.value, copyExportBtn);
+  });
+
+  shareBtn?.addEventListener("click", async () => {
+    if (!lastPayload?.url) {
+      shareStatus.textContent = "Run an analysis first.";
+      return;
+    }
+
+    shareBtn.disabled = true;
+    shareStatus.textContent = "Creating share link...";
+
+    try {
+      const response = await fetch("/api/ai-visibility-checkup.json", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: lastPayload.url, createShare: true }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok || !payload.shareUrl) {
+        shareStatus.textContent = payload.message || "Could not create share link.";
+        return;
+      }
+
+      shareUrlEl.value = payload.shareUrl;
+      shareOutput.hidden = false;
+      shareStatus.textContent = "Share link ready.";
+    } catch {
+      shareStatus.textContent = "Could not create share link.";
+    } finally {
+      shareBtn.disabled = false;
+    }
+  });
+
+  copyShareBtn?.addEventListener("click", () => {
+    copyText(shareUrlEl.value, copyShareBtn);
+  });
+</script>
+
+<style>
+  .aio-tool {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .hero p {
+    max-width: 56ch;
+    margin-top: 0;
+  }
+
+  .checkup-form {
+    display: grid;
+    gap: 0.45rem;
+    background: #fff;
+    border: 1px solid #d5dce8;
+    border-radius: 10px;
+    padding: 0.9rem;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    border: 1px solid #b8c2d7;
+    border-radius: 8px;
+    padding: 0.65rem;
+    font-size: 1rem;
+  }
+
+  button {
+    border: 0;
+    border-radius: 8px;
+    background: #0d4fb7;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 0.95rem;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+  }
+
+  .secondary {
+    background: #e9eefb;
+    color: #1d3f87;
+  }
+
+  .loading,
+  .tiny,
+  .status {
+    margin: 0;
+    color: #4d5a71;
+    font-size: 0.92rem;
+  }
+
+  .results {
+    display: grid;
+    gap: 0.95rem;
+  }
+
+  .top-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .score-card,
+  .confidence-card,
+  .panel {
+    background: #fff;
+    border: 1px solid #d5dce8;
+    border-radius: 10px;
+    padding: 0.95rem;
+  }
+
+  .label {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    color: #5d6880;
+  }
+
+  .score {
+    margin: 0.15rem 0;
+    display: flex;
+    gap: 0.25rem;
+    align-items: baseline;
+  }
+
+  .score span:first-child {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0d47a1;
+  }
+
+  .grade-pill {
+    display: inline-block;
+    padding: 0.2rem 0.62rem;
+    border-radius: 999px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .grade-needs {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .grade-fair {
+    background: #fef3c7;
+    color: #854d0e;
+  }
+
+  .grade-good {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .grade-great {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .confidence-value {
+    margin: 0.2rem 0;
+    font-size: 1.45rem;
+    font-weight: 700;
+  }
+
+  .category-bars {
+    display: grid;
+    gap: 0.58rem;
+  }
+
+  .cat-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.94rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .bar {
+    height: 8px;
+    background: #e8edf7;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #0d9488);
+  }
+
+  .panel h2 {
+    margin: 0 0 0.55rem;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .evidence-item {
+    border-top: 1px solid #e4e9f2;
+    padding: 0.62rem 0;
+  }
+
+  .evidence-item:first-child {
+    border-top: 0;
+    padding-top: 0.2rem;
+  }
+
+  .evidence-item p {
+    margin: 0.22rem 0;
+  }
+
+  pre {
+    overflow-x: auto;
+    background: #f8fbff;
+    border: 1px solid #e3e9f4;
+    border-radius: 8px;
+    padding: 0.62rem;
+    font-size: 0.84rem;
+  }
+
+  .export-tabs {
+    display: inline-flex;
+    gap: 0.2rem;
+    background: #f1f5fb;
+    padding: 0.2rem;
+    border-radius: 8px;
+  }
+
+  .tab-btn {
+    background: transparent;
+    color: #23407d;
+    padding: 0.4rem 0.7rem;
+    border-radius: 7px;
+  }
+
+  .tab-btn.active {
+    background: #dfe8fb;
+    color: #193569;
+  }
+
+  .export-controls {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  textarea {
+    min-height: 10rem;
+    margin-top: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    background: #f8fbff;
+  }
+
+  .share-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  #share-output {
+    margin-top: 0.6rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .muted-cta {
+    background: #f7f8fb;
+    color: #4c5568;
+  }
+
+  .muted-cta a {
+    color: #244e9f;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .muted-cta a:hover,
+  .muted-cta a:focus-visible {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 42rem) {
+    .input-row,
+    .top-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
