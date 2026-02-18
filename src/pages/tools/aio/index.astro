@@ -84,7 +84,7 @@ const checkupJsonLd = {
           <p id="active-export-label" class="tiny">Markdown export</p>
           <button type="button" id="copy-export-btn" class="secondary">Copy</button>
         </div>
-        <textarea id="export-area" readonly></textarea>
+        <textarea id="export-area" readonly wrap="soft"></textarea>
       </article>
 
       <article class="panel">
@@ -95,7 +95,7 @@ const checkupJsonLd = {
           <span id="share-status" class="tiny"></span>
         </div>
         <div id="share-output" hidden>
-          <textarea id="share-url" readonly></textarea>
+          <textarea id="share-url" readonly wrap="soft"></textarea>
           <button type="button" id="copy-share-btn" class="secondary">Copy link</button>
         </div>
       </article>
@@ -600,5 +600,56 @@ const checkupJsonLd = {
     .top-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  /* --- AIO tool: prevent page-level horizontal overflow --- */
+  :global(html, body) {
+    overflow-x: hidden;
+  }
+
+  :global(*, *::before, *::after) {
+    box-sizing: border-box;
+  }
+
+  .tool-shell,
+  .tool-container,
+  main,
+  section {
+    max-width: 100%;
+  }
+
+  /* Any export/code blocks must not force layout wider */
+  .export-area,
+  textarea,
+  pre,
+  code {
+    max-width: 100%;
+  }
+
+  pre,
+  code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  textarea {
+    width: 100%;
+    display: block;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /* If any row uses flex, prevent flex children from forcing overflow */
+  .row,
+  .score-row,
+  .export-row {
+    flex-wrap: wrap;
+  }
+
+  .row > *,
+  .score-row > *,
+  .export-row > * {
+    min-width: 0;
   }
 </style>
