@@ -1,5 +1,5 @@
 :root {
-  --aicv-indigo: #0b1026;
+  --aicv-indigo: #0e1b4d;
   --aicv-volt: #c7ff2e;
   --aicv-page-bg: #0b1026;
   --aicv-surface: rgba(255, 255, 255, 0.92);
@@ -10,12 +10,13 @@
 body {
   background-color: var(--aicv-indigo);
   background-image:
-    radial-gradient(1200px 600px at 20% 10%, rgba(255, 255, 255, 0.06), transparent 55%),
-    radial-gradient(900px 500px at 80% 30%, rgba(199, 255, 46, 0.06), transparent 60%),
+    radial-gradient(1200px 600px at 20% 10%, rgba(255, 255, 255, 0.1), transparent 55%),
+    radial-gradient(900px 500px at 80% 30%, rgba(199, 255, 46, 0.08), transparent 60%),
     url("/topo-indigo.svg");
   background-size: cover, cover, cover;
   background-position: center, center, center;
   background-attachment: fixed;
+  background-blend-mode: screen, screen, overlay;
 }
 
 a:hover {
