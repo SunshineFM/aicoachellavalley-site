@@ -1,4 +1,6 @@
 ---
+import "../styles/global.css";
+
 interface Props {
   title: string;
   description?: string;
@@ -108,14 +110,14 @@ const siteJsonLd = {
   :global(body) {
     margin: 0;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    background: #f7f8fa;
+    background: var(--aicv-page-bg, #f7f8fa);
     color: #1a1a1a;
     line-height: 1.55;
   }
 
   header {
-    background: #ffffff;
-    border-bottom: 1px solid #d8dbe1;
+    background: var(--aicv-indigo, #0b1026);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .header-inner {
@@ -138,7 +140,7 @@ const siteJsonLd = {
   }
 
   .brand {
-    color: #0b3e91;
+    color: #ffffff;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-decoration: none;
@@ -152,7 +154,7 @@ const siteJsonLd = {
   }
 
   .utility-link {
-    color: #184a9c;
+    color: #ffffff;
     font-weight: 600;
     text-decoration: none;
   }
@@ -163,7 +165,7 @@ const siteJsonLd = {
   }
 
   nav a {
-    color: #184a9c;
+    color: #ffffff;
     text-decoration: none;
   }
 
@@ -177,7 +179,7 @@ const siteJsonLd = {
   }
 
   .nav-dropdown summary {
-    color: #184a9c;
+    color: #ffffff;
     cursor: pointer;
     list-style: none;
   }
@@ -198,9 +200,9 @@ const siteJsonLd = {
     left: 0;
     min-width: 13rem;
     padding: 0.55rem;
-    border: 1px solid #d8dbe1;
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 0.4rem;
-    background: #fff;
+    background: #141b3b;
     z-index: 20;
   }
 
@@ -210,7 +212,7 @@ const siteJsonLd = {
   }
 
   .dropdown-menu a {
-    color: #184a9c;
+    color: #ffffff;
     text-decoration: none;
     white-space: nowrap;
   }
