@@ -1,0 +1,43 @@
+:root {
+  --aicv-indigo: #0b1026;
+  --aicv-volt: #c7ff2e;
+  --aicv-page-bg: #f7f8fa;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(199, 255, 46, 0.08), transparent 28rem),
+    var(--aicv-page-bg);
+}
+
+a:hover {
+  color: var(--aicv-volt);
+}
+
+:focus-visible {
+  outline: 2px solid var(--aicv-volt);
+  outline-offset: 2px;
+}
+
+header,
+header nav {
+  background: var(--aicv-indigo);
+}
+
+header .brand,
+header nav a,
+header .utility-link,
+header .nav-dropdown summary {
+  color: #fff;
+}
+
+header .brand:hover,
+header .brand:focus-visible,
+header nav a:hover,
+header nav a:focus-visible,
+header .utility-link:hover,
+header .utility-link:focus-visible,
+header .nav-dropdown summary:hover,
+header .nav-dropdown summary:focus-visible {
+  color: var(--aicv-volt);
+}
