@@ -81,7 +81,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
           <h3>{featuredSignal.data.title}</h3>
           <p>{featuredSignal.data.summary}</p>
           <p class="feature-meta">Brief date: {dateFormatter.format(featuredSignal.data.date)}</p>
-          <a href="/briefs">Read the highlight</a>
+          <a href={`/briefs/${featuredSignal.slug}`}>Read the highlight</a>
         </>
       ) : (
         <>
