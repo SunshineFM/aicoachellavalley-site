@@ -8,14 +8,14 @@
 }
 
 body {
-  background:
-    linear-gradient(rgba(11, 16, 38, 0.8), rgba(11, 16, 38, 0.8)),
-    url("../assets/topo-indigo.svg"),
-    var(--aicv-page-bg);
-  background-color: var(--aicv-page-bg);
-  background-size: cover, 640px 640px, auto;
+  background-color: var(--aicv-indigo);
+  background-image:
+    radial-gradient(1200px 600px at 20% 10%, rgba(255, 255, 255, 0.06), transparent 55%),
+    radial-gradient(900px 500px at 80% 30%, rgba(199, 255, 46, 0.06), transparent 60%),
+    url("/topo-indigo.svg");
+  background-size: cover, cover, cover;
   background-position: center, center, center;
-  background-attachment: fixed, fixed, scroll;
+  background-attachment: fixed;
 }
 
 a:hover {
