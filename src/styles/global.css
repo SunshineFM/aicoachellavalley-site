@@ -1,13 +1,21 @@
 :root {
   --aicv-indigo: #0b1026;
   --aicv-volt: #c7ff2e;
-  --aicv-page-bg: #f7f8fa;
+  --aicv-page-bg: #0b1026;
+  --aicv-surface: rgba(255, 255, 255, 0.92);
+  --aicv-border: rgba(255, 255, 255, 0.2);
+  --aicv-button-text: #ffffff;
 }
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(199, 255, 46, 0.08), transparent 28rem),
+    linear-gradient(rgba(11, 16, 38, 0.8), rgba(11, 16, 38, 0.8)),
+    url("../assets/topo-indigo.svg"),
     var(--aicv-page-bg);
+  background-color: var(--aicv-page-bg);
+  background-size: cover, 640px 640px, auto;
+  background-position: center, center, center;
+  background-attachment: fixed, fixed, scroll;
 }
 
 a:hover {
@@ -40,4 +48,38 @@ header .utility-link:focus-visible,
 header .nav-dropdown summary:hover,
 header .nav-dropdown summary:focus-visible {
   color: var(--aicv-volt);
+}
+
+main,
+article,
+section,
+.card {
+  background: var(--aicv-surface);
+  border: 1px solid var(--aicv-border);
+  border-radius: 0.5rem;
+}
+
+button,
+input[type="submit"],
+input[type="button"],
+a.button,
+.button,
+a[role="button"] {
+  background: var(--aicv-indigo);
+  color: var(--aicv-button-text);
+  border: 1px solid var(--aicv-border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+a.button:hover,
+.button:hover,
+a[role="button"]:hover {
+  background: var(--aicv-volt);
+  border-color: var(--aicv-volt);
+  color: #111111;
 }
