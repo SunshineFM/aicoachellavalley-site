@@ -52,6 +52,11 @@ type AnalysisPayload = {
   topFixes: string[];
   limitations: string[];
   realityCheck: string[];
+  truthSignals: {
+    redirectHops: number;
+    canonicalMatchesFinal: boolean;
+    metaDescriptionLength: number;
+  };
   exports: {
     markdown: string;
     json: string;
@@ -67,7 +72,9 @@ type ApiResponse = AnalysisPayload & {
 type FetchResult = {
   ok: boolean;
   status: number;
+  initialUrl: string;
   finalUrl: string;
+  redirectChain: string[];
   html: string;
   timedOut: boolean;
   blockedStatus: boolean;
@@ -391,17 +398,24 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   ]);
   const canonicalUrlObj = resolveCanonicalUrl(canonical, fetchResult.finalUrl || url);
 
-  let redirectStatus: CheckStatus = fetchResult.redirectCount === 0 ? "pass" : fetchResult.redirectCount <= 3 ? "warn" : "fail";
-  let redirectPoints = fetchResult.redirectCount === 0 ? CHECKS.accessRedirects.max : fetchResult.redirectCount <= 3 ? 4 : 0;
-  const redirectEvidence = [`Redirect hops detected: ${fetchResult.redirectCount}. Final URL: ${fetchResult.finalUrl}.`];
-
-  if (canonicalUrlObj && finalUrlObj && canonicalUrlObj.host !== finalUrlObj.host) {
-    redirectStatus = redirectStatus === "fail" ? "fail" : "warn";
-    redirectPoints = redirectStatus === "fail" ? 0 : Math.min(redirectPoints, 3);
-    redirectEvidence.push(`Canonical host (${canonicalUrlObj.host}) differs from final host (${finalUrlObj.host}).`);
-  }
-
-  checks.push(check(CHECKS.accessRedirects, redirectStatus, redirectPoints, redirectEvidence.join(" ")));
+  const canonicalMatchesFinal = canonicalUrlObj && finalUrlObj ? canonicalMatchesFinalPath(canonicalUrlObj, finalUrlObj) : false;
+  const redirectStatus: CheckStatus = fetchResult.redirectCount === 0 ? "pass" : fetchResult.redirectCount === 1 ? "warn" : "fail";
+  const redirectPoints = fetchResult.redirectCount === 0 ? CHECKS.accessRedirects.max : fetchResult.redirectCount === 1 ? 4 : 0;
+  checks.push(
+    check(
+      CHECKS.accessRedirects,
+      redirectStatus,
+      redirectPoints,
+      buildTruthEvidence({
+        initialUrl: fetchResult.initialUrl,
+        finalUrl: fetchResult.finalUrl,
+        redirectCount: fetchResult.redirectCount,
+        canonicalUrl: canonical || undefined,
+        canonicalMatchesFinal,
+        redirectChain: fetchResult.redirectChain,
+      }),
+    ),
+  );
 
   if (!robotsTxtResult) {
     checks.push(check(CHECKS.accessRobotsTxt, "warn", 2, "Could not evaluate robots.txt for this URL origin."));
@@ -519,19 +533,29 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     ),
   );
 
-  const canonicalHostMismatch = Boolean(canonicalUrlObj && finalUrlObj && canonicalUrlObj.host !== finalUrlObj.host);
-  const canonicalPathMismatch = Boolean(canonicalUrlObj && finalUrlObj && canonicalUrlObj.pathname !== finalUrlObj.pathname);
-  const canonicalMismatch = canonicalHostMismatch || canonicalPathMismatch;
+  const canonicalMismatch = Boolean(canonicalUrlObj && finalUrlObj && !canonicalMatchesFinalPath(canonicalUrlObj, finalUrlObj));
   checks.push(
     check(
       CHECKS.metaCanonical,
       canonical ? (canonicalMismatch ? "warn" : "pass") : "fail",
       canonical ? (canonicalMismatch ? 3 : CHECKS.metaCanonical.max) : 0,
       canonical
-        ? canonicalMismatch
-          ? `Canonical URL found (${canonical}) but differs from final URL path/host (${fetchResult.finalUrl}).`
-          : `Canonical URL found: ${canonical}.`
-        : "Canonical link missing.",
+        ? buildTruthEvidence({
+            initialUrl: fetchResult.initialUrl,
+            finalUrl: fetchResult.finalUrl,
+            redirectCount: fetchResult.redirectCount,
+            canonicalUrl: canonical,
+            canonicalMatchesFinal,
+            redirectChain: fetchResult.redirectChain,
+          })
+        : buildTruthEvidence({
+            initialUrl: fetchResult.initialUrl,
+            finalUrl: fetchResult.finalUrl,
+            redirectCount: fetchResult.redirectCount,
+            canonicalUrl: undefined,
+            canonicalMatchesFinal: false,
+            redirectChain: fetchResult.redirectChain,
+          }),
       canonical ? `<link rel=\"canonical\" href=\"${canonical}\" />` : undefined,
     ),
   );
@@ -747,6 +771,11 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     topFixes,
     limitations,
     realityCheck: REALITY_CHECK_ITEMS,
+    truthSignals: {
+      redirectHops: fetchResult.redirectCount,
+      canonicalMatchesFinal,
+      metaDescriptionLength: descriptionLength,
+    },
     exports: {
       markdown: "",
       json: "",
@@ -1074,13 +1103,16 @@ async function assertSafeTarget(input: string): Promise<void> {
 async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_MS): Promise<FetchResult> {
   let current = new URL(input);
   let redirects = 0;
+  const redirectChain: string[] = [current.toString()];
 
   while (redirects <= MAX_REDIRECTS) {
     if (!/^https?:$/i.test(current.protocol)) {
       return {
         ok: false,
         status: 400,
+        initialUrl: input,
         finalUrl: current.toString(),
+        redirectChain,
         html: "",
         timedOut: false,
         blockedStatus: false,
@@ -1112,7 +1144,9 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
           return {
             ok: false,
             status: response.status,
+            initialUrl: input,
             finalUrl: current.toString(),
+            redirectChain,
             html: "",
             timedOut: false,
             blockedStatus: false,
@@ -1126,7 +1160,9 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
           return {
             ok: false,
             status: 508,
+            initialUrl: input,
             finalUrl: current.toString(),
+            redirectChain,
             html: "",
             timedOut: false,
             blockedStatus: false,
@@ -1136,6 +1172,7 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
         }
 
         current = new URL(location, current);
+        redirectChain.push(current.toString());
         continue;
       }
 
@@ -1143,7 +1180,9 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
       return {
         ok: response.ok,
         status: response.status,
+        initialUrl: input,
         finalUrl: current.toString(),
+        redirectChain,
         html,
         timedOut: false,
         blockedStatus: response.status === 403 || response.status === 429,
@@ -1155,7 +1194,9 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
       return {
         ok: false,
         status: timedOut ? 408 : 520,
+        initialUrl: input,
         finalUrl: current.toString(),
+        redirectChain,
         html: "",
         timedOut,
         blockedStatus: false,
@@ -1168,7 +1209,9 @@ async function fetchWithRedirectChecks(input: string, timeoutMs = FETCH_TIMEOUT_
   return {
     ok: false,
     status: 508,
+    initialUrl: input,
     finalUrl: input,
+    redirectChain,
     html: "",
     timedOut: false,
     blockedStatus: false,
@@ -1299,6 +1342,34 @@ function chooseExportDescription(metaDescription: string, readableBodyText: stri
   const fallback = "Concise summary of what you offer, where you operate, and who you serve.";
   const chosen = cleanedMeta || truncateWithEllipsis(cleanedBody, 160) || fallback;
   return truncateWithEllipsis(chosen, 200);
+}
+
+function normalizePathnameForMatch(pathname: string): string {
+  const normalized = pathname === "/" ? "/" : pathname.replace(/\/+$/, "");
+  return normalized || "/";
+}
+
+function canonicalMatchesFinalPath(canonicalUrl: URL, finalUrl: URL): boolean {
+  return canonicalUrl.host === finalUrl.host && normalizePathnameForMatch(canonicalUrl.pathname) === normalizePathnameForMatch(finalUrl.pathname);
+}
+
+function buildTruthEvidence(input: {
+  initialUrl: string;
+  finalUrl: string;
+  redirectCount: number;
+  canonicalUrl?: string;
+  canonicalMatchesFinal: boolean;
+  redirectChain: string[];
+}): string {
+  const parts = [
+    `initialUrl=${input.initialUrl}`,
+    `finalUrl=${input.finalUrl}`,
+    `redirectCount=${input.redirectCount}`,
+    `canonicalUrl=${input.canonicalUrl || "none"}`,
+    `canonicalMatchesFinal=${input.canonicalMatchesFinal ? "true" : "false"}`,
+    `redirectChain=${JSON.stringify(input.redirectChain.slice(0, MAX_REDIRECTS + 1))}`,
+  ];
+  return parts.join("; ");
 }
 
 function findCanonical(html: string): string {

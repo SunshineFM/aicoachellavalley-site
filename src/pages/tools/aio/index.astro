@@ -61,6 +61,15 @@ const checkupJsonLd = {
       </article>
 
       <article class="panel">
+        <h2>Truth signals</h2>
+        <ul id="truth-signals-list">
+          <li>Redirect hops: 0</li>
+          <li>Canonical matches final: Unknown</li>
+          <li>Meta description length: 0</li>
+        </ul>
+      </article>
+
+      <article class="panel">
         <h2>Top fixes</h2>
         <ol id="top-fixes"></ol>
       </article>
@@ -135,6 +144,7 @@ const checkupJsonLd = {
   const evidenceList = document.getElementById("evidence-list");
   const limitationsList = document.getElementById("limitations-list");
   const realityCheckList = document.getElementById("reality-check-list");
+  const truthSignalsList = document.getElementById("truth-signals-list");
 
   const exportArea = document.getElementById("export-area");
   const exportLabel = document.getElementById("active-export-label");
@@ -219,6 +229,11 @@ const checkupJsonLd = {
 
     limitationsList.innerHTML = (payload.limitations || []).map((item) => `<li>${esc(item)}</li>`).join("");
     realityCheckList.innerHTML = (payload.realityCheck || []).map((item) => `<li>${esc(item)}</li>`).join("");
+    truthSignalsList.innerHTML = `
+      <li>Redirect hops: ${esc(payload.truthSignals?.redirectHops ?? 0)}</li>
+      <li>Canonical matches final: ${payload.truthSignals?.canonicalMatchesFinal ? "Yes" : "No"}</li>
+      <li>Meta description length: ${esc(payload.truthSignals?.metaDescriptionLength ?? 0)}</li>
+    `;
 
     syncExportArea();
     shareOutput.hidden = true;
