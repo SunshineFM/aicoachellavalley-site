@@ -1,14 +1,14 @@
 {
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "aicoachellavalley.com"
         }
       ],
-      "destination": "https://www.aicoachellavalley.com/:path*",
+      "destination": "https://www.aicoachellavalley.com/$1",
       "permanent": true
     }
   ]
