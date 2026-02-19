@@ -22,6 +22,9 @@ type Props = {
 };
 
 const { brief, allBriefs } = Astro.props as Props;
+if (!brief) {
+  return Astro.redirect("/briefs");
+}
 const { Content } = await render(brief);
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
