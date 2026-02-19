@@ -262,6 +262,7 @@ async function createGithubIssue(input: {
     headers: {
       authorization: `Bearer ${input.token}`,
       accept: "application/vnd.github+json",
+      "x-github-api-version": "2022-11-28",
       "content-type": "application/json",
       "user-agent": "AICV-Submit-Brief/1.0",
     },
