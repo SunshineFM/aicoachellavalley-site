@@ -1,0 +1,183 @@
+name: Publish Brief From Submission
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  publish-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve issue context and guardrails
+        id: gate
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const isIssuesEvent = context.eventName === "issues";
+            const isCommentEvent = context.eventName === "issue_comment";
+
+            if (isIssuesEvent && context.payload.action !== "labeled") {
+              core.setOutput("should_run", "false");
+              return;
+            }
+            if (isIssuesEvent && context.payload.label?.name !== "approved") {
+              core.setOutput("should_run", "false");
+              return;
+            }
+
+            if (isCommentEvent) {
+              const body = context.payload.comment?.body || "";
+              if (!body.includes("/publish")) {
+                core.setOutput("should_run", "false");
+                return;
+              }
+            }
+
+            const issueNumber = isIssuesEvent ? context.payload.issue.number : context.payload.issue.number;
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+
+            const labels = issue.labels.map((label) => typeof label === "string" ? label : label.name);
+            if (!labels.includes("brief-submission")) {
+              core.setOutput("should_run", "false");
+              return;
+            }
+            if (labels.includes("published")) {
+              core.setOutput("should_run", "false");
+              return;
+            }
+
+            core.setOutput("should_run", "true");
+            core.setOutput("issue_number", String(issue.number));
+            core.setOutput("issue_title", issue.title || "");
+            core.setOutput("issue_url", issue.html_url || "");
+            core.setOutput("issue_body_b64", Buffer.from(issue.body || "", "utf8").toString("base64"));
+
+      - name: Stop when guardrails do not match
+        if: steps.gate.outputs.should_run != 'true'
+        run: echo "Guardrails skipped this event."
+
+      - name: Checkout repository
+        if: steps.gate.outputs.should_run == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        if: steps.gate.outputs.should_run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate brief markdown from issue
+        if: steps.gate.outputs.should_run == 'true'
+        id: generate
+        env:
+          ISSUE_NUMBER: ${{ steps.gate.outputs.issue_number }}
+          ISSUE_BODY_B64: ${{ steps.gate.outputs.issue_body_b64 }}
+        run: node scripts/publishBriefFromIssue.mjs
+
+      - name: Comment when required fields are missing
+        if: steps.gate.outputs.should_run == 'true' && steps.generate.outputs.publish_ready != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number("${{ steps.gate.outputs.issue_number }}"),
+              body: "${{ steps.generate.outputs.missing_message }}"
+            });
+
+      - name: Stop when issue payload is not publishable
+        if: steps.gate.outputs.should_run == 'true' && steps.generate.outputs.publish_ready != 'true'
+        run: exit 0
+
+      - name: Commit and push publish branch
+        if: steps.gate.outputs.should_run == 'true' && steps.generate.outputs.publish_ready == 'true'
+        id: push
+        env:
+          ISSUE_NUMBER: ${{ steps.gate.outputs.issue_number }}
+          SLUG: ${{ steps.generate.outputs.slug }}
+          FILE_PATH: ${{ steps.generate.outputs.file_path }}
+          BRIEF_TITLE: ${{ steps.generate.outputs.brief_title }}
+        run: |
+          set -euo pipefail
+          BRANCH="publish/brief-${ISSUE_NUMBER}-${SLUG}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add "$FILE_PATH"
+          git commit -m "Publish brief: ${BRIEF_TITLE}"
+          git push --force-with-lease origin "$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR and mark issue as published
+        if: steps.gate.outputs.should_run == 'true' && steps.generate.outputs.publish_ready == 'true'
+        uses: actions/github-script@v7
+        env:
+          BRANCH_NAME: ${{ steps.push.outputs.branch }}
+          BRIEF_TITLE: ${{ steps.generate.outputs.brief_title }}
+          SOURCE_URL: ${{ steps.generate.outputs.source_url }}
+          ISSUE_NUMBER: ${{ steps.gate.outputs.issue_number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = process.env.BRANCH_NAME;
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
+            const prTitle = `Publish brief: ${process.env.BRIEF_TITLE}`;
+            const prBody = [
+              `Publishes an approved brief from #${issueNumber}.`,
+              "",
+              `Source URL: ${process.env.SOURCE_URL}`
+            ].join("\n");
+
+            const existing = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              head: `${owner}:${branch}`,
+            });
+
+            let pull;
+            if (existing.data.length > 0) {
+              pull = existing.data[0];
+            } else {
+              const created = await github.rest.pulls.create({
+                owner,
+                repo,
+                title: prTitle,
+                head: branch,
+                base: "main",
+                body: prBody,
+              });
+              pull = created.data;
+            }
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              labels: ["published"],
+            });
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `Published candidate is ready: ${pull.html_url}`,
+            });
