@@ -1,13 +1,14 @@
 ---
 export const prerender = true;
-import type { CollectionEntry } from "astro:content";
-...
+
 import type { CollectionEntry } from "astro:content";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { normalizeMeta, resolveSummary } from "../../utils/briefs";
 
 export async function getStaticPaths() {
+  console.log("BUILDING BRIEF PAGES");
+
   const briefs = await getCollection("signals");
 
   return briefs.map((brief) => ({
@@ -22,9 +23,11 @@ type Props = {
 };
 
 const { brief, allBriefs } = Astro.props as Props;
+
 if (!brief) {
   return Astro.redirect("/briefs");
 }
+
 const { Content } = await render(brief);
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -37,6 +40,7 @@ const cityLabel = brief.data.city?.trim() || "Unclassified";
 const sectorLabel = brief.data.sector?.trim() || "Unclassified";
 const citySlug = normalizeMeta(brief.data.city);
 const sectorSlug = normalizeMeta(brief.data.sector);
+
 const updatedAtRaw = (brief.data as { updatedAt?: string | Date }).updatedAt;
 const dateModified =
   updatedAtRaw instanceof Date
@@ -86,6 +90,7 @@ const relatedBriefs = allBriefs
 
 <BaseLayout title={`${brief.data.title} | Briefs`}>
   <script type="application/ld+json" set:html={JSON.stringify(briefJsonLd)}></script>
+
   <article class="brief-article">
     <h1>{brief.data.title}</h1>
 
