@@ -351,6 +351,7 @@ const checkupJsonLd = {
   .aio-tool {
     display: grid;
     gap: 1rem;
+    width: 100%;
     max-width: 100%;
     min-width: 0;
     overflow-x: hidden;
@@ -422,6 +423,7 @@ const checkupJsonLd = {
   }
 
   .score-wrap {
+    width: 100%;
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
@@ -589,10 +591,13 @@ const checkupJsonLd = {
 
   .export-tabs {
     display: inline-flex;
+    flex-wrap: wrap;
     gap: 0.2rem;
     background: #f1f5fb;
     padding: 0.2rem;
     border-radius: 8px;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .tab-btn {
@@ -632,6 +637,13 @@ const checkupJsonLd = {
     display: flex;
     gap: 0.6rem;
     align-items: center;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .share-row > * {
+    min-width: 0;
   }
 
   #share-output {
