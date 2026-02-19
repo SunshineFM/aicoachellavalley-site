@@ -1,27 +1,33 @@
 ---
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const CANONICAL_ORIGIN = "https://www.aicoachellavalley.com";
+const DEFAULT_DESCRIPTION =
+  "AI Coachella Valley tracks practical AI adoption across cities and sectors with dated briefs, tools, and workshops for local operators.";
+
+const { title, description = DEFAULT_DESCRIPTION } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, CANONICAL_ORIGIN).toString();
 
 const siteJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://aicoachellavalley.com/#organization",
+      "@id": `${CANONICAL_ORIGIN}/#organization`,
       name: "AI Coachella Valley (AICV)",
-      url: "https://aicoachellavalley.com/",
+      url: `${CANONICAL_ORIGIN}/`,
     },
     {
       "@type": "WebSite",
-      "@id": "https://aicoachellavalley.com/#website",
+      "@id": `${CANONICAL_ORIGIN}/#website`,
       name: "AI Coachella Valley (AICV)",
-      url: "https://aicoachellavalley.com/",
+      url: `${CANONICAL_ORIGIN}/`,
       inLanguage: "en-US",
       publisher: {
-        "@id": "https://aicoachellavalley.com/#organization",
+        "@id": `${CANONICAL_ORIGIN}/#organization`,
       },
     },
   ],
@@ -37,6 +43,8 @@ const siteJsonLd = {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(siteJsonLd)}></script>
   </head>
   <body>
