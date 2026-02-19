@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const issueUrl = Astro.url.searchParams.get("issue") || "";
+const storage = Astro.url.searchParams.get("storage") || "";
+const issuesBase = "https://github.com/SunshineFM/aicoachellavalley-site/issues";
+---
+
+<BaseLayout title="Brief Submitted | AI Coachella Valley">
+  <section class="card">
+    <h1>Thanks — queued for review.</h1>
+    <p>Your brief submission is now in the review pipeline.</p>
+    <ul>
+      <li>
+        Review queue:
+        <a href={issuesBase} target="_blank" rel="noreferrer">{issuesBase}</a>
+      </li>
+      {issueUrl ? (
+        <li>
+          Created issue:
+          <a href={issueUrl} target="_blank" rel="noreferrer">{issueUrl}</a>
+        </li>
+      ) : null}
+      {storage === "memory" ? (
+        <li>Current storage mode: memory fallback (set GitHub env vars in Vercel to create issues).</li>
+      ) : null}
+    </ul>
+    <p>
+      Need field/format guidance?
+      <a href="/briefs/conventions">Open briefs conventions</a>.
+    </p>
+    <p>
+      <a href="/submit">Submit another brief</a>
+      <span aria-hidden="true"> | </span>
+      <a href="/briefs">Back to briefs</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .card {
+    background: #fff;
+    border: 1px solid #d8dbe1;
+    padding: 1rem;
+    max-width: 52rem;
+  }
+</style>

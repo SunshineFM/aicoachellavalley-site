@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Briefs Conventions | AI Coachella Valley">
+  <section class="card">
+    <h1>Briefs Conventions</h1>
+    <p>Use this format when drafting or reviewing signals for publication.</p>
+
+    <h2>Required fields</h2>
+    <ul>
+      <li><code>title</code> (clear, specific, factual)</li>
+      <li><code>date</code> (YYYY-MM-DD)</li>
+      <li><code>summary</code> (one concise sentence)</li>
+      <li><code>sources</code> (at least one URL)</li>
+      <li><code>signal_type</code> (e.g. <code>adoption</code>)</li>
+      <li><code>confidence</code> (low, medium, high)</li>
+    </ul>
+
+    <h2>Recommended fields</h2>
+    <ul>
+      <li><code>city</code></li>
+      <li><code>sector</code></li>
+      <li><code>time</code></li>
+      <li><code>tags</code></li>
+    </ul>
+
+    <h2>Example</h2>
+    <pre><code>{`---
+title: "Regional operator launches AI pilot"
+date: 2026-02-19
+city: "Palm Desert"
+sector: "Retail"
+signal_type: adoption
+confidence: medium
+sources:
+  - https://example.com/source
+summary: "A verified pilot launch indicates practical AI adoption in local operations."
+---
+
+The organization launched a bounded pilot with measurable operational scope.
+
+Source: https://example.com/source
+`}</code></pre>
+  </section>
+</BaseLayout>
+
+<style>
+  .card {
+    background: #fff;
+    border: 1px solid #d8dbe1;
+    padding: 1rem;
+    max-width: 56rem;
+  }
+
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #d8dbe1;
+    border-radius: 8px;
+    padding: 0.8rem;
+    overflow-x: auto;
+  }
+</style>

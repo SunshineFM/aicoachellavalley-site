@@ -105,6 +105,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
       form.hidden = true;
       statusEl.textContent = "Thanks — queued for review.";
+      const params = new URLSearchParams();
+      if (data.storage) params.set("storage", data.storage);
+      if (data.issueUrl) params.set("issue", data.issueUrl);
+      window.location.href = `/briefs/submit${params.toString() ? `?${params.toString()}` : ""}`;
     } catch {
       statusEl.textContent = "Could not submit this brief right now.";
     } finally {

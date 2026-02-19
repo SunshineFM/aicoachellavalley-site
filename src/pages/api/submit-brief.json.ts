@@ -44,6 +44,7 @@ const BURST_TOKENS = 2;
 const BURST_WINDOW_MS = 60_000;
 const DAILY_LIMIT = 10;
 const MAX_LINKS_IN_SUMMARY = 3;
+const MAX_REQUEST_BODY_BYTES = 12 * 1024;
 
 const rateState = new Map<string, RateState>();
 const memoryQueue: SubmissionRecord[] = [];
@@ -51,8 +52,17 @@ const memoryQueue: SubmissionRecord[] = [];
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const now = Date.now();
   const ip = clientAddress || getForwardedIp(request) || "unknown";
+  const ipHash = createHash("sha256").update(ip).digest("hex").slice(0, 16);
+
+  const contentLengthHeader = Number(request.headers.get("content-length") || "0");
+  if (Number.isFinite(contentLengthHeader) && contentLengthHeader > MAX_REQUEST_BODY_BYTES) {
+    devLog("reject_body_too_large", { ipHash, contentLengthHeader });
+    return json({ message: "Request body too large." }, 413);
+  }
+
   const rate = consumeRateLimit(ip, now);
   if (!rate.allowed) {
+    devLog("reject_rate_limit", { ipHash, retryAfterSeconds: rate.retryAfterSeconds });
     return json(
       {
         message: "Too many submissions from this IP. Please try again shortly.",
@@ -66,9 +76,21 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     );
   }
 
+  let rawBody = "";
+  try {
+    rawBody = await request.text();
+  } catch {
+    return json({ message: "Invalid request body." }, 400);
+  }
+
+  if (Buffer.byteLength(rawBody, "utf8") > MAX_REQUEST_BODY_BYTES) {
+    devLog("reject_body_too_large", { ipHash, bodyBytes: Buffer.byteLength(rawBody, "utf8") });
+    return json({ message: "Request body too large." }, 413);
+  }
+
   let body: SubmissionInput;
   try {
-    body = (await request.json()) as SubmissionInput;
+    body = JSON.parse(rawBody) as SubmissionInput;
   } catch {
     return json({ message: "Invalid JSON body." }, 400);
   }
@@ -85,6 +107,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const company = asTrimmed(body.company);
 
   if (company) {
+    devLog("reject_honeypot", { ipHash });
     return json({ message: "Submission rejected." }, 400);
   }
 
@@ -97,6 +120,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   if (countLinks(summary) > MAX_LINKS_IN_SUMMARY) {
+    devLog("reject_summary_links", { ipHash, links: countLinks(summary) });
     return json({ message: "Summary contains too many links. Please keep it to 3 or fewer." }, 400);
   }
 
@@ -113,6 +137,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     sourceUrl = normalizeHttpUrl(sourceUrlInput);
     await assertSafeTarget(sourceUrl);
   } catch (error) {
+    devLog("reject_source_url", { ipHash, reason: error instanceof Error ? error.message : "unknown" });
     return json({ message: error instanceof Error ? error.message : "Source URL validation failed." }, 400);
   }
 
@@ -127,7 +152,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     submitterEmail,
     notes,
     submittedAt: new Date(now).toISOString(),
-    ipHash: createHash("sha256").update(ip).digest("hex").slice(0, 16),
+    ipHash,
     userAgent: request.headers.get("user-agent") || "unknown",
   };
 
@@ -137,6 +162,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!githubToken) {
     memoryQueue.push(submission);
+    devLog("queued_memory_missing_token", { ipHash, titleLen: title.length });
     return json(
       {
         ok: true,
@@ -167,6 +193,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     );
   } catch (error) {
     memoryQueue.push(submission);
+    devLog("queued_memory_github_error", { ipHash, error: error instanceof Error ? error.message : "unknown" });
     return json(
       {
         ok: true,
@@ -186,6 +213,16 @@ async function createGithubIssue(input: {
   submission: SubmissionRecord;
 }): Promise<{ html_url: string }> {
   const issueTitle = `Brief Submission: ${input.submission.title}`;
+  const templateDate = input.submission.date || "YYYY-MM-DD";
+  const escapedNotes = input.submission.notes.replace(/\n+/g, " ").trim();
+  const draftBodyLines = [
+    input.submission.summary.trim(),
+    "",
+    `Source: ${input.submission.sourceUrl}`,
+    escapedNotes ? "" : undefined,
+    escapedNotes ? `Submitted notes: ${escapedNotes}` : undefined,
+  ].filter(Boolean) as string[];
+
   const issueBody = [
     "<!-- brief-submission-v1 -->",
     "Title: " + input.submission.title,
@@ -201,6 +238,23 @@ async function createGithubIssue(input: {
     "Timestamp: " + input.submission.submittedAt,
     "IP Hash: " + input.submission.ipHash,
     "User Agent: " + input.submission.userAgent,
+    "",
+    "Ready-to-paste signal draft:",
+    "```md",
+    "---",
+    `title: ${yamlQuote(input.submission.title)}`,
+    `date: ${templateDate}`,
+    input.submission.city ? `city: ${yamlQuote(input.submission.city)}` : undefined,
+    input.submission.sector ? `sector: ${yamlQuote(input.submission.sector)}` : undefined,
+    "signal_type: adoption",
+    "confidence: medium",
+    "sources:",
+    `  - ${input.submission.sourceUrl}`,
+    `summary: ${yamlQuote(truncate(input.submission.summary, 260))}`,
+    "---",
+    "",
+    ...draftBodyLines,
+    "```",
   ].join("\n");
 
   const response = await fetch(`https://api.github.com/repos/${input.owner}/${input.repo}/issues`, {
@@ -254,6 +308,12 @@ function normalizeHttpUrl(input: string): string {
 
   if (!/^https?:$/i.test(parsed.protocol)) {
     throw new Error("Source URL must start with http or https.");
+  }
+  if (parsed.username || parsed.password) {
+    throw new Error("Source URL must not include credentials.");
+  }
+  if (!parsed.hostname) {
+    throw new Error("Source URL hostname is required.");
   }
   return parsed.toString();
 }
@@ -379,4 +439,21 @@ function json(payload: unknown, status = 200, headers: HeadersInit = {}): Respon
       ...headers,
     },
   });
+}
+
+function yamlQuote(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
+function truncate(value: string, max: number): string {
+  if (value.length <= max) return value;
+  if (max <= 1) return "…";
+  return `${value.slice(0, max - 1).trimEnd()}…`;
+}
+
+function devLog(event: string, details: Record<string, unknown>) {
+  if (!import.meta.env.DEV) {
+    return;
+  }
+  console.info("[submit-brief]", event, details);
 }
