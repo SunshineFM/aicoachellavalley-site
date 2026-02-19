@@ -1,70 +1,117 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
-
-const rawCity = Astro.url.searchParams.get("city") ?? "";
-const rawSector = Astro.url.searchParams.get("sector") ?? "";
-const normalizedCity = normalizeMeta(rawCity);
-const matchedCity = CITY_ENTRIES.find((city) => city.slug === normalizedCity);
-const cityPrefill = matchedCity?.slug ?? "";
-const sectorPrefill = rawSector.trim();
 ---
 
 <BaseLayout title="Submit a Brief | AI Coachella Valley">
   <h1>Submit a Brief</h1>
   <p>A brief is a short, verifiable update about AI adoption, operations, or outcomes in the region.</p>
 
-  <form class="submit-form" method="post" action="#">
-    <label>
-      Name (optional)
-      <input type="text" name="name" autocomplete="name" />
-    </label>
-
-    <label>
-      Email (optional)
-      <input type="email" name="email" autocomplete="email" />
-    </label>
-
-    <label>
-      City
-      <select name="city">
-        <option value="">Select city</option>
-        {CITY_ENTRIES.map((city) => (
-          <option value={city.slug} selected={city.slug === cityPrefill}>{city.name}</option>
-        ))}
-      </select>
-    </label>
-
-    <label>
-      Sector
-      <input type="text" name="sector" value={sectorPrefill} />
+  <form id="submit-brief-form" class="submit-form" novalidate>
+    <label class="honeypot" aria-hidden="true">
+      Company
+      <input type="text" name="company" autocomplete="off" tabindex="-1" />
     </label>
 
     <label>
       Title
-      <input type="text" name="title" />
+      <input type="text" name="title" required minlength="10" maxlength="140" />
     </label>
 
     <label>
-      Summary
-      <textarea name="summary" rows={4}></textarea>
+      Summary (1-3 sentences)
+      <textarea name="summary" rows={4} required minlength="30" maxlength="600"></textarea>
     </label>
 
     <label>
-      Sources
-      <textarea name="sources" rows={4} placeholder="One URL per line"></textarea>
+      Source URL
+      <input type="url" name="sourceUrl" required placeholder="https://example.com/source" />
     </label>
 
     <label>
-      Notes
-      <textarea name="notes" rows={4}></textarea>
+      City (optional)
+      <input type="text" name="city" />
     </label>
 
-    <button type="submit">Submit Brief</button>
+    <label>
+      Sector (optional)
+      <input type="text" name="sector" />
+    </label>
+
+    <label>
+      Date (optional)
+      <input type="date" name="date" />
+    </label>
+
+    <label>
+      Submitter Name (optional)
+      <input type="text" name="submitterName" autocomplete="name" />
+    </label>
+
+    <label>
+      Submitter Email (optional)
+      <input type="email" name="submitterEmail" autocomplete="email" />
+    </label>
+
+    <label>
+      Notes (optional)
+      <textarea name="notes" rows={4} maxlength="1200"></textarea>
+    </label>
+
+    <button type="submit" id="submit-btn">Submit Brief</button>
   </form>
 
+  <p id="submit-status" class="note" role="status" aria-live="polite"></p>
   <p class="note">Where this goes: submissions are reviewed before publishing.</p>
 </BaseLayout>
+
+<script>
+  const form = document.getElementById("submit-brief-form");
+  const submitBtn = document.getElementById("submit-btn");
+  const statusEl = document.getElementById("submit-status");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement) || !(submitBtn instanceof HTMLButtonElement) || !statusEl) return;
+
+    const fd = new FormData(form);
+    const payload = {
+      title: String(fd.get("title") || "").trim(),
+      summary: String(fd.get("summary") || "").trim(),
+      sourceUrl: String(fd.get("sourceUrl") || "").trim(),
+      city: String(fd.get("city") || "").trim(),
+      sector: String(fd.get("sector") || "").trim(),
+      date: String(fd.get("date") || "").trim(),
+      submitterName: String(fd.get("submitterName") || "").trim(),
+      submitterEmail: String(fd.get("submitterEmail") || "").trim(),
+      notes: String(fd.get("notes") || "").trim(),
+      company: String(fd.get("company") || "").trim(),
+    };
+
+    submitBtn.disabled = true;
+    statusEl.textContent = "Submitting...";
+
+    try {
+      const response = await fetch("/api/submit-brief.json", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        statusEl.textContent = data.message || "Could not submit this brief.";
+        return;
+      }
+
+      form.hidden = true;
+      statusEl.textContent = "Thanks — queued for review.";
+    } catch {
+      statusEl.textContent = "Could not submit this brief right now.";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
 
 <style>
   .submit-form {
@@ -81,8 +128,15 @@ const sectorPrefill = rawSector.trim();
     color: #4b5360;
   }
 
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
   .submit-form input,
-  .submit-form select,
   .submit-form textarea {
     border: 1px solid #c8ced8;
     border-radius: 0.35rem;
