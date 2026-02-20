@@ -7,7 +7,8 @@ interface Props {
   fullBleed?: boolean;
 }
 
-const CANONICAL_ORIGIN = "https://www.aicoachellavalley.com";
+const PRE_CUTOVER_ORIGIN = "https://aicoachellavalley-site.vercel.app";
+const CANONICAL_ORIGIN = import.meta.env.PUBLIC_CANONICAL_ORIGIN || PRE_CUTOVER_ORIGIN;
 const DEFAULT_DESCRIPTION =
   "AI Coachella Valley tracks practical AI adoption across cities and sectors with dated briefs, tools, and workshops for local operators.";
 
