@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Indigo topographic pattern">
-  <rect width="800" height="800" fill="#0b1026" />
-  <g fill="none" stroke="#1b2554" stroke-width="1.2" opacity="0.72">
+  <rect width="800" height="800" fill="#0e1b4d" />
+  <g fill="none" stroke="#a9bbff" stroke-width="1.6" opacity="0.24">
     <path d="M-40 90C60 20 180 25 290 78s215 70 320 35 196-30 280 18" />
     <path d="M-60 150C45 80 175 85 296 136s232 70 340 33 201-30 288 24" />
     <path d="M-30 210c102-66 226-61 350-8s236 67 343 29 194-27 273 26" />
