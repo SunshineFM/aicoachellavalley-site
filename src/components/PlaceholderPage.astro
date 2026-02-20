@@ -9,11 +9,31 @@ const { title } = Astro.props;
 ---
 
 <BaseLayout title={title}>
-  <h1>{title}</h1>
-  <p>Phase II rebuild in progress. This page is being updated.</p>
-  <p>
-    <a href="/">Home</a>
-    <span aria-hidden="true"> | </span>
-    <a href="/briefs">Briefs</a>
-  </p>
+  <section class="empty-state">
+    <h1>{title}</h1>
+    <p>Phase II rebuild in progress. This page is being updated.</p>
+    <p class="actions">
+      <a href="/">Home</a>
+      <span aria-hidden="true"> | </span>
+      <a href="/briefs">Briefs</a>
+      <span aria-hidden="true"> | </span>
+      <a href="/marketplace">Marketplace</a>
+    </p>
+  </section>
 </BaseLayout>
+
+<style>
+  .empty-state {
+    border: 1px solid #d8dbe1;
+    background: #fff;
+    padding: 1rem;
+  }
+
+  .empty-state h1 {
+    margin-top: 0;
+  }
+
+  .actions {
+    margin-bottom: 0;
+  }
+</style>
