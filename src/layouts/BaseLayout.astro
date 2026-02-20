@@ -7,8 +7,14 @@ interface Props {
   fullBleed?: boolean;
 }
 
-const PRE_CUTOVER_ORIGIN = "https://aicoachellavalley-site.vercel.app";
-const CANONICAL_ORIGIN = import.meta.env.PUBLIC_CANONICAL_ORIGIN || PRE_CUTOVER_ORIGIN;
+const FALLBACK_CANONICAL_ORIGIN = "https://aicoachellavalley-site.vercel.app";
+const vercelHost = import.meta.env.VERCEL_URL;
+const vercelOrigin = vercelHost
+  ? vercelHost.startsWith("http://") || vercelHost.startsWith("https://")
+    ? vercelHost
+    : `https://${vercelHost}`
+  : undefined;
+const CANONICAL_ORIGIN = import.meta.env.PUBLIC_CANONICAL_ORIGIN || vercelOrigin || FALLBACK_CANONICAL_ORIGIN;
 const DEFAULT_DESCRIPTION =
   "AI Coachella Valley tracks practical AI adoption across cities and sectors with dated briefs, tools, and workshops for local operators.";
 
