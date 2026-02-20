@@ -7,6 +7,7 @@ import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
 
 const briefs = await getCollection("signals");
 const briefCountByCity = new Map<string, number>();
+const liveCitySlugs = new Set(CITY_ENTRIES.map((city) => city.slug));
 
 briefs.forEach((brief) => {
   const citySlug = normalizeMeta(brief.data.city);
@@ -34,12 +35,14 @@ const cityListJsonLd = {
     <div class="city-grid">
     {CITY_ENTRIES.map((city) => {
       const count = briefCountByCity.get(city.slug) ?? 0;
+      const isLive = liveCitySlugs.has(city.slug);
       return (
         <ActionCard
           title={city.name}
           description={`${count} brief${count === 1 ? "" : "s"} currently available`}
-          href={`/cities/${city.slug}`}
-          buttonLabel={`Open ${city.name}`}
+          href={isLive ? `/cities/${city.slug}` : undefined}
+          buttonLabel={isLive ? `Open ${city.name}` : "Coming soon"}
+          disabled={!isLive}
         />
       );
     })}
