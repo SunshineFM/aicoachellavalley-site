@@ -33,6 +33,7 @@ const checkupJsonLd = {
       </form>
       <p id="status-text" class="status" aria-live="polite"></p>
       <p id="loading-text" class="loading" hidden>Analyzing... (10-20 seconds)</p>
+      <p id="environment-note" class="status env-note" hidden></p>
     </header>
 
     <section id="results" class="results" hidden>
@@ -133,6 +134,7 @@ const checkupJsonLd = {
   const statusText = document.getElementById("status-text");
   const loadingText = document.getElementById("loading-text");
   const results = document.getElementById("results");
+  const environmentNote = document.getElementById("environment-note");
 
   const scoreValue = document.getElementById("score-value");
   const gradePill = document.getElementById("grade-pill");
@@ -193,6 +195,15 @@ const checkupJsonLd = {
   function render(payload) {
     lastPayload = payload;
     results.hidden = false;
+    if (environmentNote) {
+      if (payload.environmentNote) {
+        environmentNote.textContent = payload.environmentNote;
+        environmentNote.hidden = false;
+      } else {
+        environmentNote.textContent = "";
+        environmentNote.hidden = true;
+      }
+    }
 
     scoreValue.textContent = String(payload.score || 0);
     gradePill.textContent = payload.grade || "Needs work";
@@ -271,6 +282,10 @@ const checkupJsonLd = {
     loadingText.hidden = false;
     statusText.textContent = "";
     results.hidden = true;
+    if (environmentNote) {
+      environmentNote.textContent = "";
+      environmentNote.hidden = true;
+    }
 
     try {
       const response = await fetch("/api/ai-visibility-checkup.json", {
@@ -412,6 +427,16 @@ const checkupJsonLd = {
     margin: 0;
     color: #4d5a71;
     font-size: 0.92rem;
+  }
+
+  .env-note {
+    margin-top: 0.45rem;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #f1d8a8;
+    background: #fff8ea;
+    border-radius: 8px;
+    color: #634b22;
+    max-width: 100%;
   }
 
   .results {

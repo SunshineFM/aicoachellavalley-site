@@ -48,12 +48,14 @@ const briefListJsonLd = {
     <p>Fast, date-stamped briefings on regional AI movement, plus deeper analysis tracks as they publish.</p>
   </section>
 
-  <section class="band" aria-label="Brief depth">
-    <div class="band__inner tabs">
-      <button type="button" class="tab-button active" data-tab="quick" aria-selected="true">Quick</button>
-      <button type="button" class="tab-button" data-tab="deep" aria-selected="false">Deep</button>
+  <div class="band">
+    <div class="band__inner">
+      <section class="tabs" aria-label="Brief depth">
+        <button type="button" class="tab-button active" data-tab="quick" aria-selected="true">Quick</button>
+        <button type="button" class="tab-button" data-tab="deep" aria-selected="false">Deep</button>
+      </section>
     </div>
-  </section>
+  </div>
 
   <section id="quick-panel" data-panel="quick">
     <div class="controls">
@@ -175,6 +177,14 @@ const briefListJsonLd = {
 
 <style>
   section + section {
+    margin-top: var(--s-6);
+  }
+
+  .band {
+    margin-top: var(--s-6);
+  }
+
+  .band + section {
     margin-top: var(--s-6);
   }
 
