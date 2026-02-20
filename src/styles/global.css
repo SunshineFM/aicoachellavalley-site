@@ -1,86 +1,152 @@
 :root {
-  --aicv-indigo: #0e1b4d;
-  --aicv-volt: #c7ff2e;
-  --aicv-page-bg: #0e1b4d;
-  --aicv-surface: rgba(255, 255, 255, 0.92);
-  --aicv-border: rgba(255, 255, 255, 0.2);
-  --aicv-button-text: #ffffff;
+  --c-bg: #f2f5fb;
+  --c-surface: #ffffff;
+  --c-text: #121826;
+  --c-muted: #56607a;
+  --c-border: #d6deeb;
+  --c-indigo: #1c2f72;
+  --c-volt: #c7ff2e;
+
+  --r-sm: 0.5rem;
+  --r-md: 0.75rem;
+  --r-lg: 1rem;
+
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+
+  --shadow-1: 0 10px 24px rgba(14, 24, 54, 0.08);
+  --font-ui: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
-  background-color: var(--aicv-indigo);
+  background-color: var(--c-bg);
   background-image:
-    radial-gradient(1100px 560px at 18% 12%, rgba(255, 255, 255, 0.14), transparent 58%),
-    radial-gradient(900px 520px at 80% 28%, rgba(199, 255, 46, 0.1), transparent 62%),
-    url("/topo-indigo.svg");
-  background-size: cover, cover, cover;
-  background-position: center, center, center;
-  background-attachment: fixed;
-  background-blend-mode: screen, screen, overlay;
+    radial-gradient(1100px 560px at 18% 12%, rgba(28, 47, 114, 0.08), transparent 58%),
+    radial-gradient(900px 520px at 80% 28%, rgba(199, 255, 46, 0.08), transparent 62%);
+  background-size: cover, cover;
+  background-position: center, center;
+  color: var(--c-text);
+  font-family: var(--font-ui);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--s-3);
+  color: var(--c-text);
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  font-size: clamp(1.95rem, 3.8vw, 2.6rem);
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+h2 {
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  line-height: 1.2;
+  font-weight: 680;
+}
+
+h3 {
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  line-height: 1.3;
+  font-weight: 650;
+}
+
+p {
+  margin: 0 0 var(--s-4);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--c-indigo);
 }
 
 a:hover {
-  color: var(--aicv-volt);
+  color: var(--c-indigo);
 }
 
 :focus-visible {
-  outline: 2px solid var(--aicv-volt);
+  outline: 3px solid color-mix(in srgb, var(--c-volt) 70%, #7b9900 30%);
   outline-offset: 2px;
 }
 
-header,
-header nav {
-  background: var(--aicv-indigo);
+.text-muted {
+  color: var(--c-muted);
 }
 
-header .brand,
-header nav a,
-header .utility-link,
-header .nav-dropdown summary {
-  color: #fff;
+.surface-card {
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
 }
 
-header .brand:hover,
-header .brand:focus-visible,
-header nav a:hover,
-header nav a:focus-visible,
-header .utility-link:hover,
-header .utility-link:focus-visible,
-header .nav-dropdown summary:hover,
-header .nav-dropdown summary:focus-visible {
-  color: var(--aicv-volt);
-}
-
-main,
-article,
-section,
-.card {
-  background: var(--aicv-surface);
-  border: 1px solid var(--aicv-border);
-  border-radius: 0.5rem;
-}
-
-button,
-input[type="submit"],
-input[type="button"],
-a.button,
-.button,
-a[role="button"] {
-  background: var(--aicv-indigo);
-  color: var(--aicv-button-text);
-  border: 1px solid var(--aicv-border);
-  border-radius: 0.5rem;
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  padding: 0.6rem 0.95rem;
+  font-weight: 620;
   text-decoration: none;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  line-height: 1.2;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-button:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover,
-a.button:hover,
-.button:hover,
-a[role="button"]:hover {
-  background: var(--aicv-volt);
-  border-color: var(--aicv-volt);
-  color: #111111;
+.btn-primary {
+  background: var(--c-indigo);
+  color: #ffffff;
+  border-color: var(--c-indigo);
+}
+
+.btn-primary:hover {
+  background: #243d90;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: var(--c-surface);
+  color: var(--c-indigo);
+  border-color: var(--c-indigo);
+}
+
+.btn-secondary:hover {
+  background: color-mix(in srgb, var(--c-volt) 22%, var(--c-surface) 78%);
+  color: #15265e;
+}
+
+.band {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  background: color-mix(in srgb, var(--c-surface) 90%, #ecf2ff 10%);
+}
+
+.band__inner {
+  width: min(calc(100% - 2rem), 980px);
+  margin-inline: auto;
+  padding: var(--s-4) 0;
+}
+
+@media (min-width: 48rem) {
+  .band__inner {
+    width: min(calc(100% - 3rem), 1040px);
+  }
 }

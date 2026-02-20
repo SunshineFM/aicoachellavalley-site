@@ -50,6 +50,12 @@ const siteJsonLd = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
@@ -118,9 +124,9 @@ const siteJsonLd = {
 
   :global(body) {
     margin: 0;
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    background: var(--aicv-page-bg, #f7f8fa);
-    color: #1a1a1a;
+    font-family: var(--font-ui, "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif);
+    background: var(--c-bg, #f2f5fb);
+    color: var(--c-text, #121826);
     line-height: 1.55;
   }
 
@@ -131,8 +137,8 @@ const siteJsonLd = {
   }
 
   header {
-    background: var(--aicv-indigo, #0b1026);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--c-indigo, #1c2f72);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-indigo, #1c2f72) 78%, #ffffff 22%);
   }
 
   .header-inner {
@@ -176,6 +182,7 @@ const siteJsonLd = {
 
   .utility-link:hover,
   .utility-link:focus-visible {
+    color: var(--c-volt, #c7ff2e);
     text-decoration: underline;
   }
 
@@ -186,6 +193,7 @@ const siteJsonLd = {
 
   nav a:hover,
   nav a:focus-visible {
+    color: var(--c-volt, #c7ff2e);
     text-decoration: underline;
   }
 
@@ -205,6 +213,7 @@ const siteJsonLd = {
 
   .nav-dropdown summary:hover,
   .nav-dropdown summary:focus-visible {
+    color: var(--c-volt, #c7ff2e);
     text-decoration: underline;
   }
 
@@ -215,9 +224,9 @@ const siteJsonLd = {
     left: 0;
     min-width: 13rem;
     padding: 0.55rem;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid color-mix(in srgb, var(--c-indigo, #1c2f72) 55%, #ffffff 45%);
     border-radius: 0.4rem;
-    background: #141b3b;
+    background: #122055;
     z-index: 20;
   }
 
@@ -263,8 +272,8 @@ const siteJsonLd = {
   }
 
   footer {
-    border-top: 1px solid #d8dbe1;
-    background: #ffffff;
+    border-top: 1px solid var(--c-border, #d6deeb);
+    background: var(--c-surface, #ffffff);
   }
 
   .footer-inner {
@@ -277,7 +286,7 @@ const siteJsonLd = {
   }
 
   .footer-inner a {
-    color: #454b57;
+    color: var(--c-muted, #56607a);
     font-size: 0.95rem;
     text-decoration: none;
   }

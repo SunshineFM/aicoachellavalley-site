@@ -48,9 +48,11 @@ const briefListJsonLd = {
     <p>Fast, date-stamped briefings on regional AI movement, plus deeper analysis tracks as they publish.</p>
   </section>
 
-  <section class="tabs" aria-label="Brief depth">
-    <button type="button" class="tab-button active" data-tab="quick" aria-selected="true">Quick</button>
-    <button type="button" class="tab-button" data-tab="deep" aria-selected="false">Deep</button>
+  <section class="band" aria-label="Brief depth">
+    <div class="band__inner tabs">
+      <button type="button" class="tab-button active" data-tab="quick" aria-selected="true">Quick</button>
+      <button type="button" class="tab-button" data-tab="deep" aria-selected="false">Deep</button>
+    </div>
   </section>
 
   <section id="quick-panel" data-panel="quick">
@@ -172,48 +174,65 @@ const briefListJsonLd = {
 </script>
 
 <style>
+  section + section {
+    margin-top: var(--s-6);
+  }
+
+  h1 + p {
+    max-width: 66ch;
+    color: var(--c-muted);
+  }
+
   .tabs {
     display: flex;
-    gap: 0.5rem;
-    margin: 1rem 0;
+    gap: var(--s-2);
+    margin: 0;
+    align-items: center;
   }
 
   .tab-button {
-    border: 1px solid #c8ced8;
-    background: #fff;
+    border: 1px solid var(--c-border);
+    background: var(--c-surface);
     border-radius: 999px;
-    padding: 0.35rem 0.75rem;
+    padding: 0.45rem 0.95rem;
     font-weight: 600;
-    color: #184a9c;
+    color: var(--c-indigo);
     cursor: pointer;
   }
 
   .tab-button.active {
-    background: #184a9c;
+    background: var(--c-indigo);
     color: #fff;
-    border-color: #184a9c;
+    border-color: var(--c-indigo);
   }
 
   .controls {
     display: grid;
-    gap: 0.75rem;
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    margin-bottom: 1rem;
+    gap: var(--s-3);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    margin-bottom: var(--s-4);
+    border: 1px solid var(--c-border);
+    background: var(--c-surface);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-4);
   }
 
   .control {
     display: grid;
-    gap: 0.35rem;
+    gap: var(--s-2);
     font-size: 0.95rem;
-    color: #4b5360;
+    color: var(--c-muted);
   }
 
   .control input,
   .control select {
-    border: 1px solid #c8ced8;
-    border-radius: 0.35rem;
-    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-sm);
+    padding: 0.5rem 0.6rem;
     font: inherit;
+    color: var(--c-text);
+    background: var(--c-surface);
   }
 
   .brief-list {
@@ -221,22 +240,30 @@ const briefListJsonLd = {
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 0.75rem;
+    gap: var(--s-3);
   }
 
   .brief-list li {
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    padding: 0.9rem 1rem;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
+    transition: border-color 0.16s ease, background-color 0.16s ease;
+  }
+
+  .brief-list li:hover {
+    border-color: color-mix(in srgb, var(--c-indigo) 35%, var(--c-border) 65%);
+    background: color-mix(in srgb, var(--c-surface) 94%, #edf4ff 6%);
   }
 
   .brief-list h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.12rem;
   }
 
   .brief-list a {
-    color: #184a9c;
+    color: var(--c-indigo);
     text-decoration: none;
   }
 
@@ -246,11 +273,11 @@ const briefListJsonLd = {
   }
 
   .brief-list p {
-    margin: 0.35rem 0 0;
+    margin: var(--s-2) 0 0;
   }
 
   .meta {
     font-size: 0.92rem;
-    color: #4b5360;
+    color: var(--c-muted);
   }
 </style>

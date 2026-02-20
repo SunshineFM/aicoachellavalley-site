@@ -25,9 +25,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
       Trust-first intelligence for regional AI adoption: practical suggestions, dated briefs, and concise reports you can use.
     </p>
     <div class="cta-row">
-      <a class="cta-primary" href="/marketplace">Explore Marketplace</a>
-      <a class="cta-secondary" href="/briefs">Read Briefs</a>
-      <a class="cta-tertiary" href="/events">Browse Events</a>
+      <a class="btn btn-primary" href="/briefs">Explore Marketplace</a>
+      <a class="btn btn-secondary" href="/briefs">Read Briefs</a>
+      <a class="btn btn-secondary" href="/events">Browse Events</a>
     </div>
   </section>
 
@@ -42,7 +42,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
       <article class="card">
         <h3>Marketplace</h3>
         <p>Curated tools and practical plays for operators in the valley economy.</p>
-        <a href="/marketplace">Explore Marketplace</a>
+        <a href="/briefs">Explore Marketplace</a>
       </article>
       <article class="card">
         <h3>Briefs: Quick</h3>
@@ -96,7 +96,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   <section>
     <h2>Marketplace</h2>
     <div class="tile-grid">
-      <a class="tile" href="/marketplace">Adoption playbooks</a>
+      <a class="tile" href="/briefs">Adoption playbooks</a>
       <a class="tile" href="/cities">City use cases</a>
       <a class="tile" href="/sectors">Sector use cases</a>
       <a class="tile" href="/framework">Method & guardrails</a>
@@ -150,58 +150,46 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
 <style>
   section + section {
-    margin-top: 2.5rem;
+    margin-top: var(--s-7);
   }
 
   .hero {
-    padding: 1.5rem;
-    border: 1px solid #d8dbe1;
-    background: #fff;
+    padding: var(--s-6);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
   }
 
   .hero h1 {
     margin: 0;
   }
 
+  .hero p {
+    max-width: 66ch;
+    color: var(--c-muted);
+  }
+
   .cta-row {
-    margin-top: 1rem;
+    margin-top: var(--s-5);
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .cta-row a {
-    text-decoration: none;
-    border-radius: 0.35rem;
-    padding: 0.55rem 0.8rem;
-    font-weight: 600;
-  }
-
-  .cta-primary {
-    background: #184a9c;
-    color: #fff;
-  }
-
-  .cta-secondary {
-    border: 1px solid #184a9c;
-    color: #184a9c;
-  }
-
-  .cta-tertiary {
-    color: #184a9c;
+    gap: var(--s-3);
   }
 
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: var(--s-4);
   }
 
   .tool-callout {
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    border: 1px solid var(--c-border);
+    background: var(--c-surface);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
+    margin-bottom: var(--s-4);
   }
 
   .tool-callout h3 {
@@ -209,22 +197,29 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   }
 
   .tool-callout p {
-    margin: 0.5rem 0;
+    margin: var(--s-2) 0 var(--s-3);
+    color: var(--c-muted);
   }
 
   .tool-callout a {
-    color: #184a9c;
+    color: var(--c-indigo);
     font-weight: 600;
   }
 
   .card {
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    padding: 1rem;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
   }
 
   .card h3 {
     margin-top: 0;
+  }
+
+  .card p {
+    color: var(--c-muted);
   }
 
   .signal-list {
@@ -232,61 +227,86 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 0.8rem;
+    gap: var(--s-3);
   }
 
   .signal-list li {
-    padding: 0.9rem 1rem;
-    border: 1px solid #d8dbe1;
-    background: #fff;
+    padding: var(--s-4) var(--s-5);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .signal-list li:hover {
+    border-color: color-mix(in srgb, var(--c-indigo) 38%, var(--c-border) 62%);
+    box-shadow: var(--shadow-1);
+  }
+
+  .signal-list li > a {
+    font-weight: 620;
+    text-decoration: none;
   }
 
   .signal-list p {
-    margin: 0.35rem 0 0;
-    color: #4b5360;
+    margin: var(--s-2) 0 0;
+    color: var(--c-muted);
     font-size: 0.95rem;
   }
 
   .feature-card {
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    padding: 1rem;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-6);
+  }
+
+  .feature-card p {
+    color: var(--c-muted);
   }
 
   .feature-meta {
-    color: #4b5360;
+    color: var(--c-muted);
     font-size: 0.95rem;
   }
 
   .tile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    gap: 0.8rem;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--s-3);
   }
 
   .tile {
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    color: #184a9c;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    color: var(--c-indigo);
     text-decoration: none;
-    padding: 0.85rem;
+    padding: var(--s-4);
     font-weight: 600;
+    transition: border-color 0.16s ease, background-color 0.16s ease;
+  }
+
+  .tile:hover {
+    border-color: color-mix(in srgb, var(--c-indigo) 36%, var(--c-border) 64%);
+    background: color-mix(in srgb, var(--c-surface) 92%, #edf4ff 8%);
   }
 
   .flywheel {
     margin: 0;
     padding-left: 1.2rem;
     display: grid;
-    gap: 0.4rem;
+    gap: var(--s-2);
   }
 
   .footer-cta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem 1rem;
+    gap: var(--s-3) var(--s-4);
   }
 
   .footer-cta a {
-    color: #184a9c;
+    color: var(--c-indigo);
   }
 </style>
