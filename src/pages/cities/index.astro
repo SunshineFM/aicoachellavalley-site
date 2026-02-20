@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ActionCard from "../../components/ActionCard.astro";
+import PageHero from "../../components/PageHero.astro";
 import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
 
 const briefs = await getCollection("signals");
@@ -26,69 +28,39 @@ const cityListJsonLd = {
 
 <BaseLayout title="Cities | AI Coachella Valley">
   <script type="application/ld+json" set:html={JSON.stringify(cityListJsonLd)}></script>
-  <h1>All Cities</h1>
-  <p>Explore city-level briefs across the Coachella Valley.</p>
-  <ul class="city-grid">
+  <PageHero title="All Cities" description="Explore city-level briefs across the Coachella Valley." />
+  <section>
+    <h2>City Brief Hubs</h2>
+    <div class="city-grid">
     {CITY_ENTRIES.map((city) => {
       const count = briefCountByCity.get(city.slug) ?? 0;
       return (
-        <li class="city-tile">
-          <a href={`/cities/${city.slug}`}>
-            <strong>{city.name}</strong>
-            <span>{count} brief{count === 1 ? "" : "s"}</span>
-          </a>
-        </li>
+        <ActionCard
+          title={city.name}
+          description={`${count} brief${count === 1 ? "" : "s"} currently available`}
+          href={`/cities/${city.slug}`}
+          buttonLabel={`Open ${city.name}`}
+        />
       );
     })}
-  </ul>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
+  section + section {
+    margin-top: var(--s-7);
+  }
+
   .city-grid {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-
-  .city-tile a {
-    display: grid;
-    gap: 0.35rem;
-    border: 1px solid #d8dbe1;
-    background: #fff;
-    text-decoration: none;
-    padding: 0.9rem 1rem;
-  }
-
-  .city-tile strong {
-    color: #184a9c;
-  }
-
-  .city-tile span {
-    color: #4b5360;
-    font-size: 0.92rem;
-  }
-
-  .city-tile a:hover,
-  .city-tile a:focus-visible strong {
-    text-decoration: underline;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
   }
 
   @media (max-width: 50rem) {
     .city-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 34rem) {
-    .city-grid {
       grid-template-columns: 1fr;
     }
-  }
-
-  .city-grid a {
-    color: #184a9c;
   }
 </style>

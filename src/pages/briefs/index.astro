@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/PageHero.astro";
 import { normalizeMeta, resolveSummary } from "../../utils/briefs";
 
 const briefs = (await getCollection("signals")).sort(
@@ -43,10 +44,10 @@ const briefListJsonLd = {
 
 <BaseLayout title="Briefs | AI Coachella Valley">
   <script type="application/ld+json" set:html={JSON.stringify(briefListJsonLd)}></script>
-  <section>
-    <h1>Briefs</h1>
-    <p>Fast, date-stamped briefings on regional AI movement, plus deeper analysis tracks as they publish.</p>
-  </section>
+  <PageHero
+    title="Briefs"
+    description="Fast, date-stamped briefings on regional AI movement, plus deeper analysis tracks as they publish."
+  />
 
   <div class="band">
     <div class="band__inner">
@@ -186,11 +187,6 @@ const briefListJsonLd = {
 
   .band + section {
     margin-top: var(--s-6);
-  }
-
-  h1 + p {
-    max-width: 66ch;
-    color: var(--c-muted);
   }
 
   .tabs {

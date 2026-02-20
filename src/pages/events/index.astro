@@ -1,5 +1,48 @@
 ---
-import PlaceholderPage from "../../components/PlaceholderPage.astro";
+import ActionCard from "../../components/ActionCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/PageHero.astro";
 ---
 
-<PlaceholderPage title="Events" />
+<BaseLayout title="Events | AI Coachella Valley">
+  <PageHero
+    title="Events"
+    description="Workshops, briefings, and implementation sessions designed for practical AI adoption."
+  />
+
+  <section>
+    <h2>Top Paths</h2>
+    <div class="path-grid">
+      <ActionCard
+        title="Marketplace"
+        description="Start from curated pathways for briefs, tools, and city intelligence."
+        href="/marketplace"
+        buttonLabel="Open Marketplace"
+      />
+      <ActionCard
+        title="Submit a Brief"
+        description="Share event outcomes and local AI movement as verifiable signals."
+        href="/submit"
+        buttonLabel="Open Submit a Brief"
+      />
+      <ActionCard
+        title="Latest Briefs"
+        description="See current evidence behind regional workshop and operations trends."
+        href="/briefs"
+        buttonLabel="Open Latest Briefs"
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: var(--s-7);
+  }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
+  }
+</style>
