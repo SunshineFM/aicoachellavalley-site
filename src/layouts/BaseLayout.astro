@@ -4,13 +4,14 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  fullBleed?: boolean;
 }
 
 const CANONICAL_ORIGIN = "https://www.aicoachellavalley.com";
 const DEFAULT_DESCRIPTION =
   "AI Coachella Valley tracks practical AI adoption across cities and sectors with dated briefs, tools, and workshops for local operators.";
 
-const { title, description = DEFAULT_DESCRIPTION } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, fullBleed = false } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, CANONICAL_ORIGIN).toString();
 
 const siteJsonLd = {
@@ -49,7 +50,7 @@ const siteJsonLd = {
     <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(siteJsonLd)}></script>
   </head>
-  <body>
+  <body class="site">
     <header>
       <div class="header-inner">
         <a href="/" class="brand">AI Coachella Valley (AICV)</a>
@@ -79,8 +80,14 @@ const siteJsonLd = {
         </div>
       </div>
     </header>
-    <main>
-      <slot />
+    <main class="site-main">
+      {fullBleed ? (
+        <slot />
+      ) : (
+        <div class="page-container">
+          <slot />
+        </div>
+      )}
     </main>
     <footer>
       <div class="footer-inner">
@@ -98,15 +105,22 @@ const siteJsonLd = {
     box-sizing: border-box;
   }
 
+  :global(html, body) {
+    height: 100%;
+  }
+
   :global(body) {
     margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     background: var(--aicv-page-bg, #f7f8fa);
     color: #1a1a1a;
     line-height: 1.55;
+  }
+
+  .site {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
@@ -223,11 +237,22 @@ const siteJsonLd = {
     }
   }
 
-  main {
+  .site-main {
     flex: 1;
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 2rem 1.25rem 3rem;
+    display: block;
+  }
+
+  .page-container {
+    width: min(calc(100% - 2rem), 980px);
+    margin-inline: auto;
+    padding: 2.5rem 0 3rem;
+  }
+
+  @media (min-width: 48rem) {
+    .page-container {
+      width: min(calc(100% - 3rem), 1040px);
+      padding: 3rem 0 3.5rem;
+    }
   }
 
   footer {
