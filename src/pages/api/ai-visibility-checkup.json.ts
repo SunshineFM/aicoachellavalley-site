@@ -47,6 +47,7 @@ type AnalysisPayload = {
   score: number;
   grade: Grade;
   confidence: Confidence;
+  environmentNote?: string;
   categories: CategoryOutput[];
   checks: CheckOutput[];
   topFixes: string[];
@@ -766,6 +767,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
     score,
     grade,
     confidence,
+    environmentNote: getEnvironmentNote(url) || undefined,
     categories: categoryScores,
     checks: outputChecks,
     topFixes,
@@ -787,7 +789,7 @@ async function runAnalysis(url: string, now: number): Promise<AnalysisPayload> {
   const snippets = recommendedSnippets(url, title, exportDescription, canonical);
   base.exports.markdown = buildMarkdownExport(base, checks, snippets.jsonLdStarter);
   base.exports.json = buildJsonExport(base, snippets);
-  base.exports.html = buildHtmlExport(snippets);
+  base.exports.html = buildHtmlExport(snippets, base.environmentNote);
 
   return base;
 }
@@ -796,6 +798,9 @@ function buildMarkdownExport(payload: AnalysisPayload, checks: CheckResult[], js
   const lines: string[] = [];
   lines.push("# AI Visibility Checkup - Fix Pack");
   lines.push("");
+  if (payload.environmentNote) {
+    lines.push(`- Environment: ${payload.environmentNote}`);
+  }
   lines.push(`- URL: ${payload.url}`);
   lines.push(`- Score: ${payload.score}/100 (${payload.grade})`);
   lines.push(`- Confidence: ${payload.confidence}`);
@@ -843,6 +848,7 @@ function buildMarkdownExport(payload: AnalysisPayload, checks: CheckResult[], js
 function buildJsonExport(payload: AnalysisPayload, snippets: ReturnType<typeof recommendedSnippets>): string {
   const parsedJsonExport = {
     ...payload,
+    ...(payload.environmentNote ? { environment: payload.environmentNote } : {}),
     snippets: {
       headTags: snippets.headTags,
       jsonLdStarter: JSON.parse(snippets.jsonLdStarter),
@@ -856,16 +862,31 @@ function buildJsonExport(payload: AnalysisPayload, snippets: ReturnType<typeof r
   return JSON.stringify(parsedJsonExport, null, 2);
 }
 
-function buildHtmlExport(snippets: ReturnType<typeof recommendedSnippets>): string {
+function buildHtmlExport(snippets: ReturnType<typeof recommendedSnippets>, environmentNote?: string): string {
+  const lines: string[] = [];
+  if (environmentNote) {
+    lines.push(`<!-- Environment: ${environmentNote} -->`);
+  }
+  lines.push("<!-- Paste into <head> -->");
+  lines.push(snippets.headTags);
+  lines.push("");
+  lines.push("<!-- Paste into <head> or before </body> -->");
+  lines.push('<script type="application/ld+json">');
+  lines.push(snippets.jsonLdStarter);
+  lines.push("</script>");
+  return lines.join("\n");
+}
+
+function getEnvironmentNote(inputUrl: string): string | null {
+  const parsed = parseUrl(inputUrl);
+  const host = parsed?.hostname.toLowerCase();
+  if (host !== "aicoachellavalley.com" && host !== "www.aicoachellavalley.com") {
+    return null;
+  }
+
   return [
-    "<!-- Paste into <head> -->",
-    snippets.headTags,
-    "",
-    "<!-- Paste into <head> or before </body> -->",
-    '<script type="application/ld+json">',
-    snippets.jsonLdStarter,
-    "</script>",
-  ].join("\n");
+    "You are analyzing the live site at the URL you entered. Our AICV rebuild is currently at https://aicoachellavalley-site.vercel.app (DNS not migrated yet). To score the rebuild, analyze that Vercel URL.",
+  ].join(" ");
 }
 
 function recommendedSnippets(url: string, title: string, description: string, canonical: string) {

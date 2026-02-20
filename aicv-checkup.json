@@ -1,0 +1,220 @@
+{
+    "url": "https://aicoachellavalley.com/",
+    "fetchedAt": "2026-02-19T01:09:10.633Z",
+    "rubricVersion": "1.0",
+    "score": 85,
+    "grade": "Great",
+    "confidence": "Medium",
+    "categories": [
+        {
+            "id": "access",
+            "name": "Access",
+            "score": 23,
+            "max": 25
+        },
+        {
+            "id": "metadata",
+            "name": "Metadata",
+            "score": 17,
+            "max": 25
+        },
+        {
+            "id": "content",
+            "name": "Content clarity",
+            "score": 25,
+            "max": 25
+        },
+        {
+            "id": "structured-data",
+            "name": "Structured data",
+            "score": 25,
+            "max": 25
+        }
+    ],
+    "checks": [
+        {
+            "id": "access-fetch",
+            "name": "Page fetchability",
+            "status": "pass",
+            "points": 10,
+            "evidence": "Fetched HTML successfully (71,012 chars).",
+            "fix": "Ensure a normal browser-style GET request can fetch the page without blocking."
+        },
+        {
+            "id": "access-status",
+            "name": "HTTP status",
+            "status": "pass",
+            "points": 8,
+            "evidence": "Final status code: 200.",
+            "fix": "Return a stable 200 response for the canonical page URL."
+        },
+        {
+            "id": "access-redirects",
+            "name": "Redirect/canonical sanity",
+            "status": "warn",
+            "points": 4,
+            "evidence": "initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\"https://aicoachellavalley.com/\",\"https://www.aicoachellavalley.com/\"]",
+            "fix": "Reduce unnecessary redirect chains and keep canonical URL consistent."
+        },
+        {
+            "id": "access-robots-txt",
+            "name": "robots.txt availability",
+            "status": "pass",
+            "points": 5,
+            "evidence": "robots.txt reachable (533 chars).",
+            "fix": "Publish a readable robots.txt at /robots.txt with crawl directives and sitemap reference."
+        },
+        {
+            "id": "access-sitemap-xml",
+            "name": "sitemap.xml availability",
+            "status": "pass",
+            "points": 5,
+            "evidence": "sitemap.xml reachable and valid (status 200).",
+            "fix": "Publish a valid sitemap.xml (urlset or sitemapindex) and keep it updated."
+        },
+        {
+            "id": "meta-title",
+            "name": "Title tag quality",
+            "status": "pass",
+            "points": 7,
+            "evidence": "Title found (45 chars).",
+            "fix": "Use a specific title that reflects the page topic and audience intent.",
+            "snippet": "<title>AICV - The Hub for AI in the Coachella Valley</title>"
+        },
+        {
+            "id": "meta-description",
+            "name": "Meta description quality",
+            "status": "fail",
+            "points": 0,
+            "evidence": "Meta description length: 248 (too long; ideal 70-160). Snippet: \"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\".",
+            "fix": "Write a clear 70-160 char description summarizing value and context.",
+            "snippet": "<meta name=\"description\" content=\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\" />"
+        },
+        {
+            "id": "meta-description-redundancy",
+            "name": "Meta description uniqueness",
+            "status": "pass",
+            "points": 4,
+            "evidence": "Meta description adds distinct context beyond the title.",
+            "fix": "Avoid repeating the title verbatim. Add unique, specific detail in the description."
+        },
+        {
+            "id": "meta-robots",
+            "name": "Indexing directives",
+            "status": "pass",
+            "points": 6,
+            "evidence": "Robots directive: index, follow.",
+            "fix": "Avoid noindex/noarchive directives on pages intended for discovery.",
+            "snippet": "<meta name=\"robots\" content=\"index, follow\" />"
+        },
+        {
+            "id": "meta-canonical",
+            "name": "Canonical URL tag",
+            "status": "warn",
+            "points": 3,
+            "evidence": "initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\"https://aicoachellavalley.com/\",\"https://www.aicoachellavalley.com/\"]",
+            "fix": "Add a canonical link and keep it aligned with your preferred URL.",
+            "snippet": "<link rel=\"canonical\" href=\"https://aicoachellavalley.com\" />"
+        },
+        {
+            "id": "content-h1",
+            "name": "H1 structure",
+            "status": "pass",
+            "points": 8,
+            "evidence": "H1 count: 1.",
+            "fix": "Use one clear H1 that matches the page purpose."
+        },
+        {
+            "id": "content-headings",
+            "name": "Heading hierarchy",
+            "status": "pass",
+            "points": 5,
+            "evidence": "H2/H3 heading count: 20.",
+            "fix": "Use H2/H3 sections to make content scannable for users and crawlers."
+        },
+        {
+            "id": "content-depth",
+            "name": "Meaningful body content",
+            "status": "pass",
+            "points": 8,
+            "evidence": "Detected 4,394 readable characters in body content.",
+            "fix": "Add clear descriptive content about services, audience, outcomes, and location context."
+        },
+        {
+            "id": "content-trust-signals",
+            "name": "Contact/about trust signals",
+            "status": "pass",
+            "points": 4,
+            "evidence": "About/contact trust signals detected in text or links.",
+            "fix": "Include obvious About and Contact paths in internal links or body text."
+        },
+        {
+            "id": "content-external-trust-reference",
+            "name": "External trust reference",
+            "status": "pass",
+            "points": 3,
+            "evidence": "External trust reference found in visible copy (organization-name).",
+            "fix": "Include a clear phone, address, or specific organization reference in visible page copy."
+        },
+        {
+            "id": "sd-presence",
+            "name": "JSON-LD presence",
+            "status": "pass",
+            "points": 5,
+            "evidence": "JSON-LD blocks found: 6.",
+            "fix": "Add at least one JSON-LD block describing your organization or page entity."
+        },
+        {
+            "id": "sd-validity",
+            "name": "JSON-LD validity",
+            "status": "pass",
+            "points": 10,
+            "evidence": "JSON-LD syntax parsed successfully.",
+            "fix": "Fix JSON-LD syntax errors and validate scripts with structured data tools.",
+            "snippet": "{\"@context\":\"https://schema.org\",\"@graph\":[{\"@type\":\"Organization\",\"@id\":\"https://aicoachellavalley.com/#organization\",\"name\":\"AI Coachella Valley\",\"alternateName\":\"AICV\",\"url\":\"https://aicoachellavalley.com\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://aicoachellavalley.com/logo-light.png\",\"width\":120,\"height\":32},\"sameAs\":[\"https://discord.gg/Dbv2rXar69\"]},{\"@type\":\"WebSite\",\"@id\":\"https://aicoachellavalley.com/#website\",\"url\":\"https://aicoachellavalley.com\",\"name\":\"AICV - The Hub for AI in the Coachella Valley\",\"description\":\"AI Coachella Valley (AICV) is the premier AI community hub hosting events, building talent marketplace, and developing AI tools\",\"publisher\":{\"@id\":\"https://aicoachellavalley.com/#organization\"},\"potentialAction\":{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://aicoachellavalley.com/?url={search_term_string}\"},\"query-input\":\"required name=search_term_string\"}},{\"@type\":\"WebApplication\",\"@id\":\"https://aicoachellavalley.com/#webapp\",\"name\":\"AIO Analysis Tool by AICV\",\"description\":\"Free online website analyzer for AI optimization with ChatGPT, Claude, and other LLM crawlers - part of AICV AI tools\",\"url\":\"https://aicoachellavalley.com\",\"applicationCategory\":\"WebApplication\",\"operatingSystem\":\"Any\",\"offers\":{\"@type\":\"Offer\",\"price\":\"0\",\"priceCurrency\":\"USD\"},\"author\":{\"@id\":\"https://aicoachellavalley.com/#organization\"}},{\"@type\":\"BreadcrumbList\",\"@id\":\"https://aicoachellavalley.com/#breadcrumb\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://aicoachellavalley.com\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"AIO Analysis\",\"item\":\"https://aicoachellavalley.com/#tool\"}]}]}"
+        },
+        {
+            "id": "sd-recommended-types",
+            "name": "Recommended schema types",
+            "status": "pass",
+            "points": 5,
+            "evidence": "Detected JSON-LD @type values: Organization, ImageObject, WebSite, SearchAction, EntryPoint, WebApplication, Offer, BreadcrumbList, ListItem, AdministrativeArea, PostalAddress, ContactPoint, Service, BusinessAudience, EventSeries, Place, FAQPage, Question, Answer.",
+            "fix": "Include page-specific schema entities (Service, FAQPage, LocalBusiness, SoftwareApplication, etc.)."
+        },
+        {
+            "id": "sd-brand-clarity",
+            "name": "Brand/entity clarity",
+            "status": "pass",
+            "points": 5,
+            "evidence": "Organization/WebSite schema detected.",
+            "fix": "Include clear organization identity in schema or consistent brand naming in title/H1/body copy."
+        }
+    ],
+    "topFixes": [
+        "Write a clear 70-160 char description summarizing value and context.",
+        "Add a canonical link and keep it aligned with your preferred URL.",
+        "Reduce unnecessary redirect chains and keep canonical URL consistent."
+    ],
+    "limitations": [
+        "This check uses one live fetch and may not reflect geo-specific variants, login states, or cookies.",
+        "JavaScript-rendered content can be partially missed because analysis is HTML-first.",
+        "Recommendations are heuristic and should be reviewed with your CMS and analytics context.",
+        "Additional penalty applied: meta description is far above recommended length (>220 chars).",
+        "Strict mode cap applied: one or more checks failed, so score is capped at 85."
+    ],
+    "realityCheck": [
+        "Google: search the brand name + city and review what ranks.",
+        "AI assistants: ask \"What is <brand>?\" and see whether the answer cites your site.",
+        "Search Console/Bing Webmaster: confirm important pages are indexed."
+    ],
+    "truthSignals": {
+        "redirectHops": 1,
+        "canonicalMatchesFinal": false,
+        "metaDescriptionLength": 248
+    },
+    "exports": {
+        "markdown": "# AI Visibility Checkup - Fix Pack\n\n- URL: https://aicoachellavalley.com/\n- Score: 85/100 (Great)\n- Confidence: Medium\n- Rubric version: 1.0\n\n## Prioritized checklist\n- [ ] Meta description quality: Write a clear 70-160 char description summarizing value and context.\n  - Found: Meta description length: 248 (too long; ideal 70-160). Snippet: \"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\".\n  - Why it matters: Improves crawl understanding and retrieval quality.\n  - How to fix: Write a clear 70-160 char description summarizing value and context.\n- [ ] Canonical URL tag: Add a canonical link and keep it aligned with your preferred URL.\n  - Found: initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\"https://aicoachellavalley.com/\",\"https://www.aicoachellavalley.com/\"]\n  - Why it matters: Improves crawl understanding and retrieval quality.\n  - How to fix: Add a canonical link and keep it aligned with your preferred URL.\n- [ ] Redirect/canonical sanity: Reduce unnecessary redirect chains and keep canonical URL consistent.\n  - Found: initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\"https://aicoachellavalley.com/\",\"https://www.aicoachellavalley.com/\"]\n  - Why it matters: Improves crawl understanding and retrieval quality.\n  - How to fix: Reduce unnecessary redirect chains and keep canonical URL consistent.\n\n## Reality Check (Not scored)\n- This tool evaluates readiness signals only and does not guarantee rankings or citations.\n- Google: search the brand name + city and review what ranks.\n- AI assistants: ask \"What is <brand>?\" and see whether the answer cites your site.\n- Search Console/Bing Webmaster: confirm important pages are indexed.\n\n## JSON-LD starter\n```json\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Organization\",\n  \"name\": \"AICV - The Hub for AI in the Coachella Valley\",\n  \"url\": \"https://aicoachellavalley.com\",\n  \"description\": \"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\"\n}\n```\n\n## Developer notes\n- Paste meta tags into the page <head> template.\n- Keep title, H1, canonical, and schema values aligned to the same page intent.\n- Replace placeholders before publishing.",
+        "json": "{\n  \"url\": \"https://aicoachellavalley.com/\",\n  \"fetchedAt\": \"2026-02-19T01:09:10.633Z\",\n  \"rubricVersion\": \"1.0\",\n  \"score\": 85,\n  \"grade\": \"Great\",\n  \"confidence\": \"Medium\",\n  \"categories\": [\n    {\n      \"id\": \"access\",\n      \"name\": \"Access\",\n      \"score\": 23,\n      \"max\": 25\n    },\n    {\n      \"id\": \"metadata\",\n      \"name\": \"Metadata\",\n      \"score\": 17,\n      \"max\": 25\n    },\n    {\n      \"id\": \"content\",\n      \"name\": \"Content clarity\",\n      \"score\": 25,\n      \"max\": 25\n    },\n    {\n      \"id\": \"structured-data\",\n      \"name\": \"Structured data\",\n      \"score\": 25,\n      \"max\": 25\n    }\n  ],\n  \"checks\": [\n    {\n      \"id\": \"access-fetch\",\n      \"name\": \"Page fetchability\",\n      \"status\": \"pass\",\n      \"points\": 10,\n      \"evidence\": \"Fetched HTML successfully (71,012 chars).\",\n      \"fix\": \"Ensure a normal browser-style GET request can fetch the page without blocking.\"\n    },\n    {\n      \"id\": \"access-status\",\n      \"name\": \"HTTP status\",\n      \"status\": \"pass\",\n      \"points\": 8,\n      \"evidence\": \"Final status code: 200.\",\n      \"fix\": \"Return a stable 200 response for the canonical page URL.\"\n    },\n    {\n      \"id\": \"access-redirects\",\n      \"name\": \"Redirect/canonical sanity\",\n      \"status\": \"warn\",\n      \"points\": 4,\n      \"evidence\": \"initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\\\"https://aicoachellavalley.com/\\\",\\\"https://www.aicoachellavalley.com/\\\"]\",\n      \"fix\": \"Reduce unnecessary redirect chains and keep canonical URL consistent.\"\n    },\n    {\n      \"id\": \"access-robots-txt\",\n      \"name\": \"robots.txt availability\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"robots.txt reachable (533 chars).\",\n      \"fix\": \"Publish a readable robots.txt at /robots.txt with crawl directives and sitemap reference.\"\n    },\n    {\n      \"id\": \"access-sitemap-xml\",\n      \"name\": \"sitemap.xml availability\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"sitemap.xml reachable and valid (status 200).\",\n      \"fix\": \"Publish a valid sitemap.xml (urlset or sitemapindex) and keep it updated.\"\n    },\n    {\n      \"id\": \"meta-title\",\n      \"name\": \"Title tag quality\",\n      \"status\": \"pass\",\n      \"points\": 7,\n      \"evidence\": \"Title found (45 chars).\",\n      \"fix\": \"Use a specific title that reflects the page topic and audience intent.\",\n      \"snippet\": \"<title>AICV - The Hub for AI in the Coachella Valley</title>\"\n    },\n    {\n      \"id\": \"meta-description\",\n      \"name\": \"Meta description quality\",\n      \"status\": \"fail\",\n      \"points\": 0,\n      \"evidence\": \"Meta description length: 248 (too long; ideal 70-160). Snippet: \\\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\\\".\",\n      \"fix\": \"Write a clear 70-160 char description summarizing value and context.\",\n      \"snippet\": \"<meta name=\\\"description\\\" content=\\\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\\\" />\"\n    },\n    {\n      \"id\": \"meta-description-redundancy\",\n      \"name\": \"Meta description uniqueness\",\n      \"status\": \"pass\",\n      \"points\": 4,\n      \"evidence\": \"Meta description adds distinct context beyond the title.\",\n      \"fix\": \"Avoid repeating the title verbatim. Add unique, specific detail in the description.\"\n    },\n    {\n      \"id\": \"meta-robots\",\n      \"name\": \"Indexing directives\",\n      \"status\": \"pass\",\n      \"points\": 6,\n      \"evidence\": \"Robots directive: index, follow.\",\n      \"fix\": \"Avoid noindex/noarchive directives on pages intended for discovery.\",\n      \"snippet\": \"<meta name=\\\"robots\\\" content=\\\"index, follow\\\" />\"\n    },\n    {\n      \"id\": \"meta-canonical\",\n      \"name\": \"Canonical URL tag\",\n      \"status\": \"warn\",\n      \"points\": 3,\n      \"evidence\": \"initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\\\"https://aicoachellavalley.com/\\\",\\\"https://www.aicoachellavalley.com/\\\"]\",\n      \"fix\": \"Add a canonical link and keep it aligned with your preferred URL.\",\n      \"snippet\": \"<link rel=\\\"canonical\\\" href=\\\"https://aicoachellavalley.com\\\" />\"\n    },\n    {\n      \"id\": \"content-h1\",\n      \"name\": \"H1 structure\",\n      \"status\": \"pass\",\n      \"points\": 8,\n      \"evidence\": \"H1 count: 1.\",\n      \"fix\": \"Use one clear H1 that matches the page purpose.\"\n    },\n    {\n      \"id\": \"content-headings\",\n      \"name\": \"Heading hierarchy\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"H2/H3 heading count: 20.\",\n      \"fix\": \"Use H2/H3 sections to make content scannable for users and crawlers.\"\n    },\n    {\n      \"id\": \"content-depth\",\n      \"name\": \"Meaningful body content\",\n      \"status\": \"pass\",\n      \"points\": 8,\n      \"evidence\": \"Detected 4,394 readable characters in body content.\",\n      \"fix\": \"Add clear descriptive content about services, audience, outcomes, and location context.\"\n    },\n    {\n      \"id\": \"content-trust-signals\",\n      \"name\": \"Contact/about trust signals\",\n      \"status\": \"pass\",\n      \"points\": 4,\n      \"evidence\": \"About/contact trust signals detected in text or links.\",\n      \"fix\": \"Include obvious About and Contact paths in internal links or body text.\"\n    },\n    {\n      \"id\": \"content-external-trust-reference\",\n      \"name\": \"External trust reference\",\n      \"status\": \"pass\",\n      \"points\": 3,\n      \"evidence\": \"External trust reference found in visible copy (organization-name).\",\n      \"fix\": \"Include a clear phone, address, or specific organization reference in visible page copy.\"\n    },\n    {\n      \"id\": \"sd-presence\",\n      \"name\": \"JSON-LD presence\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"JSON-LD blocks found: 6.\",\n      \"fix\": \"Add at least one JSON-LD block describing your organization or page entity.\"\n    },\n    {\n      \"id\": \"sd-validity\",\n      \"name\": \"JSON-LD validity\",\n      \"status\": \"pass\",\n      \"points\": 10,\n      \"evidence\": \"JSON-LD syntax parsed successfully.\",\n      \"fix\": \"Fix JSON-LD syntax errors and validate scripts with structured data tools.\",\n      \"snippet\": \"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@graph\\\":[{\\\"@type\\\":\\\"Organization\\\",\\\"@id\\\":\\\"https://aicoachellavalley.com/#organization\\\",\\\"name\\\":\\\"AI Coachella Valley\\\",\\\"alternateName\\\":\\\"AICV\\\",\\\"url\\\":\\\"https://aicoachellavalley.com\\\",\\\"logo\\\":{\\\"@type\\\":\\\"ImageObject\\\",\\\"url\\\":\\\"https://aicoachellavalley.com/logo-light.png\\\",\\\"width\\\":120,\\\"height\\\":32},\\\"sameAs\\\":[\\\"https://discord.gg/Dbv2rXar69\\\"]},{\\\"@type\\\":\\\"WebSite\\\",\\\"@id\\\":\\\"https://aicoachellavalley.com/#website\\\",\\\"url\\\":\\\"https://aicoachellavalley.com\\\",\\\"name\\\":\\\"AICV - The Hub for AI in the Coachella Valley\\\",\\\"description\\\":\\\"AI Coachella Valley (AICV) is the premier AI community hub hosting events, building talent marketplace, and developing AI tools\\\",\\\"publisher\\\":{\\\"@id\\\":\\\"https://aicoachellavalley.com/#organization\\\"},\\\"potentialAction\\\":{\\\"@type\\\":\\\"SearchAction\\\",\\\"target\\\":{\\\"@type\\\":\\\"EntryPoint\\\",\\\"urlTemplate\\\":\\\"https://aicoachellavalley.com/?url={search_term_string}\\\"},\\\"query-input\\\":\\\"required name=search_term_string\\\"}},{\\\"@type\\\":\\\"WebApplication\\\",\\\"@id\\\":\\\"https://aicoachellavalley.com/#webapp\\\",\\\"name\\\":\\\"AIO Analysis Tool by AICV\\\",\\\"description\\\":\\\"Free online website analyzer for AI optimization with ChatGPT, Claude, and other LLM crawlers - part of AICV AI tools\\\",\\\"url\\\":\\\"https://aicoachellavalley.com\\\",\\\"applicationCategory\\\":\\\"WebApplication\\\",\\\"operatingSystem\\\":\\\"Any\\\",\\\"offers\\\":{\\\"@type\\\":\\\"Offer\\\",\\\"price\\\":\\\"0\\\",\\\"priceCurrency\\\":\\\"USD\\\"},\\\"author\\\":{\\\"@id\\\":\\\"https://aicoachellavalley.com/#organization\\\"}},{\\\"@type\\\":\\\"BreadcrumbList\\\",\\\"@id\\\":\\\"https://aicoachellavalley.com/#breadcrumb\\\",\\\"itemListElement\\\":[{\\\"@type\\\":\\\"ListItem\\\",\\\"position\\\":1,\\\"name\\\":\\\"Home\\\",\\\"item\\\":\\\"https://aicoachellavalley.com\\\"},{\\\"@type\\\":\\\"ListItem\\\",\\\"position\\\":2,\\\"name\\\":\\\"AIO Analysis\\\",\\\"item\\\":\\\"https://aicoachellavalley.com/#tool\\\"}]}]}\"\n    },\n    {\n      \"id\": \"sd-recommended-types\",\n      \"name\": \"Recommended schema types\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"Detected JSON-LD @type values: Organization, ImageObject, WebSite, SearchAction, EntryPoint, WebApplication, Offer, BreadcrumbList, ListItem, AdministrativeArea, PostalAddress, ContactPoint, Service, BusinessAudience, EventSeries, Place, FAQPage, Question, Answer.\",\n      \"fix\": \"Include page-specific schema entities (Service, FAQPage, LocalBusiness, SoftwareApplication, etc.).\"\n    },\n    {\n      \"id\": \"sd-brand-clarity\",\n      \"name\": \"Brand/entity clarity\",\n      \"status\": \"pass\",\n      \"points\": 5,\n      \"evidence\": \"Organization/WebSite schema detected.\",\n      \"fix\": \"Include clear organization identity in schema or consistent brand naming in title/H1/body copy.\"\n    }\n  ],\n  \"topFixes\": [\n    \"Write a clear 70-160 char description summarizing value and context.\",\n    \"Add a canonical link and keep it aligned with your preferred URL.\",\n    \"Reduce unnecessary redirect chains and keep canonical URL consistent.\"\n  ],\n  \"limitations\": [\n    \"This check uses one live fetch and may not reflect geo-specific variants, login states, or cookies.\",\n    \"JavaScript-rendered content can be partially missed because analysis is HTML-first.\",\n    \"Recommendations are heuristic and should be reviewed with your CMS and analytics context.\",\n    \"Additional penalty applied: meta description is far above recommended length (>220 chars).\",\n    \"Strict mode cap applied: one or more checks failed, so score is capped at 85.\"\n  ],\n  \"realityCheck\": [\n    \"Google: search the brand name + city and review what ranks.\",\n    \"AI assistants: ask \\\"What is <brand>?\\\" and see whether the answer cites your site.\",\n    \"Search Console/Bing Webmaster: confirm important pages are indexed.\"\n  ],\n  \"truthSignals\": {\n    \"redirectHops\": 1,\n    \"canonicalMatchesFinal\": false,\n    \"metaDescriptionLength\": 248\n  },\n  \"exports\": {\n    \"markdown\": \"# AI Visibility Checkup - Fix Pack\\n\\n- URL: https://aicoachellavalley.com/\\n- Score: 85/100 (Great)\\n- Confidence: Medium\\n- Rubric version: 1.0\\n\\n## Prioritized checklist\\n- [ ] Meta description quality: Write a clear 70-160 char description summarizing value and context.\\n  - Found: Meta description length: 248 (too long; ideal 70-160). Snippet: \\\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI prof\u2026\\\".\\n  - Why it matters: Improves crawl understanding and retrieval quality.\\n  - How to fix: Write a clear 70-160 char description summarizing value and context.\\n- [ ] Canonical URL tag: Add a canonical link and keep it aligned with your preferred URL.\\n  - Found: initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\\\"https://aicoachellavalley.com/\\\",\\\"https://www.aicoachellavalley.com/\\\"]\\n  - Why it matters: Improves crawl understanding and retrieval quality.\\n  - How to fix: Add a canonical link and keep it aligned with your preferred URL.\\n- [ ] Redirect/canonical sanity: Reduce unnecessary redirect chains and keep canonical URL consistent.\\n  - Found: initialUrl=https://aicoachellavalley.com/; finalUrl=https://www.aicoachellavalley.com/; redirectCount=1; canonicalUrl=https://aicoachellavalley.com; canonicalMatchesFinal=false; redirectChain=[\\\"https://aicoachellavalley.com/\\\",\\\"https://www.aicoachellavalley.com/\\\"]\\n  - Why it matters: Improves crawl understanding and retrieval quality.\\n  - How to fix: Reduce unnecessary redirect chains and keep canonical URL consistent.\\n\\n## Reality Check (Not scored)\\n- This tool evaluates readiness signals only and does not guarantee rankings or citations.\\n- Google: search the brand name + city and review what ranks.\\n- AI assistants: ask \\\"What is <brand>?\\\" and see whether the answer cites your site.\\n- Search Console/Bing Webmaster: confirm important pages are indexed.\\n\\n## JSON-LD starter\\n```json\\n{\\n  \\\"@context\\\": \\\"https://schema.org\\\",\\n  \\\"@type\\\": \\\"Organization\\\",\\n  \\\"name\\\": \\\"AICV - The Hub for AI in the Coachella Valley\\\",\\n  \\\"url\\\": \\\"https://aicoachellavalley.com\\\",\\n  \\\"description\\\": \\\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\\\"\\n}\\n```\\n\\n## Developer notes\\n- Paste meta tags into the page <head> template.\\n- Keep title, H1, canonical, and schema values aligned to the same page intent.\\n- Replace placeholders before publishing.\",\n    \"json\": \"\",\n    \"html\": \"\"\n  },\n  \"snippets\": {\n    \"headTags\": \"<title>AICV - The Hub for AI in the Coachella Valley</title>\\n<meta name=\\\"description\\\" content=\\\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\\\" />\\n<meta name=\\\"robots\\\" content=\\\"index,follow\\\" />\\n<link rel=\\\"canonical\\\" href=\\\"https://aicoachellavalley.com\\\" />\",\n    \"jsonLdStarter\": {\n      \"@context\": \"https://schema.org\",\n      \"@type\": \"Organization\",\n      \"name\": \"AICV - The Hub for AI in the Coachella Valley\",\n      \"url\": \"https://aicoachellavalley.com\",\n      \"description\": \"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\"\n    },\n    \"placementNotes\": [\n      \"Paste headTags into <head>.\",\n      \"Paste JSON-LD script in <head> or before </body>.\"\n    ]\n  }\n}",
+        "html": "<!-- Paste into <head> -->\n<title>AICV - The Hub for AI in the Coachella Valley</title>\n<meta name=\"description\" content=\"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\" />\n<meta name=\"robots\" content=\"index,follow\" />\n<link rel=\"canonical\" href=\"https://aicoachellavalley.com\" />\n\n<!-- Paste into <head> or before </body> -->\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Organization\",\n  \"name\": \"AICV - The Hub for AI in the Coachella Valley\",\n  \"url\": \"https://aicoachellavalley.com\",\n  \"description\": \"AICV is the premier AI community hub for the Coachella Valley. We host AI events and meetups, build an AI talent marketplace connecting businesses with AI professionals, and develop AI tools includin\u2026\"\n}\n</script>"
+    }
+}
