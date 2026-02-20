@@ -1,3 +1,110 @@
 ---
-return Astro.redirect("/briefs", 302);
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const paths = [
+  {
+    title: "Latest Briefs",
+    description: "Review recent, date-stamped updates on regional AI adoption.",
+    href: "/briefs",
+  },
+  {
+    title: "Submit a Brief",
+    description: "Share a new local AI signal for editorial review and publication.",
+    href: "/submit",
+  },
+  {
+    title: "City Briefs",
+    description: "Browse AI evidence and updates by city across the valley.",
+    href: "/cities",
+  },
+  {
+    title: "State of AI",
+    description: "Track broader trends, benchmarks, and strategic context.",
+    href: "/state-of-ai",
+  },
+  {
+    title: "Events",
+    description: "Find workshops, sessions, and practical implementation programs.",
+    href: "/events",
+  },
+  {
+    title: "Tools",
+    description: "Use practical diagnostics and resources to improve visibility.",
+    href: "/tools",
+  },
+];
 ---
+
+<BaseLayout
+  title="Marketplace | AI Coachella Valley"
+  description="Marketplace hub for curated tools, services, and practical pathways across briefs, cities, events, and submissions."
+>
+  <section class="hero">
+    <h1>Marketplace</h1>
+    <p>
+      A curated hub for practical AI tools, services, and pathways. Start from briefs, submit new evidence, or navigate
+      city and sector signals.
+    </p>
+  </section>
+
+  <section aria-labelledby="top-paths-title">
+    <h2 id="top-paths-title">Top Paths</h2>
+    <div class="path-grid">
+      {paths.map((path) => (
+        <article class="path-card">
+          <h3>{path.title}</h3>
+          <p>{path.description}</p>
+          <a class="btn btn-secondary" href={path.href}>Open {path.title}</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: var(--s-7);
+  }
+
+  .hero {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-6);
+  }
+
+  .hero p {
+    max-width: 68ch;
+    color: var(--c-muted);
+  }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
+  }
+
+  .path-card {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+
+  .path-card h3 {
+    margin: 0;
+  }
+
+  .path-card p {
+    color: var(--c-muted);
+  }
+
+  .path-card .btn {
+    justify-self: start;
+  }
+</style>
