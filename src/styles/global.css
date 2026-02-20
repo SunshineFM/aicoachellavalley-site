@@ -84,3 +84,9 @@ a[role="button"]:hover {
   border-color: var(--aicv-volt);
   color: #111111;
 }
+
+/* TEMP: Volt Debug Mode (remove once verified) */
+body {
+  background-color: #c7ff2e !important;
+  background-image: none !important;
+}
