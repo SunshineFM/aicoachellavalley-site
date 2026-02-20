@@ -74,20 +74,8 @@ const siteJsonLd = {
             <a href="/state-of-ai">State of AI</a>
             <a href="/events">Events</a>
             <a href="/cities">Cities</a>
-            <details class="nav-dropdown">
-              <summary>Tools</summary>
-              <div class="dropdown-menu">
-                <a href="/tools/aio">AI Visibility Checkup</a>
-              </div>
-            </details>
-            <details class="nav-dropdown">
-              <summary>About</summary>
-              <div class="dropdown-menu">
-                <a href="/about">About</a>
-                <a href="/submit">Submit a Brief</a>
-                <a href="/contact">Contact</a>
-              </div>
-            </details>
+            <a href="/tools">Tools</a>
+            <a href="/about">About</a>
           </nav>
           <a href="/#subscribe" class="utility-link">Subscribe</a>
         </div>
@@ -195,62 +183,6 @@ const siteJsonLd = {
   nav a:focus-visible {
     color: var(--c-volt, #c7ff2e);
     text-decoration: underline;
-  }
-
-  .nav-dropdown {
-    position: relative;
-  }
-
-  .nav-dropdown summary {
-    color: #ffffff;
-    cursor: pointer;
-    list-style: none;
-  }
-
-  .nav-dropdown summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .nav-dropdown summary:hover,
-  .nav-dropdown summary:focus-visible {
-    color: var(--c-volt, #c7ff2e);
-    text-decoration: underline;
-  }
-
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: calc(100% + 0.3rem);
-    left: 0;
-    min-width: 13rem;
-    padding: 0.55rem;
-    border: 1px solid color-mix(in srgb, var(--c-indigo, #1c2f72) 55%, #ffffff 45%);
-    border-radius: 0.4rem;
-    background: #122055;
-    z-index: 20;
-  }
-
-  .nav-dropdown[open] .dropdown-menu {
-    display: grid;
-    gap: 0.45rem;
-  }
-
-  .dropdown-menu a {
-    color: #ffffff;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .dropdown-menu a:hover,
-  .dropdown-menu a:focus-visible {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 48rem) {
-    .dropdown-menu {
-      position: static;
-      margin-top: 0.35rem;
-    }
   }
 
   .site-main {

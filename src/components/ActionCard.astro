@@ -1,0 +1,64 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href?: string;
+  buttonLabel: string;
+  disabled?: boolean;
+  disabledLabel?: string;
+}
+
+const {
+  title,
+  description,
+  href,
+  buttonLabel,
+  disabled = false,
+  disabledLabel = "Coming soon",
+} = Astro.props as Props;
+
+const isDisabled = disabled || !href;
+---
+
+<article class="action-card">
+  <h3>{title}</h3>
+  <p>{description}</p>
+  {isDisabled ? (
+    <span class="btn btn-secondary is-disabled" aria-disabled="true">{disabledLabel}</span>
+  ) : (
+    <a class="btn btn-secondary" href={href}>{buttonLabel}</a>
+  )}
+</article>
+
+<style>
+  .action-card {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+  }
+
+  .action-card h3 {
+    margin: 0;
+  }
+
+  .action-card p {
+    color: var(--c-muted);
+  }
+
+  .action-card .btn {
+    justify-self: start;
+  }
+
+  .is-disabled {
+    pointer-events: none;
+    opacity: 0.65;
+    border-color: var(--c-border);
+    color: var(--c-muted);
+    background: color-mix(in srgb, var(--c-surface) 94%, #eef2f8 6%);
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ActionCard from "../../components/ActionCard.astro";
+import PageHero from "../../components/PageHero.astro";
 
 const paths = [
   {
@@ -39,72 +41,25 @@ const paths = [
   title="Marketplace | AI Coachella Valley"
   description="Marketplace hub for curated tools, services, and practical pathways across briefs, cities, events, and submissions."
 >
-  <section class="hero">
-    <h1>Marketplace</h1>
-    <p>
-      A curated hub for practical AI tools, services, and pathways. Start from briefs, submit new evidence, or navigate
-      city and sector signals.
-    </p>
-  </section>
+  <PageHero
+    title="Marketplace"
+    description="A curated hub for practical AI tools, services, and pathways. Start from briefs, submit new evidence, or navigate city and sector signals."
+  />
 
   <section aria-labelledby="top-paths-title">
     <h2 id="top-paths-title">Top Paths</h2>
     <div class="path-grid">
       {paths.map((path) => (
-        <article class="path-card">
-          <h3>{path.title}</h3>
-          <p>{path.description}</p>
-          <a class="btn btn-secondary" href={path.href}>Open {path.title}</a>
-        </article>
+        <ActionCard title={path.title} description={path.description} href={path.href} buttonLabel={`Open ${path.title}`} />
       ))}
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  section + section {
-    margin-top: var(--s-7);
-  }
-
-  .hero {
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    background: var(--c-surface);
-    box-shadow: var(--shadow-1);
-    padding: var(--s-6);
-  }
-
-  .hero p {
-    max-width: 68ch;
-    color: var(--c-muted);
-  }
-
   .path-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--s-4);
-  }
-
-  .path-card {
-    border: 1px solid var(--c-border);
-    border-radius: var(--r-md);
-    background: var(--c-surface);
-    box-shadow: var(--shadow-1);
-    padding: var(--s-5);
-    display: grid;
-    gap: var(--s-3);
-    align-content: start;
-  }
-
-  .path-card h3 {
-    margin: 0;
-  }
-
-  .path-card p {
-    color: var(--c-muted);
-  }
-
-  .path-card .btn {
-    justify-self: start;
   }
 </style>
