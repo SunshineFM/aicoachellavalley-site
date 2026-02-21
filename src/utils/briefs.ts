@@ -1,3 +1,5 @@
+import { CITIES } from "../data/cities";
+
 export const normalizeMeta = (value?: string) =>
   (value ?? "")
     .toLowerCase()
@@ -22,17 +24,7 @@ export const resolveSummary = (entry: {
   return "No summary available.";
 };
 
-export const CITY_ENTRIES = [
-  { name: "Palm Springs", slug: "palm-springs" },
-  { name: "Desert Hot Springs", slug: "desert-hot-springs" },
-  { name: "Cathedral City", slug: "cathedral-city" },
-  { name: "Rancho Mirage", slug: "rancho-mirage" },
-  { name: "Palm Desert", slug: "palm-desert" },
-  { name: "Indian Wells", slug: "indian-wells" },
-  { name: "Indio", slug: "indio" },
-  { name: "La Quinta", slug: "la-quinta" },
-  { name: "Coachella", slug: "coachella" },
-] as const;
+export const CITY_ENTRIES = CITIES.map(({ name, slug }) => ({ name, slug }));
 
 export const labelFromSlug = (slug: string) =>
   slug

@@ -3,7 +3,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ActionCard from "../../components/ActionCard.astro";
 import PageHero from "../../components/PageHero.astro";
-import { CITY_ENTRIES, normalizeMeta } from "../../utils/briefs";
+import { CITIES } from "../../data/cities";
+import { normalizeMeta } from "../../utils/briefs";
 
 const briefs = await getCollection("signals");
 const briefCountByCity = new Map<string, number>();
@@ -17,7 +18,7 @@ briefs.forEach((brief) => {
 const cityListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  itemListElement: CITY_ENTRIES.map((city, index) => ({
+  itemListElement: CITIES.map((city, index) => ({
     "@type": "ListItem",
     position: index + 1,
     url: `https://aicoachellavalley.com/cities/${city.slug}`,
@@ -28,16 +29,19 @@ const cityListJsonLd = {
 
 <BaseLayout title="Cities | AI Coachella Valley">
   <script type="application/ld+json" set:html={JSON.stringify(cityListJsonLd)}></script>
-  <PageHero title="All Cities" description="Explore city-level briefs across the Coachella Valley." />
+  <PageHero
+    title="All Cities"
+    description="Explore city-level intelligence hubs across the Coachella Valley using a shared evidence framework."
+  />
   <section>
     <h2>City Brief Hubs</h2>
     <div class="city-grid">
-    {CITY_ENTRIES.map((city) => {
+    {CITIES.map((city) => {
       const count = briefCountByCity.get(city.slug) ?? 0;
       return (
         <ActionCard
           title={city.name}
-          description={`${count} brief${count === 1 ? "" : "s"} currently available`}
+          description={`${city.shortDescription} ${count} brief${count === 1 ? "" : "s"} currently available.`}
           href={`/cities/${city.slug}`}
           buttonLabel={`Open ${city.name}`}
         />

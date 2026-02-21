@@ -2,27 +2,16 @@
 import ActionCard from "../../components/ActionCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../../components/PageHero.astro";
-
-const CITY_PAGES = [
-  { name: "Palm Springs", slug: "palm-springs" },
-  { name: "Desert Hot Springs", slug: "desert-hot-springs" },
-  { name: "Cathedral City", slug: "cathedral-city" },
-  { name: "Rancho Mirage", slug: "rancho-mirage" },
-  { name: "Palm Desert", slug: "palm-desert" },
-  { name: "Indian Wells", slug: "indian-wells" },
-  { name: "Indio", slug: "indio" },
-  { name: "La Quinta", slug: "la-quinta" },
-  { name: "Coachella", slug: "coachella" },
-] as const;
+import { CITIES } from "../../data/cities";
 
 export function getStaticPaths() {
-  return CITY_PAGES.map((city) => ({
+  return CITIES.map((city) => ({
     params: { city: city.slug },
   }));
 }
 
 const cityParam = (Astro.params.city || "").toLowerCase();
-const city = CITY_PAGES.find((entry) => entry.slug === cityParam);
+const city = CITIES.find((entry) => entry.slug === cityParam);
 
 if (!city) {
   return Astro.redirect("/cities", 302);
@@ -31,16 +20,34 @@ if (!city) {
 
 <BaseLayout title={`${city.name} | Cities | AI Coachella Valley`}>
   <PageHero
-    title={`${city.name} Briefs`}
-    description={`City-level briefs and signals for ${city.name}.`}
+    title={city.name}
+    description={city.shortDescription}
   />
+
+  <section>
+    <h2>What we're tracking</h2>
+    <ul class="tracking-list">
+      {city.signalsWeTrack.map((signal) => (
+        <li>{signal}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>Key sectors</h2>
+    <ul class="sector-list">
+      {city.keySectors.map((sector) => (
+        <li>{sector}</li>
+      ))}
+    </ul>
+  </section>
 
   <section>
     <h2>Top Paths</h2>
     <div class="path-grid">
       <ActionCard
         title="View all briefs"
-        description="Browse the latest regional evidence and updates."
+        description="Browse the latest city-tagged evidence and regional updates."
         href="/briefs"
         buttonLabel="Open Briefs"
       />
@@ -49,6 +56,12 @@ if (!city) {
         description="Share a verified local signal or implementation update."
         href="/submit"
         buttonLabel="Open Submit a Brief"
+      />
+      <ActionCard
+        title="State of AI"
+        description="Read the current narrative snapshot for this city."
+        href={`/state-of-ai/${city.slug}`}
+        buttonLabel={`Open ${city.name} State of AI`}
       />
     </div>
   </section>
@@ -65,6 +78,14 @@ if (!city) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--s-4);
+  }
+
+  .tracking-list,
+  .sector-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: var(--s-2);
   }
 
   p > a {

@@ -1,0 +1,124 @@
+---
+import ActionCard from "../../components/ActionCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/PageHero.astro";
+import { CITIES } from "../../data/cities";
+
+export function getStaticPaths() {
+  return CITIES.map((city) => ({
+    params: { city: city.slug },
+  }));
+}
+
+const cityParam = (Astro.params.city || "").toLowerCase();
+const city = CITIES.find((entry) => entry.slug === cityParam);
+
+if (!city) {
+  return Astro.redirect("/state-of-ai", 302);
+}
+
+const opportunities = [
+  "Scale practical city and business workflows with transparent AI tooling.",
+  "Build repeatable playbooks in key local sectors with measurable outcomes.",
+  "Grow regional workforce readiness through hands-on adoption pathways.",
+];
+
+const risks = [
+  "Uneven adoption speed across sectors and organization sizes.",
+  "Evidence gaps where pilots are active but results are not documented.",
+  "Governance and trust concerns if deployment outpaces standards.",
+];
+---
+
+<BaseLayout title={`${city.name} State of AI | AI Coachella Valley`}>
+  <PageHero
+    title={`${city.name} State of AI`}
+    description={`Narrative snapshot backed by city-level evidence signals for ${city.name}.`}
+  />
+
+  <section>
+    <h2>Snapshot</h2>
+    <ul>
+      <li>{city.name} shows active AI signals across {city.keySectors[0]}, {city.keySectors[1]}, and {city.keySectors[2]}.</li>
+      <li>Current momentum centers on operational efficiency and service responsiveness.</li>
+      <li>Local evidence quality improves as more date-stamped briefs are submitted and reviewed.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Evidence</h2>
+    <p>
+      Review the latest verified briefs tied to this city and the broader region.
+    </p>
+    <p><a href={`/cities/${city.slug}`}>Back to {city.name} city hub</a> · <a href="/briefs">Open Briefs</a></p>
+  </section>
+
+  <section>
+    <h2>Opportunities</h2>
+    <ul>
+      {opportunities.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>Gaps/Risks</h2>
+    <ul>
+      {risks.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>What's Next</h2>
+    <p>
+      AICV will continue publishing date-stamped briefs, then update this city narrative as higher-confidence
+      evidence accumulates across sectors and public service workflows.
+    </p>
+  </section>
+
+  <section>
+    <h2>Top Paths</h2>
+    <div class="path-grid">
+      <ActionCard
+        title={`Open ${city.name} City Hub`}
+        description="Return to the city intelligence page."
+        href={`/cities/${city.slug}`}
+        buttonLabel="Open City Hub"
+      />
+      <ActionCard
+        title="View all briefs"
+        description="Scan the evidence layer across all cities."
+        href="/briefs"
+        buttonLabel="Open Briefs"
+      />
+      <ActionCard
+        title="Submit a brief"
+        description="Contribute a new city signal for editorial review."
+        href="/submit"
+        buttonLabel="Open Submit a Brief"
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: var(--s-7);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
+  }
+</style>
