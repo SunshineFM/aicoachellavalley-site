@@ -2,7 +2,10 @@
 import ActionCard from "../../components/ActionCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../../components/PageHero.astro";
+import ResearchCoverage from "../../components/ResearchCoverage.astro";
 import { CITIES } from "../../data/cities";
+import { getCollection } from "astro:content";
+import { normalizeMeta, resolveSummary } from "../../utils/briefs";
 
 export function getStaticPaths() {
   return CITIES.map((city) => ({
@@ -14,76 +17,89 @@ const cityParam = (Astro.params.city || "").toLowerCase();
 const city = CITIES.find((entry) => entry.slug === cityParam);
 
 if (!city) {
-  return Astro.redirect("/state-of-ai", 302);
+  return new Response(null, { status: 404, statusText: "Not Found" });
 }
 
-const opportunities = [
-  "Scale practical city and business workflows with transparent AI tooling.",
-  "Build repeatable playbooks in key local sectors with measurable outcomes.",
-  "Grow regional workforce readiness through hands-on adoption pathways.",
-];
+const allBriefs = await getCollection("signals");
+const confirmedBriefs = allBriefs
+  .filter((brief) => normalizeMeta(brief.data.city) === city.slug)
+  .filter((brief) => Array.isArray(brief.data.sources) && brief.data.sources.length > 0)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const risks = [
-  "Uneven adoption speed across sectors and organization sizes.",
-  "Evidence gaps where pilots are active but results are not documented.",
-  "Governance and trust concerns if deployment outpaces standards.",
+const lastUpdated = city.stateOfAI?.lastUpdated || new Date().toISOString().slice(0, 10);
+const watchCategories = [
+  "Procurement",
+  "Workforce",
+  "Education",
+  "Public Safety",
+  "Privacy",
+  "Economic Development",
 ];
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "2-digit",
+});
 ---
 
 <BaseLayout title={`${city.name} State of AI | AI Coachella Valley`}>
   <PageHero
-    title={`${city.name} State of AI`}
-    description={`Narrative snapshot backed by city-level evidence signals for ${city.name}.`}
+    title={`State of AI in ${city.name}`}
+    description="Baseline snapshot (public-source evidence)."
   />
 
   <section>
-    <h2>Snapshot</h2>
-    <ul>
-      <li>{city.name} shows active AI signals across {city.keySectors[0]}, {city.keySectors[1]}, and {city.keySectors[2]}.</li>
-      <li>Current momentum centers on operational efficiency and service responsiveness.</li>
-      <li>Local evidence quality improves as more date-stamped briefs are submitted and reviewed.</li>
-    </ul>
+    <p class="meta-line"><strong>Last updated:</strong> {lastUpdated}</p>
   </section>
 
   <section>
-    <h2>Evidence</h2>
-    <p>
-      Review the latest verified briefs tied to this city and the broader region.
-    </p>
-    <p><a href={`/cities/${city.slug}`}>Back to {city.name} city hub</a> · <a href="/briefs">Open Briefs</a></p>
+    <h2>Confirmed signals</h2>
+    {confirmedBriefs.length === 0 ? (
+      <>
+        <p>
+          No confirmed public AI references yet. This page will update as sources are scanned and briefs are submitted.
+        </p>
+        <p><a class="btn btn-secondary" href="/submit">Submit a brief</a></p>
+      </>
+    ) : (
+      <div class="signals-grid">
+        {confirmedBriefs.map((brief) => (
+          <article class="signal-card">
+            <h3><a href={`/briefs/${brief.slug}`}>{brief.data.title}</a></h3>
+            <p class="signal-meta">{dateFormatter.format(brief.data.date)}</p>
+            <p>{resolveSummary(brief)}</p>
+            <h4>Sources</h4>
+            <ul class="source-list">
+              {(brief.data.sources || []).map((url) => (
+                <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    )}
   </section>
 
   <section>
-    <h2>Opportunities</h2>
+    <h2>Research Coverage</h2>
+    <ResearchCoverage coverage={city.stateOfAI?.coverage} />
+  </section>
+
+  <section>
+    <h2>What we're watching</h2>
+    <p>These are the public-source categories we track for city AI signal.</p>
     <ul>
-      {opportunities.map((item) => (
+      {watchCategories.map((item) => (
         <li>{item}</li>
       ))}
     </ul>
-  </section>
-
-  <section>
-    <h2>Gaps/Risks</h2>
-    <ul>
-      {risks.map((item) => (
-        <li>{item}</li>
-      ))}
-    </ul>
-  </section>
-
-  <section>
-    <h2>What's Next</h2>
-    <p>
-      AICV will continue publishing date-stamped briefs, then update this city narrative as higher-confidence
-      evidence accumulates across sectors and public service workflows.
-    </p>
   </section>
 
   <section>
     <h2>Top Paths</h2>
     <div class="path-grid">
       <ActionCard
-        title={`Open ${city.name} City Hub`}
+        title={`Open ${city.name} city hub`}
         description="Return to the city intelligence page."
         href={`/cities/${city.slug}`}
         buttonLabel="Open City Hub"
@@ -96,7 +112,7 @@ const risks = [
       />
       <ActionCard
         title="Submit a brief"
-        description="Contribute a new city signal for editorial review."
+        description="Contribute source-backed evidence for this city."
         href="/submit"
         buttonLabel="Open Submit a Brief"
       />
@@ -116,9 +132,42 @@ const risks = [
     gap: var(--s-2);
   }
 
+  .meta-line {
+    margin: 0;
+    color: var(--c-muted);
+  }
+
+  .signals-grid,
   .path-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
     gap: var(--s-4);
+  }
+
+  .signal-card {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-5);
+  }
+
+  .signal-card h3 {
+    margin: 0;
+  }
+
+  .signal-card h4 {
+    margin-bottom: 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .signal-meta {
+    color: var(--c-muted);
+    margin-bottom: var(--s-2);
+  }
+
+  .source-list {
+    margin: 0;
+    padding-left: 1.2rem;
   }
 </style>

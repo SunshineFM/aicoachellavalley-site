@@ -2,35 +2,34 @@
 import ActionCard from "../../components/ActionCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../../components/PageHero.astro";
+import { CITIES } from "../../data/cities";
 ---
 
 <BaseLayout title="State of AI | AI Coachella Valley">
   <PageHero
     title="State of AI"
-    description="A high-level view of regional momentum, practical standards, and operating signals across sectors."
+    description="Evidence-first city snapshots of practical AI adoption across the Coachella Valley."
   />
 
   <section>
-    <h2>Top Paths</h2>
+    <h2>Method</h2>
+    <p>
+      Each city page is grounded in published briefs and public-source evidence only. No URL = no claim. As
+      new source-backed briefs are added, snapshots and coverage metrics update.
+    </p>
+  </section>
+
+  <section>
+    <h2>City State of AI Pages</h2>
     <div class="path-grid">
-      <ActionCard
-        title="Latest Briefs"
-        description="Review current evidence before adopting new AI priorities."
-        href="/briefs"
-        buttonLabel="Open Latest Briefs"
-      />
-      <ActionCard
-        title="Cities"
-        description="Track implementation signals by city and local operating context."
-        href="/cities"
-        buttonLabel="Open Cities"
-      />
-      <ActionCard
-        title="Submit a Brief"
-        description="Contribute a new signal to strengthen the regional evidence base."
-        href="/submit"
-        buttonLabel="Open Submit a Brief"
-      />
+      {CITIES.map((city) => (
+        <ActionCard
+          title={city.name}
+          description={city.shortDescription}
+          href={`/state-of-ai/${city.slug}`}
+          buttonLabel={`Open ${city.name}`}
+        />
+      ))}
     </div>
   </section>
 </BaseLayout>

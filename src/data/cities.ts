@@ -4,6 +4,17 @@ export interface CityProfile {
   shortDescription: string;
   keySectors: string[];
   signalsWeTrack: string[];
+  stateOfAI?: {
+    lastUpdated?: string;
+    status: "baseline" | "in-progress" | "published";
+    coverage: {
+      meetingsScanned: number | null;
+      transcriptsAvailable: number | null;
+      documentsScanned: number | null;
+      aiMentionsFound: number | null;
+      lastScanDate: string | null;
+    };
+  };
 }
 
 export const CITIES: CityProfile[] = [
@@ -18,6 +29,16 @@ export const CITIES: CityProfile[] = [
       "Resident service chat and call-center modernization",
       "Downtown business adoption of practical AI tools",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "desert-hot-springs",
@@ -30,6 +51,16 @@ export const CITIES: CityProfile[] = [
       "Small business use of AI for customer communication",
       "City service process improvements using digital tools",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "cathedral-city",
@@ -42,6 +73,16 @@ export const CITIES: CityProfile[] = [
       "Permit and records workflow modernization",
       "Local workforce exposure to AI-enabled tools",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "rancho-mirage",
@@ -54,6 +95,16 @@ export const CITIES: CityProfile[] = [
       "Professional service automation with oversight controls",
       "High-trust hospitality personalization use cases",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "palm-desert",
@@ -66,6 +117,16 @@ export const CITIES: CityProfile[] = [
       "Education and workforce AI readiness efforts",
       "SMB adoption of marketing and productivity automation",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "indian-wells",
@@ -78,6 +139,16 @@ export const CITIES: CityProfile[] = [
       "Guest experience personalization across venues",
       "Data practices supporting seasonal demand planning",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "indio",
@@ -90,6 +161,16 @@ export const CITIES: CityProfile[] = [
       "Transportation and logistics coordination improvements",
       "Public service capacity planning and resident communication",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "la-quinta",
@@ -102,6 +183,16 @@ export const CITIES: CityProfile[] = [
       "Resident communication and city service responsiveness",
       "Local business AI usage for bookings and outreach",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
   {
     slug: "coachella",
@@ -114,6 +205,16 @@ export const CITIES: CityProfile[] = [
       "Warehouse and logistics automation signals",
       "Community access to AI skills and support pathways",
     ],
+    stateOfAI: {
+      status: "baseline",
+      coverage: {
+        meetingsScanned: null,
+        transcriptsAvailable: null,
+        documentsScanned: null,
+        aiMentionsFound: null,
+        lastScanDate: null,
+      },
+    },
   },
 ];
 
