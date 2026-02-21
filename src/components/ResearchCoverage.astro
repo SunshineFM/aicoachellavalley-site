@@ -1,0 +1,69 @@
+---
+interface CoverageMetrics {
+  meetingsScanned: number | null;
+  transcriptsAvailable: number | null;
+  documentsScanned: number | null;
+  aiMentionsFound: number | null;
+  lastScanDate: string | null;
+}
+
+interface Props {
+  coverage?: CoverageMetrics;
+}
+
+const { coverage } = Astro.props as Props;
+
+const numberDisplay = (value: number | null | undefined) => (typeof value === "number" ? String(value) : "—");
+const dateDisplay = (value: string | null | undefined) => (value && value.trim().length > 0 ? value : "In progress");
+---
+
+<div class="coverage-grid">
+  <article class="coverage-item">
+    <h3>Meetings scanned</h3>
+    <p>{numberDisplay(coverage?.meetingsScanned)}</p>
+  </article>
+  <article class="coverage-item">
+    <h3>Transcripts available</h3>
+    <p>{numberDisplay(coverage?.transcriptsAvailable)}</p>
+  </article>
+  <article class="coverage-item">
+    <h3>Documents scanned</h3>
+    <p>{numberDisplay(coverage?.documentsScanned)}</p>
+  </article>
+  <article class="coverage-item">
+    <h3>AI mentions found</h3>
+    <p>{numberDisplay(coverage?.aiMentionsFound)}</p>
+  </article>
+  <article class="coverage-item">
+    <h3>Last scan date</h3>
+    <p>{dateDisplay(coverage?.lastScanDate)}</p>
+  </article>
+</div>
+
+<style>
+  .coverage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: var(--s-3);
+  }
+
+  .coverage-item {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: var(--shadow-1);
+    padding: var(--s-4);
+  }
+
+  .coverage-item h3 {
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  .coverage-item p {
+    margin: var(--s-2) 0 0;
+    color: var(--c-muted);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+</style>
