@@ -1,0 +1,50 @@
+{
+  "palm-springs": {
+    "youtube": [
+      {
+        "url": "https://www.youtube.com/@CityofPalmSprings",
+        "label": "City of Palm Springs YouTube",
+        "notes": "Official city channel candidate."
+      }
+    ],
+    "agendas-minutes": [
+      {
+        "url": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+        "label": "City Council Agenda Archive",
+        "notes": "City clerk-managed agenda archive candidate."
+      }
+    ]
+  },
+  "cathedral-city": {
+    "docs": [
+      {
+        "url": "https://www.cathedralcity.gov/government/city-clerk",
+        "label": "City Clerk",
+        "notes": "Official records page candidate."
+      }
+    ],
+    "youtube": [
+      {
+        "url": "https://www.youtube.com/c/Discovercathedralcity",
+        "label": "Discover Cathedral City YouTube",
+        "notes": "Official city channel candidate."
+      }
+    ]
+  },
+  "coachella": {
+    "video-archive": [
+      {
+        "url": "https://www.coachella.org/city-government/city-council/meeting-video",
+        "label": "City Council Meeting Video",
+        "notes": "Official city meeting video archive candidate."
+      }
+    ],
+    "youtube": [
+      {
+        "url": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+        "label": "City of Coachella YouTube",
+        "notes": "Official city channel candidate."
+      }
+    ]
+  }
+}

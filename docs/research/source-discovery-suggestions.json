@@ -1,0 +1,993 @@
+{
+  "generatedAt": "2026-02-22T02:29:16.111Z",
+  "mode": "dry-run",
+  "inputFile": "docs/research/source-discovery-input.json",
+  "outputFile": "docs/research/source-discovery-suggestions.json",
+  "results": [
+    {
+      "citySlug": "palm-springs",
+      "cityName": "Palm Springs",
+      "type": "youtube",
+      "query": "City of Palm Springs official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Palm Springs YouTube",
+        "url": "https://www.youtube.com/@CityofPalmSprings",
+        "notes": "Official city channel for public meeting videos.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.youtube.com/@CityofPalmSprings",
+          "label": "City of Palm Springs YouTube",
+          "notes": "Official city channel candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/@CityofPalmSprings",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/@CityofPalmSprings",
+          "label": "City of Palm Springs YouTube",
+          "notes": "Official city channel for public meeting videos.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/@CityofPalmSprings",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-springs",
+      "cityName": "Palm Springs",
+      "type": "agendas-minutes",
+      "query": "City of Palm Springs agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council Meetings",
+        "url": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+        "notes": "Primary archive for council meetings and agenda packets.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+          "label": "City Council Agenda Archive",
+          "notes": "City clerk-managed agenda archive candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+          "label": "City Council Meetings",
+          "notes": "Primary archive for council meetings and agenda packets.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.palmspringsca.gov/government/city-clerk/city-council-meetings/city-council-agenda-archive",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-springs",
+      "cityName": "Palm Springs",
+      "type": "docs",
+      "query": "City of Palm Springs city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Clerk",
+        "url": "https://www.palmspringsca.gov/government/city-clerk",
+        "notes": "Official records hub for notices, documents, and agendas.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.palmspringsca.gov/government/city-clerk",
+          "label": "City Clerk",
+          "notes": "Official records hub for notices, documents, and agendas.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.palmspringsca.gov/government/city-clerk",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-springs",
+      "cityName": "Palm Springs",
+      "type": "video-archive",
+      "query": "City of Palm Springs city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "desert-hot-springs",
+      "cityName": "Desert Hot Springs",
+      "type": "youtube",
+      "query": "City of Desert Hot Springs official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Desert Hot Springs YouTube",
+        "url": "https://www.youtube.com/channel/UC6I0eH2pIjdRtqc9696_e7g",
+        "notes": "City video channel for meetings and updates.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/channel/UC6I0eH2pIjdRtqc9696_e7g",
+          "label": "City of Desert Hot Springs YouTube",
+          "notes": "City video channel for meetings and updates.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/channel/UC6I0eH2pIjdRtqc9696_e7g",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "desert-hot-springs",
+      "cityName": "Desert Hot Springs",
+      "type": "agendas-minutes",
+      "query": "City of Desert Hot Springs agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council Agendas",
+        "url": "https://www.cityofdhs.org/city-council-agendas/",
+        "notes": "Primary council agenda archive.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.cityofdhs.org/city-council-agendas/",
+          "label": "City Council Agendas",
+          "notes": "Primary council agenda archive.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cityofdhs.org/city-council-agendas/",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "desert-hot-springs",
+      "cityName": "Desert Hot Springs",
+      "type": "docs",
+      "query": "City of Desert Hot Springs city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Clerk",
+        "url": "https://www.cityofdhs.org/departments/city-clerk/",
+        "notes": "Official records and filing reference page.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.cityofdhs.org/departments/city-clerk/",
+          "label": "City Clerk",
+          "notes": "Official records and filing reference page.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cityofdhs.org/departments/city-clerk/",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "desert-hot-springs",
+      "cityName": "Desert Hot Springs",
+      "type": "video-archive",
+      "query": "City of Desert Hot Springs city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "cathedral-city",
+      "cityName": "Cathedral City",
+      "type": "youtube",
+      "query": "City of Cathedral City official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "Cathedral City Government YouTube",
+        "url": "https://www.youtube.com/c/Discovercathedralcity",
+        "notes": "Official city channel for recorded sessions.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.youtube.com/c/Discovercathedralcity",
+          "label": "Discover Cathedral City YouTube",
+          "notes": "Official city channel candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/c/Discovercathedralcity",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/c/Discovercathedralcity",
+          "label": "Cathedral City Government YouTube",
+          "notes": "Official city channel for recorded sessions.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/c/Discovercathedralcity",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "cathedral-city",
+      "cityName": "Cathedral City",
+      "type": "agendas-minutes",
+      "query": "City of Cathedral City agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "Agendas and Minutes",
+        "url": "https://www.cathedralcity.gov/departments/new-advanced-components/calendar-meeting-list",
+        "notes": "City council and commission documents archive.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.cathedralcity.gov/departments/new-advanced-components/calendar-meeting-list",
+          "label": "Agendas and Minutes",
+          "notes": "City council and commission documents archive.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cathedralcity.gov/departments/new-advanced-components/calendar-meeting-list",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "cathedral-city",
+      "cityName": "Cathedral City",
+      "type": "docs",
+      "query": "City of Cathedral City city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Council Meetings",
+        "url": "https://www.cathedralcity.gov/government/city-clerk",
+        "notes": "Council meeting schedules and supporting links.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.cathedralcity.gov/government/city-clerk",
+          "label": "City Clerk",
+          "notes": "Official records page candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cathedralcity.gov/government/city-clerk",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.cathedralcity.gov/government/city-clerk",
+          "label": "City Council Meetings",
+          "notes": "Council meeting schedules and supporting links.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cathedralcity.gov/government/city-clerk",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "cathedral-city",
+      "cityName": "Cathedral City",
+      "type": "video-archive",
+      "query": "City of Cathedral City city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "rancho-mirage",
+      "cityName": "Rancho Mirage",
+      "type": "youtube",
+      "query": "City of Rancho Mirage official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Rancho Mirage YouTube",
+        "url": "https://www.youtube.com/@cityofranchomirageca",
+        "notes": "City video channel for meeting recordings.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/@cityofranchomirageca",
+          "label": "City of Rancho Mirage YouTube",
+          "notes": "City video channel for meeting recordings.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/@cityofranchomirageca",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "rancho-mirage",
+      "cityName": "Rancho Mirage",
+      "type": "agendas-minutes",
+      "query": "City of Rancho Mirage agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council",
+        "url": "https://ranchomirageca.gov/our_city/city_government/city_council_meeting_agendas.php",
+        "notes": "Council page with meeting materials and schedules.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://ranchomirageca.gov/our_city/city_government/city_council_meeting_agendas.php",
+          "label": "City Council",
+          "notes": "Council page with meeting materials and schedules.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://ranchomirageca.gov/our_city/city_government/city_council_meeting_agendas.php",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "rancho-mirage",
+      "cityName": "Rancho Mirage",
+      "type": "docs",
+      "query": "City of Rancho Mirage city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Clerk Agendas and Minutes",
+        "url": "https://ranchomirageca.gov/our_city/city_departments/city_clerk.php",
+        "notes": "Primary records archive for agenda and minutes.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://ranchomirageca.gov/our_city/city_departments/city_clerk.php",
+          "label": "City Clerk Agendas and Minutes",
+          "notes": "Primary records archive for agenda and minutes.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://ranchomirageca.gov/our_city/city_departments/city_clerk.php",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "rancho-mirage",
+      "cityName": "Rancho Mirage",
+      "type": "video-archive",
+      "query": "City of Rancho Mirage city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "palm-desert",
+      "cityName": "Palm Desert",
+      "type": "youtube",
+      "query": "City of Palm Desert official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Palm Desert YouTube",
+        "url": "https://www.youtube.com/@palmdesertmeetings",
+        "notes": "Official city meeting and update videos.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/@palmdesertmeetings",
+          "label": "City of Palm Desert YouTube",
+          "notes": "Official city meeting and update videos.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/@palmdesertmeetings",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-desert",
+      "cityName": "Palm Desert",
+      "type": "agendas-minutes",
+      "query": "City of Palm Desert agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council Meetings",
+        "url": "https://www.palmdesert.gov/connect/city-council",
+        "notes": "Council schedules and linked agenda materials.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.palmdesert.gov/connect/city-council",
+          "label": "City Council Meetings",
+          "notes": "Council schedules and linked agenda materials.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.palmdesert.gov/connect/city-council",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-desert",
+      "cityName": "Palm Desert",
+      "type": "docs",
+      "query": "City of Palm Desert city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Clerk Agendas and Minutes",
+        "url": "https://www.palmdesert.gov/departments/city-clerk",
+        "notes": "Official records archive for meeting docs.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.palmdesert.gov/departments/city-clerk",
+          "label": "City Clerk Agendas and Minutes",
+          "notes": "Official records archive for meeting docs.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.palmdesert.gov/departments/city-clerk",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "palm-desert",
+      "cityName": "Palm Desert",
+      "type": "video-archive",
+      "query": "City of Palm Desert city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "indian-wells",
+      "cityName": "Indian Wells",
+      "type": "youtube",
+      "query": "City of Indian Wells official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Indian Wells YouTube",
+        "url": "https://www.youtube.com/@CityofIndianWells",
+        "notes": "City meeting recording channel.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/@CityofIndianWells",
+          "label": "City of Indian Wells YouTube",
+          "notes": "City meeting recording channel.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/@CityofIndianWells",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indian-wells",
+      "cityName": "Indian Wells",
+      "type": "agendas-minutes",
+      "query": "City of Indian Wells agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council Meetings",
+        "url": "https://www.cityofindianwells.org/i-want-to/view/view-city-council-meetings/city-council-meetings",
+        "notes": "Primary meetings entrypoint with council records.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.cityofindianwells.org/i-want-to/view/view-city-council-meetings/city-council-meetings",
+          "label": "City Council Meetings",
+          "notes": "Primary meetings entrypoint with council records.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cityofindianwells.org/i-want-to/view/view-city-council-meetings/city-council-meetings",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indian-wells",
+      "cityName": "Indian Wells",
+      "type": "docs",
+      "query": "City of Indian Wells city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Clerk",
+        "url": "https://www.cityofindianwells.org/city-hall/departments/city-clerk",
+        "notes": "Official notices and records references.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.cityofindianwells.org/city-hall/departments/city-clerk",
+          "label": "City Clerk",
+          "notes": "Official notices and records references.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.cityofindianwells.org/city-hall/departments/city-clerk",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indian-wells",
+      "cityName": "Indian Wells",
+      "type": "video-archive",
+      "query": "City of Indian Wells city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "indio",
+      "cityName": "Indio",
+      "type": "youtube",
+      "query": "City of Indio official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Indio YouTube",
+        "url": "https://www.youtube.com/channel/UCnJCb93GZ3LsUSpDYss2oWA",
+        "notes": "Official city channel for public meeting videos.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/channel/UCnJCb93GZ3LsUSpDYss2oWA",
+          "label": "City of Indio YouTube",
+          "notes": "Official city channel for public meeting videos.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/channel/UCnJCb93GZ3LsUSpDYss2oWA",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indio",
+      "cityName": "Indio",
+      "type": "agendas-minutes",
+      "query": "City of Indio agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "Agendas, Minutes, and Videos",
+        "url": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+        "notes": "Primary city archive for council docs and videos.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+          "label": "Agendas, Minutes, and Videos",
+          "notes": "Primary city archive for council docs and videos.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indio",
+      "cityName": "Indio",
+      "type": "docs",
+      "query": "City of Indio city clerk minutes agenda archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "docs",
+        "label": "City Council",
+        "url": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+        "notes": "Council page with schedules and public materials.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+          "label": "City Council",
+          "notes": "Council page with schedules and public materials.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "indio",
+      "cityName": "Indio",
+      "type": "video-archive",
+      "query": "City of Indio city council video archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "la-quinta",
+      "cityName": "La Quinta",
+      "type": "youtube",
+      "query": "City of La Quinta official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of La Quinta YouTube",
+        "url": "https://www.youtube.com/c/Playinlaquinta",
+        "notes": "City video channel for public meetings and updates.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/c/Playinlaquinta",
+          "label": "City of La Quinta YouTube",
+          "notes": "City video channel for public meetings and updates.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/c/Playinlaquinta",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "la-quinta",
+      "cityName": "La Quinta",
+      "type": "agendas-minutes",
+      "query": "City of La Quinta agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "City Council Agendas",
+        "url": "https://www.laquintaca.gov/business/city-council/city-council-agendas",
+        "notes": "Primary agenda and packet archive.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.laquintaca.gov/business/city-council/city-council-agendas",
+          "label": "City Council Agendas",
+          "notes": "Primary agenda and packet archive.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.laquintaca.gov/business/city-council/city-council-agendas",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "la-quinta",
+      "cityName": "La Quinta",
+      "type": "docs",
+      "query": "City of La Quinta city clerk minutes agenda archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "la-quinta",
+      "cityName": "La Quinta",
+      "type": "video-archive",
+      "query": "City of La Quinta city council video archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "video-archive",
+        "label": "City Council Videos",
+        "url": "https://www.laquintaca.gov/our-city/city-government/public-meetings",
+        "notes": "Official video archive for city council sessions.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.laquintaca.gov/our-city/city-government/public-meetings",
+          "label": "City Council Videos",
+          "notes": "Official video archive for city council sessions.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.laquintaca.gov/our-city/city-government/public-meetings",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "coachella",
+      "cityName": "Coachella",
+      "type": "youtube",
+      "query": "City of Coachella official YouTube channel",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "youtube",
+        "label": "City of Coachella YouTube",
+        "url": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+        "notes": "Official city channel for meeting recordings.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+          "label": "City of Coachella YouTube",
+          "notes": "Official city channel candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+          "label": "City of Coachella YouTube",
+          "notes": "Official city channel for meeting recordings.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.youtube.com/channel/UCNarFWjW6dMs57G2tDZ0PzA/videos",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "coachella",
+      "cityName": "Coachella",
+      "type": "agendas-minutes",
+      "query": "City of Coachella agendas minutes city clerk",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "agendas-minutes",
+        "label": "Agendas and Minutes",
+        "url": "https://www.coachella.org/city-government/city-council/agendas-and-minutes",
+        "notes": "Primary council docs archive.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "existing",
+          "url": "https://www.coachella.org/city-government/city-council/agendas-and-minutes",
+          "label": "Agendas and Minutes",
+          "notes": "Primary council docs archive.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.coachella.org/city-government/city-council/agendas-and-minutes",
+            "valid": false
+          }
+        }
+      ]
+    },
+    {
+      "citySlug": "coachella",
+      "cityName": "Coachella",
+      "type": "docs",
+      "query": "City of Coachella city clerk minutes agenda archive",
+      "action": "missing-needs-manual-verification",
+      "existing": null,
+      "selected": null,
+      "candidates": []
+    },
+    {
+      "citySlug": "coachella",
+      "cityName": "Coachella",
+      "type": "video-archive",
+      "query": "City of Coachella city council video archive",
+      "action": "keep-needs-manual-verification",
+      "existing": {
+        "type": "video-archive",
+        "label": "City Council Videos",
+        "url": "https://www.coachella.org/city-government/city-council/meeting-video",
+        "notes": "Official city video archive.",
+        "verified": false
+      },
+      "selected": null,
+      "candidates": [
+        {
+          "source": "input",
+          "url": "https://www.coachella.org/city-government/city-council/meeting-video",
+          "label": "City Council Meeting Video",
+          "notes": "Official city meeting video archive candidate.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.coachella.org/city-government/city-council/meeting-video",
+            "valid": false
+          }
+        },
+        {
+          "source": "existing",
+          "url": "https://www.coachella.org/city-government/city-council/meeting-video",
+          "label": "City Council Videos",
+          "notes": "Official city video archive.",
+          "validation": {
+            "status": "error",
+            "method": "HEAD",
+            "statusCode": null,
+            "finalUrl": "https://www.coachella.org/city-government/city-council/meeting-video",
+            "valid": false
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "checked": 33,
+    "valid": 0,
+    "missingTypeEntries": 9,
+    "needsManualVerification": 36,
+    "updated": 0
+  }
+}
