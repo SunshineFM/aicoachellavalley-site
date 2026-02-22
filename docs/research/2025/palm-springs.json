@@ -26,5 +26,16 @@
       "label": "City of Palm Springs Official Channel"
     }
   ],
-  "hits": []
+  "hits": [
+    {
+      "sourceUrl": "https://www.palmspringsca.gov/government/city-council/city-council-meetings",
+      "sourceType": "webpage",
+      "title": "City Council Meetings",
+      "date": null,
+      "timestampOrPage": null,
+      "snippet": "The city meetings page links to council agenda packets, posted minutes, and meeting video access points.",
+      "keywords": ["agendas", "minutes", "meetings"],
+      "notes": "Baseline citation entrypoint; no AI mention claim."
+    }
+  ]
 }

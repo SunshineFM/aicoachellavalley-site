@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "audit:site": "node scripts/audit-site.mjs",
-    "validate:research": "node scripts/validate-research.mjs"
+    "validate:research": "node scripts/validate-research.mjs",
+    "generate:briefs:research": "node scripts/generate-briefs-from-research.mjs"
   },
   "dependencies": {
     "astro": "^5.17.1"
