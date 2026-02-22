@@ -1,0 +1,30 @@
+{
+  "citySlug": "palm-springs",
+  "year": 2025,
+  "lastScanDate": "2026-02-22",
+  "coverage": {
+    "meetingsScanned": null,
+    "transcriptsAvailable": null,
+    "documentsScanned": null,
+    "aiMentionsFound": null,
+    "notes": "Baseline ingest stub; counts will populate after automated scan ingestion is connected."
+  },
+  "sourcesScanned": [
+    {
+      "url": "https://www.palmspringsca.gov/government/city-council/city-council-meetings",
+      "type": "Agendas-Minutes",
+      "label": "City Council Meetings"
+    },
+    {
+      "url": "https://www.palmspringsca.gov/government/city-clerk",
+      "type": "Docs",
+      "label": "City Clerk Records"
+    },
+    {
+      "url": "https://www.youtube.com/@CityofPalmSprings",
+      "type": "YouTube",
+      "label": "City of Palm Springs Official Channel"
+    }
+  ],
+  "hits": []
+}

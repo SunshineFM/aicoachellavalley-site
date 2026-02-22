@@ -32,6 +32,9 @@ const isDisabled = disabled || !href;
 
 <style>
   .action-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     border: 1px solid var(--c-border);
     border-radius: var(--r-md);
     background: var(--c-surface);
@@ -51,7 +54,10 @@ const isDisabled = disabled || !href;
   }
 
   .action-card .btn {
+    position: relative;
+    z-index: 1;
     justify-self: start;
+    max-width: 100%;
   }
 
   .is-disabled {
