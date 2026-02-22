@@ -86,6 +86,17 @@ const relatedBriefs = allBriefs
   })
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+const normalizedSources = (brief.data.sources ?? []).map((source) =>
+  typeof source === "string"
+    ? { url: source, label: source, type: "", notes: "" }
+    : {
+        url: source.url,
+        label: source.label || source.url,
+        type: source.type || "",
+        notes: source.notes || "",
+      }
+);
 ---
 
 <BaseLayout title={`${brief.data.title} | Briefs`}>
@@ -109,12 +120,16 @@ const relatedBriefs = allBriefs
     <hr />
     <Content />
 
-    {brief.data.sources && brief.data.sources.length > 0 ? (
+    {normalizedSources.length > 0 ? (
       <>
         <h2>Sources</h2>
         <ul>
-          {brief.data.sources.map((url) => (
-            <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+          {normalizedSources.map((source) => (
+            <li>
+              <a href={source.url} target="_blank" rel="noreferrer">{source.label}</a>
+              {source.type ? ` (${source.type})` : ""}
+              {source.notes ? ` - ${source.notes}` : ""}
+            </li>
           ))}
         </ul>
       </>

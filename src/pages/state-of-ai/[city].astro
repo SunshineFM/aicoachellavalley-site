@@ -81,8 +81,15 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
             <p>{resolveSummary(brief)}</p>
             <h4>Sources</h4>
             <ul class="source-list">
-              {(brief.data.sources || []).map((url) => (
-                <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+              {(brief.data.sources || []).map((source) => (
+                typeof source === "string" ? (
+                  <li><a href={source} target="_blank" rel="noreferrer">{source}</a></li>
+                ) : (
+                  <li>
+                    <a href={source.url} target="_blank" rel="noreferrer">{source.label || source.url}</a>
+                    {source.type ? ` (${source.type})` : ""}
+                  </li>
+                )
               ))}
             </ul>
           </article>
