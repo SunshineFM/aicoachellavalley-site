@@ -6,7 +6,9 @@ sector: Public Sector
 signal_type: research
 confidence: low
 sources:
-  - https://www.palmdesert.gov/
+  - https://www.palmdesert.gov/government/city-council/city-council-meetings
+  - https://www.palmdesert.gov/government/city-clerk/agendas-minutes
+  - https://www.youtube.com/@CityofPalmDesert
 summary: "Baseline stub for Palm Desert source tracking. Evidence briefs will be added as official materials are scanned and validated."
 ---
 
@@ -15,7 +17,7 @@ summary: "Baseline stub for Palm Desert source tracking. Evidence briefs will be
 ## Scope
 Baseline stub. Evidence briefs will be added as sources are scanned and validated.
 
-This entry does not assert that AI was discussed in the linked material. It records an official source endpoint for ongoing review.
+This entry does not assert that AI was discussed in the linked material. It records official source entrypoints for ongoing review.
 
 ## What we will track
 - procurement
@@ -26,7 +28,11 @@ This entry does not assert that AI was discussed in the linked material. It reco
 - economic development
 
 ## Sources
-- https://www.palmdesert.gov/
+| Label | Type | URL | Notes |
+| --- | --- | --- | --- |
+| City Council Meetings | Agendas-Minutes | https://www.palmdesert.gov/government/city-council/city-council-meetings | Primary council meetings page for schedules and agenda links. |
+| City Clerk Agendas and Minutes | Docs | https://www.palmdesert.gov/government/city-clerk/agendas-minutes | Official records archive for meeting documents and minutes. |
+| City of Palm Desert YouTube | YouTube | https://www.youtube.com/@CityofPalmDesert | Official city video channel used for meeting and workshop recordings. |
 
 ## Related nodes
 - City hub: /cities/palm-desert
