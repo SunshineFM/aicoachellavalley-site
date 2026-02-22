@@ -128,6 +128,9 @@ const run = () => {
   const existingGeneratedNames = new Set(existingFiles.filter((f) => f.name.includes("research-hit-")).map((f) => f.name));
   const outputs = [];
   const cityStats = new Map();
+  let processedTotal = 0;
+  let skippedExistingTotal = 0;
+  let skippedCollisionTotal = 0;
 
   for (const filePath of researchFiles) {
     const raw = fs.readFileSync(filePath, "utf8");
@@ -139,6 +142,7 @@ const run = () => {
 
     for (const hit of research.hits) {
       stats.processed += 1;
+      processedTotal += 1;
       if (!hit?.sourceUrl || !hit?.snippet) fail(`${filePath}: each hit must include sourceUrl and snippet`);
 
       const shortId = stableShortId(hit);
@@ -149,11 +153,13 @@ const run = () => {
 
       if (existingGeneratedNames.has(filename) || fs.existsSync(outPath)) {
         stats.skippedExisting += 1;
+        skippedExistingTotal += 1;
         continue;
       }
 
       if (hasHumanCollision(existingFiles, hit)) {
         stats.skippedCollision += 1;
+        skippedCollisionTotal += 1;
         continue;
       }
 
@@ -186,6 +192,15 @@ const run = () => {
     );
   }
   console.info(`[generate:briefs:research] total new files: ${outputs.length}`);
+  const summary = {
+    mode: dryRun ? "dry-run" : "write",
+    files_scanned: researchFiles.length,
+    hits_processed: processedTotal,
+    to_write: outputs.length,
+    skipped_existing: skippedExistingTotal,
+    skipped_collision: skippedCollisionTotal,
+  };
+  console.info(`RESEARCH_GENERATION_SUMMARY=${JSON.stringify(summary)}`);
 
   if (!dryRun) {
     outputs.forEach((output) => {

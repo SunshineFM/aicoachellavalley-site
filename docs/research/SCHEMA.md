@@ -113,3 +113,12 @@ Behavior:
 - Creates briefs in `src/content/signals/` from `hits[]`
 - Uses stable IDs to prevent duplicates on reruns
 - Skips collisions with existing human-authored briefs when source URL + timestamp/page matches
+
+## PR Checklist
+
+When a PR changes research files or research-hit generation inputs:
+
+1. Run `npm run validate:research`
+2. Run `npm run generate:briefs:research -- --write`
+3. Commit generated markdown outputs under `src/content/signals/`
+4. Ensure CI dry-run reports `to_write=0`

@@ -1,0 +1,57 @@
+name: Research Ingestion Guardrails
+
+on:
+  pull_request:
+    paths:
+      - "docs/research/**"
+      - "scripts/generate-briefs-from-research.*"
+      - "src/content/signals/**"
+      - "src/content.config.ts"
+
+jobs:
+  research-guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate research JSON
+        run: npm run validate:research
+
+      - name: Run generator dry-run
+        run: |
+          set -euo pipefail
+          npm run generate:briefs:research -- --dry-run | tee /tmp/research-dry-run.log
+
+      - name: Enforce generated briefs committed
+        run: |
+          set -euo pipefail
+          SUMMARY_LINE="$(grep 'RESEARCH_GENERATION_SUMMARY=' /tmp/research-dry-run.log | tail -n 1 || true)"
+          if [ -z "$SUMMARY_LINE" ]; then
+            echo "Missing RESEARCH_GENERATION_SUMMARY line in generator output."
+            exit 1
+          fi
+
+          SUMMARY_JSON="${SUMMARY_LINE#RESEARCH_GENERATION_SUMMARY=}"
+          TO_WRITE="$(node -e "const s=JSON.parse(process.argv[1]); process.stdout.write(String((s.to_write ?? \"\")));" "$SUMMARY_JSON")"
+
+          if [ -z "$TO_WRITE" ]; then
+            echo "Could not parse to_write from RESEARCH_GENERATION_SUMMARY."
+            exit 1
+          fi
+
+          if [ "$TO_WRITE" -gt 0 ]; then
+            echo "Research hits would generate new briefs. Run generator with --write and commit generated markdown files."
+            exit 1
+          fi
+
+          echo "Research ingestion guardrail passed (to_write=$TO_WRITE)."
