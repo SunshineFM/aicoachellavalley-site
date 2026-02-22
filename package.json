@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "audit:site": "node scripts/audit-site.mjs"
+    "audit:site": "node scripts/audit-site.mjs",
+    "validate:research": "node scripts/validate-research.mjs"
   },
   "dependencies": {
     "astro": "^5.17.1"
