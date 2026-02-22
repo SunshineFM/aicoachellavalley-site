@@ -1,0 +1,74 @@
+---
+import ActionCard from "../components/ActionCard.astro";
+import PageHero from "../components/PageHero.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Start Here | AI Coachella Valley"
+  description="AICV is the evidence-first AI ground truth for the Coachella Valley."
+>
+  <PageHero
+    title="Start Here"
+    description="AICV is the evidence-first AI ground truth for the Coachella Valley."
+  />
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="ladder">
+      <li>Briefs</li>
+      <li>City Hubs</li>
+      <li>State of AI</li>
+      <li>Programs/Tools</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Top Paths</h2>
+    <div class="path-grid">
+      <ActionCard
+        title="Browse Cities"
+        description="Navigate city-by-city evidence hubs."
+        href="/cities"
+        buttonLabel="Open Cities"
+      />
+      <ActionCard
+        title="Browse State of AI"
+        description="Review baseline narrative snapshots for each city."
+        href="/state-of-ai"
+        buttonLabel="Open State of AI"
+      />
+      <ActionCard
+        title="Submit a Brief"
+        description="Contribute source-backed local evidence for review."
+        href="/submit"
+        buttonLabel="Open Submit a Brief"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2>Method</h2>
+    <p>Evidence-first. Sources required. No URL = no claim.</p>
+    <p><a href="/about">About AICV</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: var(--s-7);
+  }
+
+  .ladder {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
+  }
+</style>
