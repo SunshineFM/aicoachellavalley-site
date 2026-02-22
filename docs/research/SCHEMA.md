@@ -122,3 +122,9 @@ When a PR changes research files or research-hit generation inputs:
 2. Run `npm run generate:briefs:research -- --write`
 3. Commit generated markdown outputs under `src/content/signals/`
 4. Ensure CI dry-run reports `to_write=0`
+
+## Source Discovery Tooling
+
+- Dry run (read-only): `npm run discover:sources`
+- Apply validated updates: `npm run discover:sources:apply`
+- Optional suggestions artifact write: add `--write-suggestions` to either command.

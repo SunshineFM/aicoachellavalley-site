@@ -11,8 +11,17 @@ const REQUIRED_TYPES = ["youtube", "agendas-minutes", "docs", "video-archive"];
 const FALLBACK_TO_GET_STATUSES = new Set([400, 401, 403, 404, 405, 406, 429]);
 
 const args = new Set(process.argv.slice(2));
+if (args.has("--help")) {
+  console.info("Usage:");
+  console.info("  node scripts/discover-city-sources.mjs --dry-run");
+  console.info("  node scripts/discover-city-sources.mjs --apply");
+  console.info("  node scripts/discover-city-sources.mjs --dry-run --write-suggestions");
+  console.info("  node scripts/discover-city-sources.mjs --apply --write-suggestions");
+  process.exit(0);
+}
 const applyMode = args.has("--apply");
 const dryRun = !applyMode || args.has("--dry-run");
+const writeSuggestions = args.has("--write-suggestions");
 
 const readCities = () => {
   const content = fs.readFileSync(CITIES_FILE, "utf8");
@@ -28,6 +37,7 @@ const readRegistry = () => {
 };
 
 const writeRegistry = (registry) => {
+  const sortedCitySlugs = Object.keys(registry).sort((a, b) => a.localeCompare(b));
   const lines = [];
   lines.push("export type CitySource = {");
   lines.push("  citySlug: string;");
@@ -41,9 +51,16 @@ const writeRegistry = (registry) => {
   lines.push("};");
   lines.push("");
   lines.push('export const citySourcesBySlug: Record<string, CitySource["sources"]> = {');
-  for (const citySlug of Object.keys(registry)) {
+  for (const citySlug of sortedCitySlugs) {
     lines.push(`  "${citySlug}": [`);
-    for (const source of registry[citySlug]) {
+    const sortedSources = [...(registry[citySlug] || [])].sort((a, b) => {
+      const byType = String(a.type).localeCompare(String(b.type));
+      if (byType !== 0) return byType;
+      const byLabel = String(a.label).localeCompare(String(b.label));
+      if (byLabel !== 0) return byLabel;
+      return String(a.url).localeCompare(String(b.url));
+    });
+    for (const source of sortedSources) {
       lines.push("    {");
       lines.push(`      type: "${source.type}",`);
       lines.push(`      label: "${String(source.label).replace(/"/g, '\\"')}",`);
@@ -58,7 +75,11 @@ const writeRegistry = (registry) => {
   }
   lines.push("};");
   lines.push("");
-  fs.writeFileSync(CITY_SOURCES_FILE, lines.join("\n"), "utf8");
+  const nextContent = lines.join("\n");
+  const prevContent = fs.existsSync(CITY_SOURCES_FILE) ? fs.readFileSync(CITY_SOURCES_FILE, "utf8") : "";
+  if (prevContent !== nextContent) {
+    fs.writeFileSync(CITY_SOURCES_FILE, nextContent, "utf8");
+  }
 };
 
 const readInputCandidates = () => {
@@ -130,12 +151,20 @@ const pickBest = (candidates) => {
   return null;
 };
 
+const normalizeSuggestions = (suggestions) => {
+  suggestions.results.sort((a, b) => {
+    const byCity = a.citySlug.localeCompare(b.citySlug);
+    if (byCity !== 0) return byCity;
+    return a.type.localeCompare(b.type);
+  });
+  return suggestions;
+};
+
 const run = async () => {
   const cities = readCities();
   const registry = readRegistry();
   const input = readInputCandidates();
   const suggestions = {
-    generatedAt: new Date().toISOString(),
     mode: dryRun ? "dry-run" : "apply",
     inputFile: path.relative(WORKDIR, INPUT_FILE),
     outputFile: path.relative(WORKDIR, OUTPUT_FILE),
@@ -211,42 +240,58 @@ const run = async () => {
       });
 
       if (!dryRun && best) {
+        const nextLabel = best.label || existing?.label || `${cityName} ${type}`;
+        const nextNotes = best.notes || existing?.notes || "Added by source discovery apply mode.";
+        const nextVerified = true;
         if (existing) {
-          existing.url = best.url;
-          existing.label = best.label || existing.label;
-          existing.notes = best.notes || existing.notes;
-          existing.verified = true;
-          suggestions.summary.updated += 1;
+          const changed =
+            existing.url !== best.url ||
+            existing.label !== nextLabel ||
+            (existing.notes || "") !== (nextNotes || "") ||
+            Boolean(existing.verified) !== nextVerified;
+          if (changed) {
+            existing.url = best.url;
+            existing.label = nextLabel;
+            existing.notes = nextNotes;
+            existing.verified = nextVerified;
+            suggestions.summary.updated += 1;
+          }
         } else {
           citySources.push({
             type,
-            label: best.label || `${cityName} ${type}`,
+            label: nextLabel,
             url: best.url,
-            notes: best.notes || "Added by source discovery apply mode.",
-            verified: true,
+            notes: nextNotes,
+            verified: nextVerified,
           });
           registry[citySlug] = citySources;
           suggestions.summary.updated += 1;
         }
-      } else if (!dryRun && existing && !best) {
-        const manualNote = "needs manual verification";
-        if (!String(existing.notes || "").includes(manualNote)) {
-          existing.notes = `${existing.notes ? `${existing.notes} ` : ""}${manualNote}`.trim();
-        }
-        existing.verified = false;
       }
     }
   }
 
-  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(suggestions, null, 2) + "\n", "utf8");
+  normalizeSuggestions(suggestions);
 
-  if (!dryRun) {
+  if (writeSuggestions) {
+    const nextSuggestions = JSON.stringify(suggestions, null, 2) + "\n";
+    fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
+    const prevSuggestions = fs.existsSync(OUTPUT_FILE) ? fs.readFileSync(OUTPUT_FILE, "utf8") : "";
+    if (nextSuggestions !== prevSuggestions) {
+      fs.writeFileSync(OUTPUT_FILE, nextSuggestions, "utf8");
+    }
+  }
+
+  if (!dryRun && suggestions.summary.updated > 0) {
     writeRegistry(registry);
   }
 
   console.info(`[discover:sources] mode=${dryRun ? "dry-run" : "apply"} checked=${suggestions.summary.checked} valid=${suggestions.summary.valid} updated=${suggestions.summary.updated}`);
-  console.info(`[discover:sources] suggestions written: ${path.relative(WORKDIR, OUTPUT_FILE)}`);
+  if (writeSuggestions) {
+    console.info(`[discover:sources] suggestions written: ${path.relative(WORKDIR, OUTPUT_FILE)}`);
+  } else {
+    console.info("[discover:sources] suggestions file not written (use --write-suggestions).");
+  }
 };
 
 await run();

@@ -97,16 +97,26 @@ const auditOneUrl = async (url) => {
 
 const run = async () => {
   const citySourcesBySlug = readCitySourceRegistry();
-  const flatEntries = Object.entries(citySourcesBySlug).flatMap(([citySlug, sources]) =>
-    (sources || []).map((source) => ({
-      citySlug,
-      type: source.type,
-      label: source.label,
-      url: source.url,
-      notes: source.notes || "",
-      verified: Boolean(source.verified),
-    }))
-  );
+  const flatEntries = Object.entries(citySourcesBySlug)
+    .flatMap(([citySlug, sources]) =>
+      (sources || []).map((source) => ({
+        citySlug,
+        type: source.type,
+        label: source.label,
+        url: source.url,
+        notes: source.notes || "",
+        verified: Boolean(source.verified),
+      }))
+    )
+    .sort((a, b) => {
+      const byCity = a.citySlug.localeCompare(b.citySlug);
+      if (byCity !== 0) return byCity;
+      const byType = String(a.type).localeCompare(String(b.type));
+      if (byType !== 0) return byType;
+      const byLabel = String(a.label).localeCompare(String(b.label));
+      if (byLabel !== 0) return byLabel;
+      return String(a.url).localeCompare(String(b.url));
+    });
 
   const reportRows = [];
   for (const entry of flatEntries) {
@@ -114,7 +124,6 @@ const run = async () => {
     reportRows.push({
       ...entry,
       ...result,
-      checkedAt: new Date().toISOString(),
     });
   }
 
@@ -144,16 +153,14 @@ const run = async () => {
   }
 
   const notFound = reportRows.filter((row) => row.status === "not_found");
-  const report = {
-    generatedAt: new Date().toISOString(),
-    timeoutMs: TIMEOUT_MS,
-    totals,
-    notFound,
-    cities,
-  };
+  const report = { timeoutMs: TIMEOUT_MS, totals, notFound, cities };
 
   fs.mkdirSync(path.dirname(REPORT_FILE), { recursive: true });
-  fs.writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2) + "\n", "utf8");
+  const nextReport = JSON.stringify(report, null, 2) + "\n";
+  const prevReport = fs.existsSync(REPORT_FILE) ? fs.readFileSync(REPORT_FILE, "utf8") : "";
+  if (nextReport !== prevReport) {
+    fs.writeFileSync(REPORT_FILE, nextReport, "utf8");
+  }
 
   console.info(`[audit:sources] urls=${totals.urls} ok=${totals.ok} redirect=${totals.redirect} not_found=${totals.not_found} error=${totals.error} timeout=${totals.timeout}`);
   console.info(`[audit:sources] report written: ${path.relative(WORKDIR, REPORT_FILE)}`);
