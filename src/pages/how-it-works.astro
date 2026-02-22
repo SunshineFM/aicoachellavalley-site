@@ -1,0 +1,89 @@
+---
+import ActionCard from "../components/ActionCard.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+---
+
+<BaseLayout
+  title="How AICV Works | AI Coachella Valley"
+  description="An evidence-first publishing engine for Coachella Valley AI signal."
+>
+  <PageHero
+    title="How AICV Works"
+    description="An evidence-first publishing engine for Coachella Valley AI signal."
+  />
+
+  <section>
+    <h2>The ladder</h2>
+    <ol class="ladder">
+      <li>Briefs</li>
+      <li>City Hubs</li>
+      <li>State of AI</li>
+      <li>Programs/Tools</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Evidence rules</h2>
+    <ul class="rule-list">
+      <li>Sources required</li>
+      <li>No URL = no claim</li>
+      <li>We separate coverage from conclusions</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Update cycle</h2>
+    <ol class="cycle-list">
+      <li>Public sources are scanned.</li>
+      <li>Findings are logged as structured research.</li>
+      <li>Evidence briefs are generated and reviewed.</li>
+      <li>Pages update with timestamps and a changelog mindset.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Top Paths</h2>
+    <div class="path-grid">
+      <ActionCard
+        title="Browse State of AI"
+        description="Review city-level narrative snapshots backed by source evidence."
+        href="/state-of-ai"
+        buttonLabel="Open State of AI"
+      />
+      <ActionCard
+        title="Browse Cities"
+        description="Navigate city hubs with briefs and current coverage context."
+        href="/cities"
+        buttonLabel="Open Cities"
+      />
+      <ActionCard
+        title="Submit a Brief"
+        description="Contribute source-backed local evidence for review."
+        href="/submit"
+        buttonLabel="Open Submit a Brief"
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  section + section {
+    margin-top: var(--s-6);
+  }
+
+  .ladder,
+  .rule-list,
+  .cycle-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--s-4);
+  }
+</style>
