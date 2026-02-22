@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "audit:site": "node scripts/audit-site.mjs",
+    "audit:sources": "node scripts/audit-city-sources.mjs",
     "validate:research": "node scripts/validate-research.mjs",
     "generate:briefs:research": "node scripts/generate-briefs-from-research.mjs"
   },

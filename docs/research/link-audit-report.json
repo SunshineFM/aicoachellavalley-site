@@ -1,0 +1,483 @@
+{
+  "generatedAt": "2026-02-22T02:04:46.128Z",
+  "timeoutMs": 12000,
+  "totals": {
+    "urls": 27,
+    "ok": 0,
+    "redirect": 0,
+    "not_found": 0,
+    "error": 27,
+    "timeout": 0
+  },
+  "notFound": [],
+  "cities": {
+    "palm-springs": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "palm-springs",
+          "type": "agendas-minutes",
+          "label": "City Council Meetings",
+          "url": "https://www.palmspringsca.gov/government/city-council/city-council-meetings",
+          "notes": "Primary archive for council meetings and agenda packets.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.palmspringsca.gov/government/city-council/city-council-meetings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.108Z"
+        },
+        {
+          "citySlug": "palm-springs",
+          "type": "docs",
+          "label": "City Clerk",
+          "url": "https://www.palmspringsca.gov/government/city-clerk",
+          "notes": "Official records hub for notices, documents, and agendas.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.palmspringsca.gov/government/city-clerk",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.111Z"
+        },
+        {
+          "citySlug": "palm-springs",
+          "type": "youtube",
+          "label": "City of Palm Springs YouTube",
+          "url": "https://www.youtube.com/@CityofPalmSprings",
+          "notes": "Official city channel for public meeting videos.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@CityofPalmSprings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.112Z"
+        }
+      ]
+    },
+    "desert-hot-springs": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "desert-hot-springs",
+          "type": "agendas-minutes",
+          "label": "City Council Agendas",
+          "url": "https://www.cityofdhs.org/city-council-agendas/",
+          "notes": "Primary council agenda archive.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cityofdhs.org/city-council-agendas/",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.113Z"
+        },
+        {
+          "citySlug": "desert-hot-springs",
+          "type": "docs",
+          "label": "City Clerk",
+          "url": "https://www.cityofdhs.org/department/city-clerk/",
+          "notes": "Official records and filing reference page.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cityofdhs.org/department/city-clerk/",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.113Z"
+        },
+        {
+          "citySlug": "desert-hot-springs",
+          "type": "youtube",
+          "label": "City of Desert Hot Springs YouTube",
+          "url": "https://www.youtube.com/@cityofdeserthotsprings",
+          "notes": "City video channel for meetings and updates.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@cityofdeserthotsprings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.114Z"
+        }
+      ]
+    },
+    "cathedral-city": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "cathedral-city",
+          "type": "agendas-minutes",
+          "label": "Agendas and Minutes",
+          "url": "https://www.cathedralcity.gov/government/agendas-minutes/agendas-and-minutes",
+          "notes": "City council and commission documents archive.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cathedralcity.gov/government/agendas-minutes/agendas-and-minutes",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.115Z"
+        },
+        {
+          "citySlug": "cathedral-city",
+          "type": "docs",
+          "label": "City Council Meetings",
+          "url": "https://www.cathedralcity.gov/government/city-council/city-council-meetings",
+          "notes": "Council meeting schedules and supporting links.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cathedralcity.gov/government/city-council/city-council-meetings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.116Z"
+        },
+        {
+          "citySlug": "cathedral-city",
+          "type": "youtube",
+          "label": "Cathedral City Government YouTube",
+          "url": "https://www.youtube.com/@CathedralCityGov",
+          "notes": "Official city channel for recorded sessions.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@CathedralCityGov",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.116Z"
+        }
+      ]
+    },
+    "rancho-mirage": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "rancho-mirage",
+          "type": "agendas-minutes",
+          "label": "City Council",
+          "url": "https://www.ranchomirageca.gov/government/city-council",
+          "notes": "Council page with meeting materials and schedules.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.ranchomirageca.gov/government/city-council",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.117Z"
+        },
+        {
+          "citySlug": "rancho-mirage",
+          "type": "docs",
+          "label": "City Clerk Agendas and Minutes",
+          "url": "https://www.ranchomirageca.gov/government/city-clerk/agendas-minutes",
+          "notes": "Primary records archive for agenda and minutes.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.ranchomirageca.gov/government/city-clerk/agendas-minutes",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.118Z"
+        },
+        {
+          "citySlug": "rancho-mirage",
+          "type": "youtube",
+          "label": "City of Rancho Mirage YouTube",
+          "url": "https://www.youtube.com/@cityofranchomirageca",
+          "notes": "City video channel for meeting recordings.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@cityofranchomirageca",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.119Z"
+        }
+      ]
+    },
+    "palm-desert": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "palm-desert",
+          "type": "agendas-minutes",
+          "label": "City Council Meetings",
+          "url": "https://www.palmdesert.gov/government/city-council/city-council-meetings",
+          "notes": "Council schedules and linked agenda materials.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.palmdesert.gov/government/city-council/city-council-meetings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.120Z"
+        },
+        {
+          "citySlug": "palm-desert",
+          "type": "docs",
+          "label": "City Clerk Agendas and Minutes",
+          "url": "https://www.palmdesert.gov/government/city-clerk/agendas-minutes",
+          "notes": "Official records archive for meeting docs.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.palmdesert.gov/government/city-clerk/agendas-minutes",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.120Z"
+        },
+        {
+          "citySlug": "palm-desert",
+          "type": "youtube",
+          "label": "City of Palm Desert YouTube",
+          "url": "https://www.youtube.com/@CityofPalmDesert",
+          "notes": "Official city meeting and update videos.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@CityofPalmDesert",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.121Z"
+        }
+      ]
+    },
+    "indian-wells": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "indian-wells",
+          "type": "agendas-minutes",
+          "label": "City Council Meetings",
+          "url": "https://www.cityofindianwells.org/i-want-to/view/view-city-council-meetings/city-council-meetings",
+          "notes": "Primary meetings entrypoint with council records.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cityofindianwells.org/i-want-to/view/view-city-council-meetings/city-council-meetings",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.121Z"
+        },
+        {
+          "citySlug": "indian-wells",
+          "type": "docs",
+          "label": "City Clerk",
+          "url": "https://www.cityofindianwells.org/government/city-clerk",
+          "notes": "Official notices and records references.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.cityofindianwells.org/government/city-clerk",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.122Z"
+        },
+        {
+          "citySlug": "indian-wells",
+          "type": "youtube",
+          "label": "City of Indian Wells YouTube",
+          "url": "https://www.youtube.com/@CityofIndianWells",
+          "notes": "City meeting recording channel.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@CityofIndianWells",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.123Z"
+        }
+      ]
+    },
+    "indio": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "indio",
+          "type": "agendas-minutes",
+          "label": "Agendas, Minutes, and Videos",
+          "url": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+          "notes": "Primary city archive for council docs and videos.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.indio.org/departments/city-clerk/agendas-minutes-videos",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.124Z"
+        },
+        {
+          "citySlug": "indio",
+          "type": "docs",
+          "label": "City Council",
+          "url": "https://www.indio.org/government/city-council",
+          "notes": "Council page with schedules and public materials.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.indio.org/government/city-council",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.124Z"
+        },
+        {
+          "citySlug": "indio",
+          "type": "youtube",
+          "label": "City of Indio YouTube",
+          "url": "https://www.youtube.com/@CityofIndio",
+          "notes": "Official city channel for public meeting videos.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@CityofIndio",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.125Z"
+        }
+      ]
+    },
+    "la-quinta": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "la-quinta",
+          "type": "agendas-minutes",
+          "label": "City Council Agendas",
+          "url": "https://www.laquintaca.gov/business/city-council/city-council-agendas",
+          "notes": "Primary agenda and packet archive.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.laquintaca.gov/business/city-council/city-council-agendas",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.125Z"
+        },
+        {
+          "citySlug": "la-quinta",
+          "type": "video-archive",
+          "label": "City Council Videos",
+          "url": "https://www.laquintaca.gov/business/city-council/city-council-videos",
+          "notes": "Official video archive for city council sessions.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.laquintaca.gov/business/city-council/city-council-videos",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.126Z"
+        },
+        {
+          "citySlug": "la-quinta",
+          "type": "youtube",
+          "label": "City of La Quinta YouTube",
+          "url": "https://www.youtube.com/@cityoflaquinta",
+          "notes": "City video channel for public meetings and updates.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@cityoflaquinta",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.126Z"
+        }
+      ]
+    },
+    "coachella": {
+      "total": 3,
+      "ok": 0,
+      "redirect": 0,
+      "not_found": 0,
+      "error": 3,
+      "timeout": 0,
+      "rows": [
+        {
+          "citySlug": "coachella",
+          "type": "agendas-minutes",
+          "label": "Agendas and Minutes",
+          "url": "https://www.coachella.org/city-government/city-council/agendas-and-minutes",
+          "notes": "Primary council docs archive.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.coachella.org/city-government/city-council/agendas-and-minutes",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.127Z"
+        },
+        {
+          "citySlug": "coachella",
+          "type": "video-archive",
+          "label": "City Council Videos",
+          "url": "https://www.coachella.org/city-government/city-council/city-council-videos",
+          "notes": "Official city video archive.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.coachella.org/city-government/city-council/city-council-videos",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.127Z"
+        },
+        {
+          "citySlug": "coachella",
+          "type": "youtube",
+          "label": "City of Coachella YouTube",
+          "url": "https://www.youtube.com/@cityofcoachella",
+          "notes": "Official city channel for meeting recordings.",
+          "verified": false,
+          "status": "error",
+          "method": "HEAD",
+          "statusCode": null,
+          "finalUrl": "https://www.youtube.com/@cityofcoachella",
+          "error": "fetch failed",
+          "checkedAt": "2026-02-22T02:04:46.128Z"
+        }
+      ]
+    }
+  }
+}
