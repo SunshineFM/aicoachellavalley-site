@@ -24,6 +24,17 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
   day: "2-digit",
 });
+
+const normalizedSources = (signal.data.sources ?? []).map((source) =>
+  typeof source === "string"
+    ? { url: source, label: source, type: "", notes: "" }
+    : {
+        url: source.url,
+        label: source.label || source.url,
+        type: source.type || "",
+        notes: source.notes || "",
+      }
+);
 ---
 
 <BaseLayout title={`${signal.data.title} | Briefs`}>
@@ -52,12 +63,16 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
     <hr />
     <Content />
 
-    {signal.data.sources && signal.data.sources.length > 0 ? (
+    {normalizedSources.length > 0 ? (
       <>
         <h2>Sources</h2>
         <ul>
-          {signal.data.sources.map((url) => (
-            <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+          {normalizedSources.map((source) => (
+            <li>
+              <a href={source.url} target="_blank" rel="noreferrer">{source.label}</a>
+              {source.type ? ` (${source.type})` : ""}
+              {source.notes ? ` - ${source.notes}` : ""}
+            </li>
           ))}
         </ul>
       </>

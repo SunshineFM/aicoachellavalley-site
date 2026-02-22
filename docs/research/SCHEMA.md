@@ -98,3 +98,18 @@ Optional keys:
 - `notes`: string
 
 Rule: no hit is valid without `sourceUrl`.
+
+## Generate Briefs From Hits
+
+Use the deterministic generator to convert `hits[]` into signal briefs:
+
+- Dry run (default): `npm run generate:briefs:research`
+- Explicit dry run: `npm run generate:briefs:research -- --dry-run`
+- Write files: `npm run generate:briefs:research -- --write`
+
+Behavior:
+
+- Reads all files in `docs/research/2025/`
+- Creates briefs in `src/content/signals/` from `hits[]`
+- Uses stable IDs to prevent duplicates on reruns
+- Skips collisions with existing human-authored briefs when source URL + timestamp/page matches

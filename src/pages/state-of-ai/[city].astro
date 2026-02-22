@@ -5,6 +5,7 @@ import PageHero from "../../components/PageHero.astro";
 import ResearchCoverage from "../../components/ResearchCoverage.astro";
 import { CITIES } from "../../data/cities";
 import { getCollection } from "astro:content";
+import { loadCityResearch } from "../../utils/researchLoader";
 import { normalizeMeta, resolveSummary } from "../../utils/briefs";
 
 export function getStaticPaths() {
@@ -21,12 +22,22 @@ if (!city) {
 }
 
 const allBriefs = await getCollection("signals");
+const research = await loadCityResearch({ citySlug: city.slug, year: 2025 });
 const confirmedBriefs = allBriefs
   .filter((brief) => normalizeMeta(brief.data.city) === city.slug)
   .filter((brief) => Array.isArray(brief.data.sources) && brief.data.sources.length > 0)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const lastUpdated = city.stateOfAI?.lastUpdated || new Date().toISOString().slice(0, 10);
+const lastUpdated = research?.lastScanDate || city.stateOfAI?.lastUpdated || new Date().toISOString().slice(0, 10);
+const coverage = research
+  ? {
+      meetingsScanned: research.coverage.meetingsScanned,
+      transcriptsAvailable: research.coverage.transcriptsAvailable,
+      documentsScanned: research.coverage.documentsScanned,
+      aiMentionsFound: research.coverage.aiMentionsFound,
+      lastScanDate: research.lastScanDate,
+    }
+  : city.stateOfAI?.coverage;
 const watchCategories = [
   "Procurement",
   "Workforce",
@@ -70,8 +81,15 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
             <p>{resolveSummary(brief)}</p>
             <h4>Sources</h4>
             <ul class="source-list">
-              {(brief.data.sources || []).map((url) => (
-                <li><a href={url} target="_blank" rel="noreferrer">{url}</a></li>
+              {(brief.data.sources || []).map((source) => (
+                typeof source === "string" ? (
+                  <li><a href={source} target="_blank" rel="noreferrer">{source}</a></li>
+                ) : (
+                  <li>
+                    <a href={source.url} target="_blank" rel="noreferrer">{source.label || source.url}</a>
+                    {source.type ? ` (${source.type})` : ""}
+                  </li>
+                )
               ))}
             </ul>
           </article>
@@ -82,7 +100,31 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 
   <section>
     <h2>Research Coverage</h2>
-    <ResearchCoverage coverage={city.stateOfAI?.coverage} />
+    <ResearchCoverage coverage={coverage} />
+  </section>
+
+  <section>
+    <h2>Confirmed public-source hits (from research)</h2>
+    {!research ? (
+      <p>Research scan in progress. Coverage metrics will appear here once logged.</p>
+    ) : research.hits.length === 0 ? (
+      <p>No confirmed hits logged yet for this city/year.</p>
+    ) : (
+      <div class="hits-grid">
+        {research.hits.map((hit) => (
+          <article class="signal-card">
+            <h3>{hit.title}</h3>
+            <p class="signal-meta">
+              {hit.date ? `Date: ${hit.date}` : "Date: Unknown"}
+              {hit.timestampOrPage ? ` · Location: ${hit.timestampOrPage}` : ""}
+              {` · Type: ${hit.sourceType}`}
+            </p>
+            <p>{hit.snippet}</p>
+            <p><a href={hit.sourceUrl} target="_blank" rel="noreferrer">Open source</a></p>
+          </article>
+        ))}
+      </div>
+    )}
   </section>
 
   <section>
@@ -138,6 +180,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   }
 
   .signals-grid,
+  .hits-grid,
   .path-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
